@@ -1,8 +1,7 @@
 
 ##  <b>Nx_TCP_Echo_Client Application Description</b>
 
-This application provides an example of Azure RTOS NetX/NetXDuo stack usage.
-It shows how to develop a NetX TCP client to communicate with a remote sever using the NetX TCP socket API.
+This application provides an example of Azure RTOS NetX/NetXDuo stack usage. It shows how to develop a NetX TCP client to communicate with a remote sever using the NetX TCP socket API.
 
 The main entry function tx_application_define() is then called by ThreadX during kernel start, at this stage, all NetX resources are created.
 
@@ -104,11 +103,11 @@ None
        } >RAM AT> RAM
     ```
 
-       The simplest way to provide memory for ThreadX is to define a new section, see ._threadx_heap above.
-       In the example above the ThreadX heap size is set to 64KBytes.
-       The ._threadx_heap must be located between the .bss and the ._user_heap_stack sections in the linker script.
-       Caution: Make sure that ThreadX does not need more than the provided heap memory (64KBytes in this example).
-       Read more in STM32CubeIDE User Guide, chapter: "Linker script".
+    The simplest way to provide memory for ThreadX is to define a new section, see ._threadx_heap above.
+    In the example above the ThreadX heap size is set to 64KBytes.
+    The ._threadx_heap must be located between the .bss and the ._user_heap_stack sections in the linker script.
+    Caution: Make sure that ThreadX does not need more than the provided heap memory (64KBytes in this example).
+    Read more in STM32CubeIDE User Guide, chapter: "Linker script".
 
     + The "tx_initialize_low_level.S" should be also modified to enable the "USE_DYNAMIC_MEMORY_ALLOCATION" flag.
 
@@ -167,11 +166,11 @@ RTOS, Network, ThreadX, NetXDuo, TCP, UART
   - This application has been tested with STMicroelectronics NUCLEO-N657X0-Q boards Revision MB1940-N657XOQ-C01 and can be easily tailored to any other supported device and development board.
 
   - This application uses USART1 to display logs, the hyperterminal configuration is as follows:
-      - BaudRate = 115200 baud
-      - Word Length = 8 Bits
-      - Stop Bit = 1
-      - Parity = None
-      - Flow control = None
+    - BaudRate = 115200 baud
+    - Word Length = 8 Bits
+    - Stop Bit = 1
+    - Parity = None
+    - Flow control = None
 
   - **EWARM** : To monitor a variable in the live watch window, you must proceed as follow :
     - Start a debugging session.
@@ -203,3 +202,6 @@ Next, this program can be run in boot from flash mode. This can be done by follo
  - Next, in resorting again to CubeProgrammer, load the binary and its header (Nx_TCP_Echo_Client-trusted.bin) in Nucleo board external Flash at address 0x7000'0000.
  - Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).
  - Press the reset button. The code then executes in boot from external Flash mode.
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

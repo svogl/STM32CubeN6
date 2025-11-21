@@ -13,22 +13,24 @@ setlocal EnableDelayedExpansion
 set current_log_file=%projectdir%postbuild.log
 echo. > %current_log_file%
 
-:exe
-::line for window executable
-set applicfg=%cube_fw_path%\Utilities\PC_Software\ROT_AppliConfig\dist\AppliCfg.exe
-set python=
-if exist %applicfg% (
-echo run config Appli with windows executable
-goto postbuild
+:: Check if Python is installed
+python3 --version >nul 2>&1
+if %errorlevel% neq 0 (
+ python --version >nul 2>&1
+ if !errorlevel! neq 0 (
+    echo Python installation missing. Refer to Utilities\PC_Software\ROT_AppliConfig\README.md
+    goto :error
+ )
+  set "python=python "
+) else (
+  set "python=python3 "
 )
-:py
-::line for python
-echo run config Appli with python script
-set applicfg=%cube_fw_path%\Utilities\PC_Software\ROT_AppliConfig\AppliCfg.py
-set "python= "
+
+:: Environment variable for AppliCfg
+set "applicfg=%cube_fw_path%\Utilities\PC_Software\ROT_AppliConfig\AppliCfg.py"
 
 :postbuild
-set crypted=0
+set encrypted=0
 set appli_dir=..\..\..\..\%oemurot_appli_path_project%
 set binary_file=%projectdir%..\Binary\OEMuROT_Boot.bin
 set trusted_binary_file=%projectdir%..\Binary\OEMuROT_Boot_Trusted.bin
@@ -50,7 +52,7 @@ set enck=%bootrom_path%\Keys\OEM_SECRET.bin
 set version=0x00000001
 
 set scmd=-pubk "%pbk1%" "%pbk2%" "%pbk3%" "%pbk4%" "%pbk5%" "%pbk6%" "%pbk7%" "%pbk8%" -prvk "%pvk%" -pwd rot1
-if "%crypted%" == "1" (
+if "%encrypted%" == "1" (
 set enccmd=-encdc %derivval% -enck "%enck%"
 set optionflag=-t fsbl -iv %version% -la 0x34180000 -of 0x80000003
 ) else (

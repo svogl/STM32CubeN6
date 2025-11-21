@@ -49,6 +49,7 @@ RTC_HandleTypeDef hrtc;
 
 /* Private function prototypes -----------------------------------------------*/
 static void MX_RTC_Init(void);
+static void SystemIsolation_Config(void);
 /* USER CODE BEGIN PFP */
 static void SystemClock_Config(void);
 /* USER CODE END PFP */
@@ -78,16 +79,12 @@ int main(void)
   SCB_EnableDCache();
 
   /* MCU Configuration--------------------------------------------------------*/
-
-  /* Update SystemCoreClock variable according to RCC registers values. */
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
   /* Update SystemCoreClock variable */
   SystemCoreClockUpdate();
+  /* USER CODE END Init */
 
   /* USER CODE BEGIN SysInit */
 
@@ -95,6 +92,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_RTC_Init();
+  SystemIsolation_Config();
   /* USER CODE BEGIN 2 */
   /* Initialize LED2 */
   BSP_LED_Init(LED_RED);
@@ -166,6 +164,52 @@ int main(void)
 }
 
 /**
+  * @brief RIF Initialization Function
+  * @param None
+  * @retval None
+  */
+  static void SystemIsolation_Config(void)
+{
+
+  /* USER CODE BEGIN RIF_Init 0 */
+
+  /* USER CODE END RIF_Init 0 */
+
+  /* set all required IPs as secure privileged */
+  __HAL_RCC_RIFSC_CLK_ENABLE();
+
+  /* RIF-Aware IPs Config */
+  RTC_PrivilegeStateTypeDef privilegeState = {0};
+  RTC_SecureStateTypeDef secureState = {0};
+
+  privilegeState.rtcPrivilegeFull= RTC_PRIVILEGE_FULL_YES;
+  privilegeState.rtcPrivilegeFeatures= RTC_PRIVILEGE_FEATURE_NONE;
+  privilegeState.backupRegisterStartZone2= RTC_BKP_DR0;
+  privilegeState.backupRegisterStartZone3= RTC_BKP_DR0;
+  if (HAL_RTCEx_PrivilegeModeSet(&hrtc, &privilegeState) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  secureState.rtcSecureFull= RTC_SECURE_FULL_NO;
+  secureState.rtcNonSecureFeatures= RTC_NONSECURE_FEATURE_WUT;
+  secureState.backupRegisterStartZone2= RTC_BKP_DR0;
+  secureState.backupRegisterStartZone3= RTC_BKP_DR0;
+  if (HAL_RTCEx_SecureModeSet(&hrtc, &secureState) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /* USER CODE BEGIN RIF_Init 1 */
+
+  /* USER CODE END RIF_Init 1 */
+  /* USER CODE BEGIN RIF_Init 2 */
+
+  /* USER CODE END RIF_Init 2 */
+
+}
+
+/**
   * @brief RTC Initialization Function
   * @param None
   * @retval None
@@ -176,9 +220,6 @@ static void MX_RTC_Init(void)
   /* USER CODE BEGIN RTC_Init 0 */
 
   /* USER CODE END RTC_Init 0 */
-
-  RTC_PrivilegeStateTypeDef privilegeState = {0};
-  RTC_SecureStateTypeDef secureState = {0};
 
   /* USER CODE BEGIN RTC_Init 1 */
 
@@ -200,30 +241,13 @@ static void MX_RTC_Init(void)
   {
     Error_Handler();
   }
-  privilegeState.rtcPrivilegeFull = RTC_PRIVILEGE_FULL_YES;
-  privilegeState.backupRegisterPrivZone = RTC_PRIVILEGE_BKUP_ZONE_NONE;
-  privilegeState.backupRegisterStartZone2 = RTC_BKP_DR0;
-  privilegeState.backupRegisterStartZone3 = RTC_BKP_DR0;
-  if (HAL_RTCEx_PrivilegeModeSet(&hrtc, &privilegeState) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  secureState.rtcSecureFull = RTC_SECURE_FULL_YES;
-  secureState.backupRegisterStartZone2 = RTC_BKP_DR0;
-  secureState.backupRegisterStartZone3 = RTC_BKP_DR0;
-  if (HAL_RTCEx_SecureModeSet(&hrtc, &secureState) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
+  /* USER CODE BEGIN RTC_Init 2 */
   /** Enable the WakeUp
   */
   if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 20000, RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN RTC_Init 2 */
-
   /* USER CODE END RTC_Init 2 */
 
 }
@@ -353,8 +377,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

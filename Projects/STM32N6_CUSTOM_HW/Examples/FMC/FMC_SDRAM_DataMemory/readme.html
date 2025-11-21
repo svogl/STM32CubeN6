@@ -26,7 +26,7 @@
 <p>The goal of this example is to demonstrate the different steps to configure the FMC and make the SDRAM device ready for access R/W.</p>
 <p>The example scenario does not reflect a real application case, its purpose is to provide only the procedure to follow to use the external SDRAM as data memory.</p>
 <p>All FMC configuration and its associated GPIOs are done earlier in system_stm32n6xx_fsbl.c through function SystemInit_ExtMemCtl(), to configure SDRAM to be ready to contain data.</p>
-<p>The user has to configure his preferred toolchain using the provided linker file. The RAM zone is modified in order to use the external SDRAM memory as a RAM.</p>
+<p>The user can resort to the provided linker file.</p>
 <p>At this stage, all the used data can be located in the external SDRAM memory.</p>
 <p>The user can use the debugger’s watch to evaluate “uwTabAddr” variable value which should be above 0xC0000000.</p>
 <p>If uwTabAddr value is in the external SDRAM memory, GPIO PG7 is ON, otherwise the GPIO PG6 is ON.</p>
@@ -50,7 +50,7 @@
 <h3 id="hardware-and-software-environment"><b>Hardware and Software environment</b></h3>
 <ul>
 <li><p>This example runs on STM32N6xx devices.</p></li>
-<li><p>This template has been tested with STMicroelectronics STM32N6570 Custom Board with a SDRAM Micron MT48LC16M16A2.</p></li>
+<li><p>This example can be tested using STM32N6xx devices and a SDRAM memory (Micron MT48LC16M16A2) mounted on a user custom board.</p></li>
 <li><p>The IOs to be connected between the memory and the MCU are detailed in FMC/FMC_SDRAM_DataMemory/FSBL/Src/system_stm32n6xx_fsbl.c file section “GPIO Configuration”.</p></li>
 </ul>
 <h3 id="how-to-use-it"><b>How to use it ?</b></h3>
@@ -61,6 +61,7 @@
 <li>Open your preferred toolchain</li>
 <li>Rebuild all files and load your image into target memory. Code can be executed in this mode for debugging purposes.</li>
 </ul>
+<p><strong>Warning</strong> If using CubeProgrammer v2.21 version or more recent, add <em>-align</em> option in the command line.</p>
 </div>
 </div>
 </body>

@@ -25,6 +25,7 @@
 #include "evision-api-utils.h"
 #include <limits.h>
 #include <math.h>
+#include <inttypes.h>
 
 /* Private types -------------------------------------------------------------*/
 /* ISP algorithms identifier */
@@ -43,7 +44,7 @@ typedef enum
 /* Additional delay to let things getting stable after an AWB update */
 #define ALGO_AWB_ADDITIONAL_LATENCY                  3
 #define ALGO_AWB_STAT_CHECK_SKIP_AFTER_INIT          10
-#define ALGO_AWB_STAT_CHECK_SKIP_AFTER_CT_ESTIMATION 4
+#define ALGO_AWB_STAT_CHECK_SKIP_AFTER_CT_ESTIMATION 6
 
 /* Debug logs control */
 //#define ALGO_AWB_DBG_LOGS
@@ -91,6 +92,18 @@ ISP_AlgoTypeDef ISP_Algo_AEC = {
     .DeInit = ISP_Algo_AEC_DeInit,
     .Process = ISP_Algo_AEC_Process,
 };
+
+/* Default hyper parameter of the AEC algorithm */
+#define HYPERPARAM_AEC_TOLERANCE                10      /* Max delta between lum stat and target in convergence region */
+#define HYPERPARAM_AEC_GAIN_INCREMENT_COEFF     100     /* Factor applied to increment gain update */
+#define HYPERPARAM_AEC_GAIN_LOW_DELTA           45      /* Max delta value between lum stat and target in low delta region */
+#define HYPERPARAM_AEC_GAIN_HIGH_DELTA          120     /* Min delta value between lum stat and target in high delta region */
+#define HYPERPARAM_AEC_GAIN_LOW_INC_MAX         1500    /* Maximum gain update value in luminance low delta region */
+#define HYPERPARAM_AEC_GAIN_MEDIUM_INC_MAX      6000    /* Maximum gain update value in luminance medium delta region */
+#define HYPERPARAM_AEC_GAIN_HIGH_INC_MAX        12000   /* Maximum gain update value in luminance high delta region */
+#define HYPERPARAM_AEC_EXPOSURE_UP_RATIO        0.020F  /* Factor applied to increment exposure */
+#define HYPERPARAM_AEC_EXPOSURE_DOWN_RATIO      0.004F  /* Factor applied to decrement exposure */
+#define HYPERPARAM_AEC_DARKZONE_LUM_LIMIT       5       /* Default value for dark zone luminance limit */
 #endif /* ISP_MW_SW_AEC_ALGO_SUPPORT */
 
 #ifdef ISP_MW_SW_AWB_ALGO_SUPPORT
@@ -304,14 +317,27 @@ ISP_StatusTypeDef ISP_Algo_AEC_Init(void *hIsp, void *pAlgo)
     return ISP_ERR_ALGO;
   }
 
-  /* Configure algo (AEC target) */
+  /* Configure algo (AEC target and anti-flicker setting) */
   pIspAEprocess->hyper_params.target = IQParamConfig->AECAlgo.exposureTarget;
+  pIspAEprocess->hyper_params.compat_freq = IQParamConfig->AECAlgo.antiFlickerFreq;
 
   /* Configure algo (sensor config) */
   pIspAEprocess->hyper_params.exposure_min = pIsp_handle->sensorInfo.exposure_min;
   pIspAEprocess->hyper_params.exposure_max = pIsp_handle->sensorInfo.exposure_max;
   pIspAEprocess->hyper_params.gain_min = pIsp_handle->sensorInfo.gain_min;
   pIspAEprocess->hyper_params.gain_max = pIsp_handle->sensorInfo.gain_max;
+
+  /* Force hyper parameters with configuration defined in evision-api-st-ae.h */
+  pIspAEprocess->hyper_params.tolerance = HYPERPARAM_AEC_TOLERANCE;
+  pIspAEprocess->hyper_params.gain_increment_coeff = HYPERPARAM_AEC_GAIN_INCREMENT_COEFF;
+  pIspAEprocess->hyper_params.gain_low_delta = HYPERPARAM_AEC_GAIN_LOW_DELTA;
+  pIspAEprocess->hyper_params.gain_high_delta = HYPERPARAM_AEC_GAIN_HIGH_DELTA;
+  pIspAEprocess->hyper_params.gain_low_increment_max = HYPERPARAM_AEC_GAIN_LOW_INC_MAX;
+  pIspAEprocess->hyper_params.gain_medium_increment_max = HYPERPARAM_AEC_GAIN_MEDIUM_INC_MAX;
+  pIspAEprocess->hyper_params.gain_high_increment_max = HYPERPARAM_AEC_GAIN_HIGH_INC_MAX;
+  pIspAEprocess->hyper_params.exposure_up_ratio = HYPERPARAM_AEC_EXPOSURE_UP_RATIO;
+  pIspAEprocess->hyper_params.exposure_down_ratio = HYPERPARAM_AEC_EXPOSURE_DOWN_RATIO;
+  pIspAEprocess->hyper_params.dark_zone_lum_limit = HYPERPARAM_AEC_DARKZONE_LUM_LIMIT;
 
   /* Initialize exposure and gain at min value */
   if (IQParamConfig->AECAlgo.enable == true)
@@ -414,11 +440,15 @@ ISP_StatusTypeDef ISP_Algo_AEC_Process(void *hIsp, void *pAlgo)
   case ISP_ALGO_STATE_STAT_READY:
     /* Align on the target update (may have been updated with ISP_SetExposureTarget()) */
     pIspAEprocess->hyper_params.target = IQParamConfig->AECAlgo.exposureTarget;
+
+    /* Align on the anti-flicker frequency (may have been updated by IQTune)*/
+    pIspAEprocess->hyper_params.compat_freq = IQParamConfig->AECAlgo.antiFlickerFreq;
+
     avgL = stats.down.averageL;
 #ifdef ALGO_AEC_DBG_LOGS
     if (avgL != currentL)
     {
-      printf("L = %ld\r\n", avgL);
+      printf("L = %"PRIu32"\r\n", avgL);
       currentL = avgL;
     }
 #endif
@@ -436,11 +466,11 @@ ISP_StatusTypeDef ISP_Algo_AEC_Process(void *hIsp, void *pAlgo)
     }
 
     /* Store meta data */
-    Meta.averageL = avgL;
+    Meta.averageL = (uint8_t)avgL;
     Meta.exposureTarget = IQParamConfig->AECAlgo.exposureTarget;
 
     /* Run algo to calculate new gain and exposure */
-    e_ret = evision_api_st_ae_process(pIspAEprocess, gainConfig.gain, exposureConfig.exposure, avgL);
+    e_ret = evision_api_st_ae_process(pIspAEprocess, gainConfig.gain, exposureConfig.exposure, (uint8_t)avgL);
     if (e_ret == EVISION_RET_SUCCESS)
     {
       if (gainConfig.gain != pIspAEprocess->new_gain)
@@ -455,7 +485,7 @@ ISP_StatusTypeDef ISP_Algo_AEC_Process(void *hIsp, void *pAlgo)
         }
 
 #ifdef ALGO_AEC_DBG_LOGS
-        printf("New gain = %ld\r\n", gainConfig.gain);
+        printf("New gain = %"PRIu32"\r\n", gainConfig.gain);
 #endif
       }
 
@@ -471,7 +501,7 @@ ISP_StatusTypeDef ISP_Algo_AEC_Process(void *hIsp, void *pAlgo)
         }
 
 #ifdef ALGO_AEC_DBG_LOGS
-        printf("New exposure = %ld\r\n", exposureConfig.exposure);
+        printf("New exposure = %"PRIu32"\r\n", exposureConfig.exposure);
 #endif
       }
     }
@@ -483,6 +513,13 @@ ISP_StatusTypeDef ISP_Algo_AEC_Process(void *hIsp, void *pAlgo)
     /* Wait for stats to be ready */
     algo->state = ISP_ALGO_STATE_WAITING_STAT;
     break;
+
+  default:
+    printf("WARNING: Unknown AE algo state\r\n");
+    /* Reset state to ISP_ALGO_STATE_INIT */
+    algo->state = ISP_ALGO_STATE_INIT;
+    break;
+
   }
 
   return ret;
@@ -532,9 +569,9 @@ void ISP_Algo_GetUpStat(ISP_HandleTypeDef *hIsp, ISP_SVC_StatStateTypeDef *pStat
     upG = (int64_t) pStats->down.averageG * ISP_GAIN_PRECISION_FACTOR / ISPGain.ispGainG;
     upB = (int64_t) pStats->down.averageB * ISP_GAIN_PRECISION_FACTOR / ISPGain.ispGainB;
 
-    pStats->up.averageR = (uint32_t) upR;
-    pStats->up.averageG = (uint32_t) upG;
-    pStats->up.averageB = (uint32_t) upB;
+    pStats->up.averageR = (uint8_t) upR;
+    pStats->up.averageG = (uint8_t) upG;
+    pStats->up.averageB = (uint8_t) upB;
 
     if ((ISP_SVC_ISP_GetBlackLevel(hIsp, &BlackLevel) == ISP_OK) && (BlackLevel.enable == 1))
     {
@@ -688,6 +725,7 @@ ISP_StatusTypeDef ISP_Algo_AWB_Process(void *hIsp, void *pAlgo)
   static uint32_t statsHistory[3][3] = { 0 };
   static uint32_t colorTempHistory[2] = { 0 };
   static uint8_t skip_stat_check_count = ALGO_AWB_STAT_CHECK_SKIP_AFTER_INIT;
+  uint8_t stat_has_changed = false;
 
   IQParamConfig = ISP_SVC_IQParam_Get(hIsp);
 
@@ -703,13 +741,21 @@ ISP_StatusTypeDef ISP_Algo_AWB_Process(void *hIsp, void *pAlgo)
     IQParamConfig->AWBAlgo.enable = true;
     reconfigureRequest = true;
     enableCurrent = true;
+    skip_stat_check_count = ALGO_AWB_STAT_CHECK_SKIP_AFTER_CT_ESTIMATION;
   }
 
   switch(algo->state)
   {
   case ISP_ALGO_STATE_INIT:
-    /* Set profiles (color temperature, gains, color conv matrix) */
     profNb = 0;
+
+    /* Reset color temperature history */
+    for (i = 0; i < 2; i++)
+    {
+      colorTempHistory[i] = 0;
+    }
+
+    /* Set profiles (color temperature, gains, color conv matrix) */
     for (profId = 0; profId < ISP_AWB_COLORTEMP_REF; profId++)
     {
       colorTemp = IQParamConfig->AWBAlgo.referenceColorTemp[profId];
@@ -749,7 +795,7 @@ ISP_StatusTypeDef ISP_Algo_AWB_Process(void *hIsp, void *pAlgo)
 
     /* Register profiles */
     e_ret = evision_api_awb_init_profiles(pIspAWBestimator, (double) IQParamConfig->AWBAlgo.referenceColorTemp[0],
-                                          (double) IQParamConfig->AWBAlgo.referenceColorTemp[profNb - 1], profNb,
+                                          (double) IQParamConfig->AWBAlgo.referenceColorTemp[profNb - 1], (uint16_t)profNb,
                                           colorTempThresholds, awbProfiles);
     if (e_ret != EVISION_RET_SUCCESS)
     {
@@ -793,9 +839,17 @@ ISP_StatusTypeDef ISP_Algo_AWB_Process(void *hIsp, void *pAlgo)
   case ISP_ALGO_STATE_STAT_READY:
     ISP_Algo_GetUpStat(hIsp, &stats);
 
-    if (!(!skip_stat_check_count && (abs(stats.up.averageR - statsHistory[0][0]) <= 2) && (abs(stats.up.averageG - statsHistory[0][1]) <= 2) && (abs(stats.up.averageB - statsHistory[0][2]) <= 2)
-        && (abs(stats.up.averageR - statsHistory[1][0]) <= 2) && (abs(stats.up.averageG - statsHistory[1][1]) <= 2) && (abs(stats.up.averageB - statsHistory[1][2]) <= 2)
-        && (abs(stats.up.averageR - statsHistory[2][0]) <= 2) && (abs(stats.up.averageG - statsHistory[2][1]) <= 2) && (abs(stats.up.averageB - statsHistory[2][2]) <= 2)))
+    for (i = 0; i < 3; i++)
+    {
+      if ((abs(stats.up.averageR - (int32_t)statsHistory[i][0]) > 2)
+          || (abs(stats.up.averageG - (int32_t)statsHistory[i][1]) > 2)
+          || (abs(stats.up.averageB - (int32_t)statsHistory[i][2]) > 2))
+      {
+        stat_has_changed = true;
+      }
+    }
+
+    if (skip_stat_check_count || stat_has_changed || reconfigureRequest)
     {
         statsHistory[2][0] = stats.up.averageR;
         statsHistory[2][1] = stats.up.averageG;
@@ -832,7 +886,7 @@ ISP_StatusTypeDef ISP_Algo_AWB_Process(void *hIsp, void *pAlgo)
           {
             printf("Last 100 measures:\r\n");
             for (int i = 0; i < ISP_AWB_COLORTEMP_REF; i++) {
-              printf("\t%ld: %d\r\n",
+              printf("\t%"PRIu32": %"PRIu16"\r\n",
                      IQParamConfig->AWBAlgo.referenceColorTemp[i],
                      nb_colortemp_change[i]);
             }
@@ -847,12 +901,10 @@ ISP_StatusTypeDef ISP_Algo_AWB_Process(void *hIsp, void *pAlgo)
 #endif
           if (pIspAWBestimator->out_temp != currentColorTemp || reconfigureRequest == true)
           {
-            /* Force to apply a WB profile when reconfigureRequest is true */
-            reconfigureRequest = false;
 #ifdef ALGO_AWB_DBG_LOGS
-            printf("Color temperature = %ld\r\n", (uint32_t) pIspAWBestimator->out_temp);
+            printf("Color temperature = %"PRIu32"\r\n", (uint32_t) pIspAWBestimator->out_temp);
 #endif
-            if (pIspAWBestimator->out_temp == colorTempHistory[1])
+            if ((pIspAWBestimator->out_temp == colorTempHistory[1]) && (reconfigureRequest != true))
             {
               skip_stat_check_count = 0; //oscillation detected
             }
@@ -906,6 +958,9 @@ ISP_StatusTypeDef ISP_Algo_AWB_Process(void *hIsp, void *pAlgo)
         }
     }
 
+    /* Reset reconfigureRequest */
+    reconfigureRequest = false;
+
     /* Decrease counter to limit the number of estimations before reaching convergence */
     if (skip_stat_check_count > 0) skip_stat_check_count--;
 
@@ -926,6 +981,12 @@ ISP_StatusTypeDef ISP_Algo_AWB_Process(void *hIsp, void *pAlgo)
 
     /* Wait for stats to be ready */
     algo->state = ISP_ALGO_STATE_WAITING_STAT;
+    break;
+
+  default:
+    printf("WARNING: Unknown AWB algo state\r\n");
+    /* Reset state to ISP_ALGO_STATE_INIT */
+    algo->state = ISP_ALGO_STATE_INIT;
     break;
   }
 
@@ -995,7 +1056,8 @@ ISP_StatusTypeDef ISP_Algo_SensorDelay_Process(void *hIsp, void *pAlgo)
   ISP_IQParamTypeDef *IQParamConfig;
   ISP_StatusTypeDef ret = ISP_OK;
   uint8_t sensorDelay;
-  int32_t avgL, i;
+  int32_t avgL;
+  uint32_t i;
   static int32_t refL, delay, delays[ALGO_DELAY_NB_CONFIG - 1], configId;
   static ISP_SensorExposureTypeDef configExposure[ALGO_DELAY_NB_CONFIG];
   static ISP_SensorGainTypeDef configGain[ALGO_DELAY_NB_CONFIG];
@@ -1138,7 +1200,7 @@ ISP_StatusTypeDef ISP_Algo_SensorDelay_Process(void *hIsp, void *pAlgo)
       {
         if ((delays[i] != ALGO_DELAY_MAX) && (delays[i] > sensorDelay))
         {
-          sensorDelay = delays[i];
+          sensorDelay = (uint8_t)delays[i];
         }
       }
 
@@ -1168,6 +1230,12 @@ ISP_StatusTypeDef ISP_Algo_SensorDelay_Process(void *hIsp, void *pAlgo)
 
       algo->state = ISP_ALGO_STATE_INIT;
     }
+    break;
+
+  default:
+    printf("WARNING: Unknown Sensor Delay algo state\r\n");
+    /* Reset state to ISP_ALGO_STATE_INIT */
+    algo->state = ISP_ALGO_STATE_INIT;
     break;
   }
 
@@ -1291,7 +1359,7 @@ ISP_StatusTypeDef ISP_Algo_Process(ISP_HandleTypeDef *hIsp)
         }
         else
         {
-          printf(" %ld ms\r\n", meas);
+          printf(" %"PRIu32" ms\r\n", meas);
         }
         algo->iter = 0;
       }

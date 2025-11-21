@@ -1,8 +1,7 @@
 
 ## <b>USBPD_SNK_Ux_Device_HID_CDC_ACM Application Description</b>
 
-This application provides an example of Azure RTOS USBX stack usage on STM32N6570-DK board,
-it shows how to develop USB Device communication class "HID" and "CDC_ACM" based application.
+This application provides an example of Azure RTOS USBX stack usage on STM32N6570-DK board, it shows how to develop USB Device communication class "HID" and "CDC_ACM" based application.
 
 The application is designed to emulate a USB HID mouse device and USB-to-UART bridge following the Virtual COM Port (VCP) implementation, the code provides all required device descriptors framework
 and associated to both classes descriptor report to build a composite compliant USB HID_CDC_ACM device.
@@ -77,7 +76,7 @@ None.
  - ThreadX is configured with 1000 ticks/sec by default, this should be taken into account when using delays or timeouts at application. It is always possible to reconfigure it, by updating the "TX_TIMER_TICKS_PER_SECOND" define in the "tx_user.h" file. The update should be reflected in "tx_initialize_low_level.S" file too.
  - ThreadX is disabling all interrupts during kernel start-up to avoid any unexpected behavior, therefore all system related calls (HAL, BSP) should be done either at the beginning of the application or inside the thread entry functions.
  - ThreadX offers the "tx_application_define()" function, that is automatically called by the tx_kernel_enter() API.
-   It is highly recommended to use it to create all applications ThreadX related resources (threads, semaphores, memory pools...)  but it should not in any way contain a system API call (HAL or BSP).
+   It is highly recommended to use it to create all applications ThreadX related resources (threads, semaphores, memory pools...) but it should not in any way contain a system API call (HAL or BSP).
  - Using dynamic memory allocation requires to apply some changes to the linker file.
    ThreadX needs to pass a pointer to the first free memory location in RAM to the tx_application_define() function,
    using the "first_unused_memory" argument.
@@ -103,11 +102,11 @@ None.
        } >RAM_D1 AT> RAM_D1
     ```
 
-       The simplest way to provide memory for ThreadX is to define a new section, see ._threadx_heap above.
-       In the example above the ThreadX heap size is set to 64KBytes.
-       The ._threadx_heap must be located between the .bss and the ._user_heap_stack sections in the linker script.
-       Caution: Make sure that ThreadX does not need more than the provided heap memory (64KBytes in this example).
-       Read more in STM32CubeIDE User Guide, chapter: "Linker script".
+    The simplest way to provide memory for ThreadX is to define a new section, see ._threadx_heap above.
+    In the example above the ThreadX heap size is set to 64KBytes.
+    The ._threadx_heap must be located between the .bss and the ._user_heap_stack sections in the linker script.
+    Caution: Make sure that ThreadX does not need more than the provided heap memory (64KBytes in this example).
+    Read more in STM32CubeIDE User Guide, chapter: "Linker script".
 
     + The "tx_initialize_low_level.S" should be also modified to enable the "USE_DYNAMIC_MEMORY_ALLOCATION" flag.
 
@@ -162,3 +161,5 @@ Next, this program can be run in boot from flash mode. This can be done by follo
  - Next, in resorting again to CubeProgrammer, load the binary and its header (USBPD_SNK_Ux_Device_HID_CDC_ACM-trusted.bin) in Nucleo board external Flash at address 0x7000'0000.
  - Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).
  - Unplug the board then plug it again. The code then executes in boot from external Flash mode.
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

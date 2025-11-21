@@ -194,6 +194,13 @@ void SystemClock_Config(void)
   {
   }
 
+  /** Configure the main internal regulator output voltage
+  */
+  LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
+  while(LL_PWR_IsActiveFlag_VOSRDY() == 0)
+  {
+  }
+
   LL_RCC_HSI_Enable();
 
    /* Wait till HSI is ready */
@@ -287,8 +294,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

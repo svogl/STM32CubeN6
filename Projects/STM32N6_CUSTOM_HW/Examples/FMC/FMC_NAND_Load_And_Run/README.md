@@ -88,3 +88,6 @@ In order to make the program work, you must do the following :
  - Open your preferred toolchain
  - Rebuild all files and load your image into target memory. Code can be executed in this mode for debugging purposes.
 
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

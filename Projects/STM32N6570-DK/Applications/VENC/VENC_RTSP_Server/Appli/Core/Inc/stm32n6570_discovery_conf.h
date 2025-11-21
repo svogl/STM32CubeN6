@@ -62,8 +62,6 @@ extern "C" {
 
 #define USE_IMX335_SENSOR 1U
 
-#define USE_NOR_MEMORY_MX66UW1G45G           0
-#define USE_RAM_MEMORY_APS256XX              0
 
 #define USE_DMA2D_TO_FILL_RGB_RECT           1U
 

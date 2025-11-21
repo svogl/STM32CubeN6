@@ -25,9 +25,11 @@ Also, information regarding executing operation on the SRAM-Disk is printed to t
 On failure, the red led starts toggling while the green and blue leds are switched off.
 
 #### <b>Assumptions if any</b>
+
 None
 
 #### <b>Known limitations</b>
+
 None
 
 ### <b>Notes</b>
@@ -49,12 +51,11 @@ FileX, File System, FAT32, SRAM
 
   - This application uses USART1 to display logs, the hyperterminal configuration is as follows:
 
-      - BaudRate = 115200 baud
-      - Word Length = 8 Bits
-      - Stop Bit = 1
-      - Parity = none
-      - Flow control = None
-
+    - BaudRate = 115200 baud
+    - Word Length = 8 Bits
+    - Stop Bit = 1
+    - Parity = None
+    - Flow control = None
 
   - **EWARM** : To monitor a variable in the live watch window, you must proceed as follow :
     - Start a debugging session.
@@ -79,3 +80,6 @@ Next, this program can be run in boot from flash mode. This can be done by follo
  - Next, in resorting again to CubeProgrammer, load the binary and its header (Fx_File_Edit_Standalone-trusted.bin) in Nucleo board external Flash at address 0x7000'0000.
  - Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).
  - Press the reset button. The code then executes in boot from external Flash mode.
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

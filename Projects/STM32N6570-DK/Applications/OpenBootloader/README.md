@@ -228,3 +228,6 @@ To be able to program the NOR memory (MX66UW1G45G) present in the STM32N6570-DK 
   - Then press *Download* button.
 
 To load a different binary file, place the binary inside the directory *Binaries\\NOR_Binary* and edit the *FlashLayout.tsv* file to change the file name from *RamdomData.bin* to your file name.
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

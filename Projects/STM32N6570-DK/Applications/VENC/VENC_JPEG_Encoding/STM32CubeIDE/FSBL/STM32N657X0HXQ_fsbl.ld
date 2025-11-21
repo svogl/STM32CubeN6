@@ -161,7 +161,7 @@ SECTIONS
   {
     . = ALIGN(8);
     _snocacheram = .;/* create symbol for start of section */
-    KEEP(*(RW_NOCACHERAM))
+    KEEP(*(.NOCACHERAM_region))
     . = ALIGN(8);
     _enocacheram = .;  /* create symbol for end of section */
   } > RAM

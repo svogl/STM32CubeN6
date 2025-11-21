@@ -67,6 +67,8 @@ void HAL_MspInit(void)
 
   /* USER CODE END MspInit 0 */
 
+  HAL_PWREx_EnableVddA();
+
   /* System interrupt init*/
 
   HAL_PWREx_EnableVddIO2();
@@ -571,8 +573,8 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hhcd)
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USBOTGHS2;
-    PeriphClkInitStruct.UsbPhy2ClockSelection = RCC_USBOTGHS2CLKSOURCE_HSE_DIV2;
-    PeriphClkInitStruct.UsbOtgHs2ClockSelection = RCC_USBPHY2REFCLKSOURCE_OTGPHY2;
+    PeriphClkInitStruct.UsbPhy2ClockSelection = RCC_USBPHY2CLKSOURCE_HSE_DIV2;
+    PeriphClkInitStruct.UsbOtgHs2ClockSelection = RCC_USBOTGHS2CLKSOURCE_OTGPHY2;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
     {
       Error_Handler();
@@ -609,7 +611,7 @@ void HAL_HCD_MspDeInit(HCD_HandleTypeDef* hhcd)
     __HAL_RCC_USB2_OTG_HS_PHY_CLK_DISABLE();
 
     /* Disable VDDUSB */
-    HAL_PWREx_DisableVddUSB();
+      HAL_PWREx_DisableVddUSB();
     /* USER CODE BEGIN USB2_OTG_HS_MspDeInit 1 */
 
     /* USER CODE END USB2_OTG_HS_MspDeInit 1 */

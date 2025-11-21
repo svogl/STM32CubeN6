@@ -79,7 +79,7 @@
                 </option>
                 <option>
                     <name>RTDescription</name>
-                    <state>Use the full configuration of the C/C++ runtime library. Full locale interface, C locale, file descriptor support, multibytes in printf and scanf, and hex floats in strtod.</state>
+                    <state>A complete configuration of the C/C++14 runtime library. Full locale interface, C locale, file descriptor support, multibytes in printf and scanf, and hex floats in strtod.</state>
                 </option>
                 <option>
                     <name>OGProductVersion</name>
@@ -116,7 +116,7 @@
                 <option>
                     <name>GBECoreSlave</name>
                     <version>33</version>
-                    <state>0</state>
+                    <state>63</state>
                 </option>
                 <option>
                     <name>OGUseCmsis</name>
@@ -357,13 +357,13 @@
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
+                    <state>$PROJ_DIR$/../../FSBL</state>
                     <state>$PROJ_DIR$/../../FSBL/Inc</state>
                     <state>$PROJ_DIR$/../../../../../../../Drivers/BSP/STM32N6570-DK</state>
                     <state>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Inc</state>
                     <state>$PROJ_DIR$/../../../../../../../Drivers/CMSIS/Device/ST/STM32N6xx/Include</state>
                     <state>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy</state>
                     <state>$PROJ_DIR$/../../../../../../../Drivers/CMSIS/Include</state>
-                    <state>$PROJ_DIR$/../../../../../../../Middlewares\ST\STM32_ExtMem_Manager</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>

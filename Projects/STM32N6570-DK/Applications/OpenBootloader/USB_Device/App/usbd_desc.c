@@ -240,7 +240,7 @@ uint8_t *USBD_DFU_InterfaceStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *leng
   */
 static void Get_SerialNum(void)
 {
-  uint32_t deviceserial0, deviceserial1, deviceserial2;
+  unsigned long deviceserial0, deviceserial1, deviceserial2;
   char serial_string[SIZ_STRING_SERIAL + 2U];
   uint8_t idx = 2U;
 

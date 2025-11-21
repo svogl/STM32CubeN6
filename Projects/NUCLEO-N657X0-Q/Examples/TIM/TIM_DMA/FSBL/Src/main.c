@@ -51,7 +51,7 @@ DMA_HandleTypeDef handle_GPDMA1_Channel7;
 /* USER CODE BEGIN PV */
 
 /* Capture Compare buffer */
-uint32_t aCCValue_Buffer[3] = {0, 0, 0};
+uint32_t aCCValue_Buffer[BUFFER_SIZE] __NON_CACHEABLE;
 
 /* Timer Period*/
 uint32_t uwTimerPeriod  = 0;
@@ -169,7 +169,7 @@ int main(void)
   aCCValue_Buffer[2] = (uint32_t)(((uint32_t) 25 * (uwTimerPeriod - 1)) / 100);
 
   /*## Start PWM signal generation in DMA mode ############################*/
-  if (HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_3, aCCValue_Buffer, 3) != HAL_OK)
+  if (HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_3, aCCValue_Buffer, (BUFFER_SIZE * 4U)) != HAL_OK)
   {
     /* Starting Error */
     Error_Handler();
@@ -203,6 +203,13 @@ void SystemClock_Config(void)
   /** Configure the System Power Supply
   */
   if (HAL_PWREx_ConfigSupply(PWR_EXTERNAL_SOURCE_SUPPLY) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure the main internal regulator output voltage
+  */
+  if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -349,7 +356,7 @@ static void MX_GPDMA1_Init(void)
   /* RIF-Aware IPs Config */
 
   /* set up GPDMA configuration */
-  /* set GPDMA1 channel 7 */
+  /* set GPDMA1 channel 7 used by TIM1 */
   if (HAL_DMA_ConfigChannelAttributes(&handle_GPDMA1_Channel7,DMA_CHANNEL_SEC|DMA_CHANNEL_PRIV|DMA_CHANNEL_SRC_SEC|DMA_CHANNEL_DEST_SEC)!= HAL_OK )
   {
     Error_Handler();
@@ -529,7 +536,6 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
 #ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number

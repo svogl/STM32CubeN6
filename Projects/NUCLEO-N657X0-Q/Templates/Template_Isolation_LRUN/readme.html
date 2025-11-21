@@ -25,8 +25,8 @@
 <p>This project is composed of three sub-projects:</p>
 <ul>
 <li>one for the First Stage BootLoader (FSBL)</li>
-<li>one for the secure application part (Project_s)</li>
-<li>one for the non-secure application part (Project_ns).</li>
+<li>one for the secure application part (AppliSecure)</li>
+<li>one for the non-secure application part (AppliNonSecure).</li>
 </ul>
 <p>Please remember that on system with security enabled, the system always boots in secure and the secure application is responsible for launching the non-secure application.</p>
 <ul>
@@ -107,22 +107,22 @@ After bootROM execution, the FSBL project executes in internal RAM, ensures prop
 <li>Open your preferred toolchain</li>
 <li>Select first the FSBL workspace</li>
 <li>Rebuild all files from sub-project FSBL (if no modification is done on FSBL project, this step can be done only once)</li>
-<li>Select the Project_s workspace</li>
-<li>Rebuild all files from sub-project Project_s</li>
-<li>Select the Project_ns workspace</li>
-<li>Rebuild all files from sub-project Project_ns</li>
-<li>Resort to CubeProgrammer to add a header to the generated App_Secure binary Project.bin with the following command
+<li>Select the AppliSecure workspace</li>
+<li>Rebuild all files from sub-project AppliSecure</li>
+<li>Select the AppliNonSecure workspace</li>
+<li>Rebuild all files from sub-project AppliNonSecure</li>
+<li>Resort to CubeProgrammer to add a header to the generated AppliSecure binary Project_s.bin with the following command (depending on your IDE, the binary name can change)
 <ul>
 <li><em>STM32_SigningTool_CLI.exe -bin Project_s.bin -nk -of 0x80000000 -t fsbl -o Project_s-trusted.bin -hv 2.3 -dump Project_s-trusted.bin</em></li>
-<li>The resulting binary is Project-trusted.bin.</li>
+<li>The resulting binary is Project_s-trusted.bin.</li>
 </ul></li>
-<li>Do the same with App_NonSecure
+<li>Do the same with AppliNonSecure
 <ul>
 <li><em>STM32_SigningTool_CLI.exe -bin Project_ns.bin -nk -of 0x80000000 -t fsbl -o Project_ns-trusted.bin -hv 2.3 -dump Project_ns-trusted.bin</em></li>
 <li>The resulting binary is Project_ns-trusted.bin.<br />
 </li>
 </ul></li>
-<li>Next, in resorting again to CubeProgrammer, load the secure application binary and its header (Project-trusted.bin) in Nucleo board external Flash at address 0x7010’0000 and the non-secure application binary and its header (Project_ns-trusted.bin) at address 0x7018’0000.</li>
+<li>Next, in resorting again to CubeProgrammer, load the secure application binary and its header (Project_s-trusted.bin) in Nucleo board external Flash at address 0x7010’0000 and the non-secure application binary and its header (Project_ns-trusted.bin) at address 0x7018’0000.</li>
 </ul>
 <p><br />
 To run the template with boot in development mode,</p>
@@ -143,6 +143,7 @@ To run the template in boot from flash mode,</p>
 <li>Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).</li>
 <li>Press the reset button. The code then executes in boot from Flash mode.</li>
 </ul>
+<p><strong>Warning</strong> If using CubeProgrammer v2.21 version or more recent, add <em>-align</em> option in the command line.</p>
 </div>
 </div>
 </body>

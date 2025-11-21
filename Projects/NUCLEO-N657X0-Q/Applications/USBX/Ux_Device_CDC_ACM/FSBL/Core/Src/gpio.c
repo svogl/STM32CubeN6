@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2025 STMicroelectronics.
+  * Copyright (c) 2024 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -32,10 +32,11 @@
 
 /* USER CODE END 1 */
 
-/** Configure pins
-     PH0-OSC_IN(PH0)   ------> RCC_OSC_IN
-     PH1-OSC_OUT(PH1)   ------> RCC_OSC_OUT
-*/
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 void MX_GPIO_Init(void)
 {
 

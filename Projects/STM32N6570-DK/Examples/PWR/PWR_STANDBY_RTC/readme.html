@@ -19,8 +19,6 @@
 <body>
 <div class="row">
 <div class="col-sm-12 col-lg-8">
-<div class="row">
-<div class="col-sm-12 col-lg-8">
 <h2 id="pwr_standby_rtc-example-description"><b>PWR_STANDBY_RTC Example Description</b></h2>
 <p>How to enter the Standby mode and wake-up from this mode by using the RTC wakeup timer.</p>
 <ul>
@@ -32,10 +30,10 @@
 <li>The application then sets up the necessary configuration for standby operation and wake-up upon RTC interrupt (LSI is chosen as RTC clock source).</li>
 <li>After power on, the LED blinks at 1Hz to signify post-reset operation for 5 seconds.</li>
 <li>The device enters standby mode.</li>
-<li>The device is woken up after 5 seconds by an RTC interrupt.</li>
+<li>The device is woken up after 2 seconds by an RTC interrupt.</li>
 <li>The LED blinks at 5Hz for 5 seconds to signify exit from standby mode.</li>
 <li>The device enters again standby mode.</li>
-<li>The device is again woken up after 5 seconds by an RTC interrupt and the last steps described above infinitely unroll.</li>
+<li>The device is again woken up after 2 seconds by an RTC interrupt and the last steps described above infinitely unroll.</li>
 </ul>
 <h4 id="notes"><b>Notes</b></h4>
 <ol type="1">
@@ -108,8 +106,7 @@
 <li>Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).</li>
 <li>Press the reset button. The code then executes in boot from external Flash mode.</li>
 </ul>
-</div>
-</div>
+<p><strong>Warning</strong> If using CubeProgrammer v2.21 version or more recent, add <em>-align</em> option in the command line.</p>
 </div>
 </div>
 </body>

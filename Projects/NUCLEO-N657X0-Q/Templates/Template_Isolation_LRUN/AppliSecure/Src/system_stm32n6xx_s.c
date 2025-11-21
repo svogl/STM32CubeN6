@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @file    system_stm32n6xx_s.c
-  * @author  GPM Application Team
+  * @author  MCD Application Team
   * @brief   CMSIS Cortex-M55 Device Peripheral Access Layer System Source File
   *          to be used in secure application.
   *
@@ -190,18 +190,12 @@ void SystemInit(void)
   /* Delay after an RCC peripheral clock enabling */
   (void)RCC->APB4ENR2;
 
-  /* Setup I/O compensation cells for */
-  SYSCFG->VDDIO2CCCR = 0x00000278UL; /* SDMMC1 domain compensation */
-  SYSCFG->VDDIO3CCCR = 0x00000278UL; /* SDMMC2 domain compensation */
-  SYSCFG->VDDIO4CCCR = 0x00000278UL; /* Hexa-SPI domain compensation */
-  SYSCFG->VDDIO5CCCR = 0x00000278UL; /* Octo-SPI domain compensation */
-  SYSCFG->VDDCCCR    = 0x00000278UL; /* VDD domain compensation */
-
   /* Set default Vector Table location after system reset or return from Standby */
   SYSCFG->INITSVTORCR = SCB->VTOR;
+  /* Read back the value to make sure it is written before deactivating SYSCFG */
+  (void) SYSCFG->INITSVTORCR;
   /* Deactivate SYSCFG clock */
   RCC->APB4ENCR2 = RCC_APB4ENCR2_SYSCFGENC;
-
   /* FPU settings ------------------------------------------------------------*/
 #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
   SCB->CPACR |= ((3UL << 20U)|(3UL << 22U));  /* set CP10 and CP11 Full Access */
@@ -266,12 +260,12 @@ void SystemInit(void)
 void SystemCoreClockUpdate(void)
 {
   uint32_t sysclk = 0;
-  uint32_t pllcfgr, pllsource, pllbypass, ic_divider;
-  uint32_t pllp2 = 0;
-  uint32_t pllp1 = 0;
-  uint32_t pllfracn = 0;
-  uint32_t plln = 0;
   uint32_t pllm = 0;
+  uint32_t plln = 0;
+  uint32_t pllfracn = 0;
+  uint32_t pllp1 = 0;
+  uint32_t pllp2 = 0;
+  uint32_t pllcfgr, pllsource, pllbypass, ic_divider;
   float_t pllvco;
 
   /* Get CPUCLK source -------------------------------------------------------*/
@@ -393,7 +387,7 @@ void SystemCoreClockUpdate(void)
       /* Compte PLL output frequency (Integer and fractional modes) */
       /* PLLVCO = (Freq * (DIVN + (FRACN / 0x1000000) / DIVM) / (DIVP1 * DIVP2)) */
       pllvco = ((float_t)sysclk * ((float_t)plln + ((float_t)pllfracn/(float_t)0x1000000UL))) / (float_t)pllm;
-      sysclk = (uint32_t)(pllvco/(float_t)(pllp1 * pllp2));
+      sysclk = (uint32_t)((float_t)(pllvco/(((float_t)pllp1) * ((float_t)pllp2))));
     }
     /* Apply IC1 divider */
     ic_divider = (READ_BIT(RCC->IC1CFGR, RCC_IC1CFGR_IC1INT) >> RCC_IC1CFGR_IC1INT_Pos) + 1UL;

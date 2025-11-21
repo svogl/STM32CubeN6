@@ -46,6 +46,7 @@ MEMORY
 {
   ROM    (xrw)    : ORIGIN = 0x34180400,   LENGTH = 255K
   RAM    (xrw)    : ORIGIN = 0x341C0000,   LENGTH = 256K
+  SDRAM1 (xrw)    : ORIGIN = 0xC0000000, LENGTH = 256K
 }
 
 /* Sections */
@@ -157,7 +158,14 @@ SECTIONS
     __enoncacheable = .;  /* create symbol for end of section */
   } > RAM
 
-
+  .sdram1_data :
+  {
+    . = ALIGN(4);
+    *(.sdram1_data)  /* Place all .sdram1_data sections here */
+    *(.sdram1_data*) /* Place all .sdram1_data* sections here */
+    . = ALIGN(4);*/
+  } >SDRAM1
+  
   .gnu.sgstubs :
   {
     . = ALIGN(4);

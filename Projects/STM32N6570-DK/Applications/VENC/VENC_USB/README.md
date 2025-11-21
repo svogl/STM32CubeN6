@@ -105,3 +105,5 @@ In order to make the program work, you must do the following :
  - Press the reset button. The code then executes in boot from external Flash mode.
 
  Note : when using CubeIDE, make sure to use the Debug configuration for development mode and the Release configuration for boot from flash.
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

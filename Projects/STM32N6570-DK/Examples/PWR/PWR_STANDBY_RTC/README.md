@@ -17,10 +17,10 @@ integrate in his application in order to enhance the performance.
 - The application then sets up the necessary configuration for standby operation and wake-up upon RTC interrupt (LSI is chosen as RTC clock source).
 - After power on, the LED blinks at 1Hz to signify post-reset operation for 5 seconds.
 - The device enters standby mode.
-- The device is woken up after 5 seconds by an RTC interrupt.
+- The device is woken up after 2 seconds by an RTC interrupt.
 - The LED blinks at 5Hz for 5 seconds to signify exit from standby mode.
 - The device enters again standby mode.
-- The device is again woken up after 5 seconds by an RTC interrupt and the last steps described above infinitely unroll. 
+- The device is again woken up after 2 seconds by an RTC interrupt and the last steps described above infinitely unroll. 
 
 #### <b>Notes</b>
 
@@ -112,3 +112,6 @@ In order to make the program work, you must do the following :
 
 
 
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

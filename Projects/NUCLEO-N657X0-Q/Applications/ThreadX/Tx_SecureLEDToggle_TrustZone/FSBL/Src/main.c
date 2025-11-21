@@ -231,7 +231,6 @@ static int32_t OTP_Config(void)
 {
   #define BSEC_HW_CONFIG_ID        124U
   #define BSEC_HWS_HSLV_VDDIO3     (1U<<15)
-  #define BSEC_HWS_HSLV_VDDIO2     (1U<<16)
 
   uint32_t fuse_id, bit_mask, data;
   BSEC_HandleTypeDef sBsecHandler;
@@ -248,7 +247,7 @@ static int32_t OTP_Config(void)
   if (HAL_BSEC_OTP_Read(&sBsecHandler, fuse_id, &data) == HAL_OK)
   {
     /* Check if bit has already been set */
-    bit_mask = BSEC_HWS_HSLV_VDDIO3 | BSEC_HWS_HSLV_VDDIO2;
+    bit_mask = BSEC_HWS_HSLV_VDDIO3 ;
     if ((data & bit_mask) != bit_mask)
     {
       data |= bit_mask;

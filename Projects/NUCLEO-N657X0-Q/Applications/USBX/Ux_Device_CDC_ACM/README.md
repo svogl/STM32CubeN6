@@ -1,8 +1,7 @@
 
 ## <b>Ux_Device_CDC_ACM Application Description </b>
 
-This application provides an example of Azure RTOS USBX stack usage on NUCLEO-N657X0-Q board,
-it shows how to develop USB Device communication class "CDC_ACM"  based application.
+This application provides an example of Azure RTOS USBX stack usage on NUCLEO-N657X0-Q board, it shows how to develop USB Device communication class "CDC_ACM"  based application.
 
 The application is designed to emulate a USB-to-UART bridge following the Virtual COM Port (VCP) implementation, the code provides all required device descriptors framework
 and associated to both classes descriptor report to build a composite compliant USB _CDC_ACM device.
@@ -152,3 +151,5 @@ Next, this program can be run in boot from flash mode. This can be done by follo
  - Next, in resorting again to CubeProgrammer, load the binary and its header (Ux_Device_CDC_ACM-trusted.bin) in Nucleo board external Flash at address 0x7000'0000.
  - Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).
  - Unplug the board then plug it again. The code then executes in boot from external Flash mode.
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

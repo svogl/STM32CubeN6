@@ -42,9 +42,20 @@
 #define FRAMERATE 30
 /* number of frames to film and encode */
 #define VIDEO_FRAME_NB 600
+
 #define USE_SD_AS_OUTPUT 1
 
 /* Private macro -------------------------------------------------------------*/
+#ifndef TEST_WIDTH
+#define TEST_WIDTH     800
+#endif
+#ifndef TEST_HEIGHT
+#define TEST_HEIGHT    480
+#endif
+
+#define VENC_WIDTH     TEST_WIDTH
+#define VENC_HEIGHT    TEST_HEIGHT
+
 
 /* enable trace if possible */
 #if USE_COM_LOG || defined(TERMINAL_IO)
@@ -66,11 +77,19 @@ uint32_t img_addr = 0;
 
 EWLLinearMem_t outbuf;
 static int frame_nb = 0;
-uint32_t output_buffer[800*480/8] __NON_CACHEABLE __attribute__((aligned(8)));
+uint32_t output_buffer[VENC_WIDTH*VENC_HEIGHT/8] __NON_CACHEABLE __attribute__((aligned(8)));
 
 #if USE_SD_AS_OUTPUT
-uint32_t sd_buf1[0x10000] __NON_CACHEABLE;
-uint32_t sd_buf2[0x10000] __NON_CACHEABLE;
+/* Each write = 512 Blocks of 512 Bytes */
+#define BLOCK_SIZE         (512) /* 1 Block = 512 Bytes */
+#define NB_BLOCKS_TO_WRITE (128)  /* Write 128 Blocks at once*/
+#define NB_BYTES_TO_WRITE (NB_BLOCKS_TO_WRITE*BLOCK_SIZE)
+#define NB_WORDS_TO_WRITE (NB_BYTES_TO_WRITE/4)
+#define NB_BLOCKS_ERASED  (1024*1024) /*Erase 512 MBytes = 512*1024*1024 */
+
+uint32_t sd_buf1[NB_WORDS_TO_WRITE] __NON_CACHEABLE; 
+uint32_t sd_buf2[NB_WORDS_TO_WRITE] __NON_CACHEABLE;
+
 uint32_t * curr_buf = sd_buf1;
 size_t buf_index = 0;
 size_t SD_index = 0;
@@ -97,16 +116,19 @@ static int erase_enc_output(void);
 */
 int save_stream(uint32_t offset, uint32_t * buf, size_t size){
   int err = 0;
+  size += 15; /* Alignment*/
+  size = size / sizeof(uint32_t);
+  
 #if USE_SD_AS_OUTPUT
-  for(int i = 0; i<size/4; i++){
+  for(int i = 0; i<size; i++){
     curr_buf[buf_index] = buf[i];
     buf_index++;
     /* upload to sd every 512 blocks to limit the impact of access latency */
-    if(buf_index >= 0x10000){
-      if(BSP_SD_WriteBlocks_DMA(0, curr_buf, SD_index, 512)!= BSP_ERROR_NONE){
+    if(buf_index >= NB_WORDS_TO_WRITE){
+      if(BSP_SD_WriteBlocks_DMA(0, curr_buf, SD_index, NB_BLOCKS_TO_WRITE)!= BSP_ERROR_NONE){
         err = -1;
       }
-      SD_index+=512;
+      SD_index+=NB_BLOCKS_TO_WRITE;
       /* swap buffers */
       buf_index = 0;
       curr_buf = (curr_buf == sd_buf1)?sd_buf2:sd_buf1;
@@ -118,7 +140,7 @@ int save_stream(uint32_t offset, uint32_t * buf, size_t size){
 
 int flush_out_buffer(void){
 #if USE_SD_AS_OUTPUT
-  if(BSP_SD_WriteBlocks(0, (uint32_t *) curr_buf, SD_index, 512)!= BSP_ERROR_NONE){
+  if(BSP_SD_WriteBlocks(0, (uint32_t *) curr_buf, SD_index, NB_BLOCKS_TO_WRITE)!= BSP_ERROR_NONE){
         return -1;
       }
 #endif
@@ -129,10 +151,9 @@ int flush_out_buffer(void){
 * @retval err error code. 0 On success.
 */
 int erase_enc_output(void){
-  /* flash must be erased by blocks of 64 bytes */
 #if USE_SD_AS_OUTPUT
-  /* only 100 blocks are erased because erasing the 64M would take forever */
-  if (BSP_SD_Erase(0, 0, 1943552) != BSP_ERROR_NONE)
+  /* Erase beginning of SDCard */
+  if (BSP_SD_Erase(0, 0, NB_BLOCKS_ERASED) != BSP_ERROR_NONE)
   {
     TRACE_MAIN("failed to erase external flash block nb \n");
     return -1;
@@ -238,7 +259,7 @@ int main(void)
     Error_Handler();
   }
   /* start camera acquisition */
-  if(BSP_CAMERA_DoubleBufferStart(0, (uint8_t *)(0x34040000),(uint8_t *)(0x340fb800), CAMERA_MODE_CONTINUOUS)!= BSP_ERROR_NONE){
+  if(BSP_CAMERA_DoubleBufferStart(0, (uint8_t *)(0x34040000),(uint8_t *)(0x34040000 + VENC_WIDTH*VENC_HEIGHT*2), CAMERA_MODE_CONTINUOUS)!= BSP_ERROR_NONE){
     Error_Handler();
   }
 
@@ -261,7 +282,7 @@ int main(void)
 
 
   /* initialize encoder software for camera feed encoding */
-  encoder_prepare(800,480,output_buffer);
+  encoder_prepare(VENC_WIDTH,VENC_HEIGHT,output_buffer);
 
   while (frame_nb < VIDEO_FRAME_NB)
   {
@@ -409,7 +430,7 @@ static int Encode_frame(){
 
 static int encoder_end(void){
   int ret = H264EncStrmEnd(encoder, &encIn, &encOut);
-  TRACE_MAIN("done encoding %d frames. size : %d\n",frame_nb ,output_size);
+  TRACE_MAIN("done encoding %d frames. size : %d - Blocks : %d\n",frame_nb ,output_size, (output_size+511)/512);
   if (ret != H264ENC_OK)
   {
     return -1;
@@ -577,6 +598,23 @@ HAL_StatusTypeDef MX_DCMIPP_ClockConfig(DCMIPP_HandleTypeDef *hdcmipp)
   return HAL_OK;
 }
 
+
+static void dcmipp_downsize(DCMIPP_DownsizeTypeDef * DonwsizeConf, int32_t camWidth,int32_t camHeight,int32_t captureWidth,int32_t captureHeight)
+{
+  /* Calcultation explained in RM0486v2 table 354*/
+  
+  /* Configure the downsize */
+  DonwsizeConf->HRatio      = (uint32_t)((((float)(camWidth)) / ((float)(captureWidth))) * 8192.F); 
+  DonwsizeConf->VRatio      = (uint32_t)((((float)(camHeight )) / ((float)(captureHeight ))) * 8192.F); 
+  DonwsizeConf->HSize       = captureWidth;
+  DonwsizeConf->VSize       = captureHeight;
+
+  DonwsizeConf->HDivFactor  = (uint32_t)floor((1024 * 8192 -1) / DonwsizeConf->HRatio);
+  DonwsizeConf->VDivFactor  = (uint32_t)floor((1024 * 8192 -1) / DonwsizeConf->VRatio);
+
+  return ;
+}
+
 /**
   * @brief  Initializes the DCMIPP peripheral
   * @param  hdcmipp  DCMIPP handle
@@ -621,7 +659,7 @@ HAL_StatusTypeDef MX_DCMIPP_Init(DCMIPP_HandleTypeDef *hdcmipp)
   pPipeConf.PixelPackerFormat = DCMIPP_PIXEL_PACKER_FORMAT_RGB565_1;
 
   /* Set Pitch for Main and Ancillary Pipes */
-  pPipeConf.PixelPipePitch  = 1600 ; /* Number of bytes */
+  pPipeConf.PixelPipePitch  = VENC_WIDTH*2 ; /* Number of bytes */
 
   /* Configure Pipe */
   if (HAL_DCMIPP_PIPE_SetConfig(hdcmipp, DCMIPP_PIPE1, &pPipeConf) != HAL_OK)
@@ -629,13 +667,10 @@ HAL_StatusTypeDef MX_DCMIPP_Init(DCMIPP_HandleTypeDef *hdcmipp)
     return HAL_ERROR;
   }
 
-  /* Configure the downsize */
-  DonwsizeConf.HRatio      = 25656;
-  DonwsizeConf.VRatio      = 33161;
-  DonwsizeConf.HSize       = 800;
-  DonwsizeConf.VSize       = 480;
-  DonwsizeConf.HDivFactor  = 316;
-  DonwsizeConf.VDivFactor  = 253;
+   /* Calcultation explained in RM0486v2 table 354*/
+  
+
+  dcmipp_downsize(&DonwsizeConf, 2592/*camWidth*/, 1944 /*camHeight*/, VENC_WIDTH, VENC_HEIGHT);
 
   HAL_DCMIPP_PIPE_SetDownsizeConfig(hdcmipp, DCMIPP_PIPE1, &DonwsizeConf);
   HAL_DCMIPP_PIPE_EnableDownsize(hdcmipp, DCMIPP_PIPE1);

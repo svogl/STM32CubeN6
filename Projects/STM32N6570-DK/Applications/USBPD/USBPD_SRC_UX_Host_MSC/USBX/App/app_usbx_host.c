@@ -50,10 +50,6 @@ UX_HOST_CLASS_STORAGE_MEDIA *storage_media;
 FX_MEDIA                    *media;
 TX_EVENT_FLAGS_GROUP        ux_app_EventFlag;
 TX_QUEUE                    ux_app_MsgQueue_UCPD;
-#if defined ( __ICCARM__ ) /* IAR Compiler */
-  #pragma data_alignment=4
-#endif /* defined ( __ICCARM__ ) */
-__ALIGN_BEGIN USB_MODE_STATE USB_Host_State_Msg __ALIGN_END;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -185,6 +181,7 @@ UINT MX_USBX_Host_Init(VOID *memory_ptr)
 static VOID app_ux_host_thread_entry(ULONG thread_input)
 {
   /* USER CODE BEGIN app_ux_host_thread_entry */
+   USB_MODE_STATE USB_Host_State_Msg;
 
   /* Initialization of USB host */
   USBX_APP_Host_Init();

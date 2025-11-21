@@ -112,15 +112,15 @@
                 </option>
                 <option>
                     <name>FlashLoadersV3</name>
-                    <state>$TOOLKIT_DIR$/config/flashloader/ST/FlashSTM32N6570-DK.board</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OCImagesPath1</name>
-                    <state></state>
+                    <state>C:\git\n6\STM32Cube_FW_N6_Ext\Projects\STM32N6570-DK\Applications\VENC\VENC_RTSP_Server_Ext\EWARM\Appli\VENC_RTSP_Debug\Exe\Project.out</state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck2</name>
@@ -156,7 +156,7 @@
                 </option>
                 <option>
                     <name>OCImagesUse1</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OCImagesUse2</name>

@@ -149,3 +149,6 @@ The file can then be read using VLC.
    - *STM32_SigningTool_CLI.exe -bin Project.bin -nk -of 0x80000000 -t fsbl -o Project-trusted.bin -hv 2.3 -dump Project-trusted.bin*
    - The resulting binary is Project-trusted.bin.
 
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

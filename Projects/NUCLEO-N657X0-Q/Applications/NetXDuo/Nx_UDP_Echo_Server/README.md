@@ -1,8 +1,7 @@
 
 ## <b>Nx_UDP_Echo_Server Application Description</b>
 
-This application provides an example of Azure RTOS NetX/NetXDuo stack usage .
-It shows how to develop a NetX UDP server to communicate with a remote client using the NetX UDP socket API.
+This application provides an example of Azure RTOS NetX/NetXDuo stack usage. It shows how to develop a NetX UDP server to communicate with a remote client using the NetX UDP socket API.
 
 The main entry function tx_application_define() is called by ThreadX during kernel start, at this stage, all NetX resources are created.
 
@@ -212,3 +211,6 @@ Next, this program can be run in boot from flash mode. This can be done by follo
  - Next, in resorting again to CubeProgrammer, load the binary and its header (Nx_UDP_Echo_Server-trusted.bin) in Nucleo board external Flash at address 0x7000'0000.
  - Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).
  - Press the reset button. The code then executes in boot from external Flash mode.
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

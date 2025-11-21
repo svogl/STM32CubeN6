@@ -70,6 +70,7 @@ enum {
 /*
   @brief management of the boot layer
 */
+#define EXTMEM_HEADER_OFFSET 0x400
 
 #define EXTMEM_LRUN_SOURCE EXTMEMORY_1
 #define EXTMEM_LRUN_SOURCE_ADDRESS  0x00100000u
@@ -77,9 +78,9 @@ enum {
 #define EXTMEM_LRUN_DESTINATION_INTERNAL  1
 #define EXTMEM_LRUN_DESTINATION_ADDRESS 0x34000000u
 
-/* USER CODE BEGIN PV */
-#define EXTMEM_HEADER_OFFSET 0x400
-/* USER CODE END PV */
+/* USER CODE BEGIN EC */
+
+/* USER CODE END EC */
 
 /* Exported configuration --------------------------------------------------------*/
 /** @defgroup EXTMEM_CONF_Exported_configuration EXTMEM_CONF exported configuration definition

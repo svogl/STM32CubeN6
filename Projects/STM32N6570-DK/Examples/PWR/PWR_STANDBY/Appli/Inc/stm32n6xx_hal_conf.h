@@ -67,7 +67,7 @@ extern "C" {
 /*#define HAL_PKA_MODULE_ENABLED   */
 /*#define HAL_PSSI_MODULE_ENABLED   */
 /*#define HAL_RAMCFG_MODULE_ENABLED   */
-#define HAL_RIF_MODULE_ENABLED
+/*#define HAL_RIF_MODULE_ENABLED   */
 /*#define HAL_RNG_MODULE_ENABLED   */
 /*#define HAL_RTC_MODULE_ENABLED   */
 /*#define HAL_SAI_MODULE_ENABLED   */
@@ -232,7 +232,7 @@ extern "C" {
 #define USE_SD_TRANSCEIVER            0U
 
 /* ################## SDIO peripheral configuration ######################### */
-	
+
 #define USE_SDIO_TRANSCEIVER          0U
 #define SDIO_MAX_IO_NUMBER            7U
 

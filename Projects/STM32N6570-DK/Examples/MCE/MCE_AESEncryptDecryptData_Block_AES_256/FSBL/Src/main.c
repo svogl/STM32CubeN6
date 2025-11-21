@@ -188,39 +188,22 @@ int main(void)
   /* Enable illegal access interrupts */
   __HAL_MCE_ENABLE_IT(&hmce1, MCE_IT_ILLEGAL_ACCESS_ERROR);
 
-  ContextAESConfig.Nonce [0] = Nonce[0];
-  ContextAESConfig.Nonce [1] = Nonce[1];
-  ContextAESConfig.Version   = 0xFEDC;
   ContextAESConfig.pKey      = Key;
   ContextAESConfig.KeySize   = MCE_AES_256;
   ContextAESConfig.Cipher_Mode = MCE_CONTEXT_BLOCK_CIPHER;
 
   /* Set MCE AES context configuration */
-  if (HAL_MCE_ConfigAESContext(&hmce1, &ContextAESConfig, MCE_CONTEXT2)!= HAL_OK)
+  if (HAL_MCE_ConfigAESContext(&hmce1, &ContextAESConfig, MCE_NO_CONTEXT)!= HAL_OK)
   {
     Error_Handler();
   }
-
-  /* Enable the AES context configuration */
-  if (HAL_MCE_EnableAESContext(&hmce1, MCE_CONTEXT2)!= HAL_OK)
-  {
-    Error_Handler();
-  }
-
   /* Set the MCE Region configuration*/
   RegionConfig.Mode             = MCE_BLOCK_CIPHER;
-  RegionConfig.ContextID        = MCE_CONTEXT2;
+  RegionConfig.ContextID        = MCE_NO_CONTEXT;
   RegionConfig.StartAddress     = 0x90000000;
   RegionConfig.EndAddress       = 0x90000FFF;
 
-
   if (HAL_MCE_ConfigRegion(&hmce1, 0, &RegionConfig)!= HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /* link the context used to the region */
-  if (HAL_MCE_SetRegionAESContext(&hmce1, MCE_CONTEXT2, 0) != HAL_OK)
   {
     Error_Handler();
   }
@@ -236,8 +219,8 @@ int main(void)
 
   SCB_CleanDCache_by_Addr((void*)0x90000000, BUFFER_SIZE*4);
 
-  /* Disable the AES context configuration */
-  if (HAL_MCE_DisableAESContext(&hmce1, MCE_CONTEXT2)!= HAL_OK)
+  /* disable the region */
+  if (HAL_MCE_DisableRegion(&hmce1, 0) != HAL_OK)
   {
     Error_Handler();
   }
@@ -270,8 +253,8 @@ int main(void)
       Error_Handler();
   }
 
-  /* Re-Enable cipher Context */
-  if (HAL_MCE_EnableAESContext(&hmce1, MCE_CONTEXT2)!= HAL_OK)
+  /* Re-Enable region config */
+  if (HAL_MCE_EnableRegion(&hmce1, 0) != HAL_OK)
   {
     Error_Handler();
   }
@@ -324,6 +307,13 @@ void SystemClock_Config(void)
   /** Configure the System Power Supply
   */
   if (HAL_PWREx_ConfigSupply(PWR_EXTERNAL_SOURCE_SUPPLY) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure the main internal regulator output voltage
+  */
+  if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK)
   {
     Error_Handler();
   }

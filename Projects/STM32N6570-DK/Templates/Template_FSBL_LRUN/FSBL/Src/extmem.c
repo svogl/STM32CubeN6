@@ -20,7 +20,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "extmem.h"
-#include "stm32_boot_lrun.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -28,12 +27,6 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
-/* Headers 2.1 and 2.3 information for ST firmware */
-#define HEADER_V2_1_IMG_SIZE_OFFSET 76
-#define HEADER_V2_3_IMG_SIZE_OFFSET 108
-#define HEADER_V2_1_SIZE 1024
-#define HEADER_V2_3_SIZE 1024
 
 /* USER CODE END PV */
 
@@ -64,7 +57,7 @@ void MX_EXTMEM_Init(void)
 {
 
   /* USER CODE BEGIN MX_EXTMEM_Init_PreTreatment */
-
+    
   /* USER CODE END MX_EXTMEM_Init_PreTreatment */
 
   EXTMEM_Init(EXTMEMORY_1, HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_XSPI2));
@@ -75,12 +68,3 @@ void MX_EXTMEM_Init(void)
   /* USER CODE END MX_EXTMEM_Init_PostTreatment */
 }
 
-uint32_t BOOT_GetApplicationSize(uint32_t img_addr)
-{
-  uint32_t img_size;
-
-  img_size = (*(uint32_t *)(img_addr + HEADER_V2_3_IMG_SIZE_OFFSET));
-  img_size += HEADER_V2_3_SIZE;
-
-  return img_size;
-}

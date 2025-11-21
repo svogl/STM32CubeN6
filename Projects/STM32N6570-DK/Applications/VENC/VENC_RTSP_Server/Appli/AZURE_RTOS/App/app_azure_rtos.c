@@ -52,7 +52,7 @@
 #pragma data_alignment=4
 #endif
 __ALIGN_BEGIN static UCHAR tx_byte_pool_buffer[TX_APP_MEM_POOL_SIZE] __ALIGN_END;
-static TX_BYTE_POOL tx_app_byte_pool;
+TX_BYTE_POOL tx_app_byte_pool;
 
 /* USER CODE BEGIN NX_Pool_Buffer */
 
@@ -74,6 +74,11 @@ TX_THREAD venc_thread;
 
 /* USER CODE END PFP */
 
+__weak void monitor_thread_create(void)
+{
+  return;
+}
+
 /**
   * @brief  Define the initial system.
   * @param  first_unused_memory : Pointer to the first unused memory
@@ -81,6 +86,7 @@ TX_THREAD venc_thread;
   */
 VOID tx_application_define(VOID *first_unused_memory)
 {
+  
   /* USER CODE BEGIN  tx_application_define_1*/
 
   /* USER CODE END  tx_application_define_1 */
@@ -109,14 +115,17 @@ VOID tx_application_define(VOID *first_unused_memory)
       /* USER CODE END  App_ThreadX_Init_Error */
     }
 
+    /* CPU monitoring*/
+    monitor_thread_create();
+
     /* USER CODE BEGIN  App_ThreadX_Init_Success */
     void *thread_stack_pointer;
-    if(tx_byte_allocate(&tx_app_byte_pool, &thread_stack_pointer, 2000, TX_NO_WAIT) != TX_SUCCESS){
+    if(tx_byte_allocate(&tx_app_byte_pool, &thread_stack_pointer, 16000, TX_NO_WAIT) != TX_SUCCESS){
       Error_Handler();
     }
     /* Start the VENC Thread */
     status = tx_thread_create(&venc_thread, "VENC App Thread", venc_thread_func, 0,
-              thread_stack_pointer, 2000, DEFAULT_PRIORITY+2, DEFAULT_PRIORITY+2, TX_NO_TIME_SLICE, TX_AUTO_START);
+              thread_stack_pointer, 16000, DEFAULT_PRIORITY+2, DEFAULT_PRIORITY+2, TX_NO_TIME_SLICE, TX_AUTO_START);
     if(status != TX_SUCCESS)
     {
       Error_Handler();

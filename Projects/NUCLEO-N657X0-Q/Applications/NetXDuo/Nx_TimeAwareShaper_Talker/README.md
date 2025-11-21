@@ -1,7 +1,6 @@
 ##  <b>Nx_TimeAwareShaper_Talker Application Description</b>
 
-This application provides an example of Azure RTOS NetX/NetXDuo stack usage.
-It is used to demonstrate the effect of the Time-Aware Shaper (IEEE 802.1Qbv standard) on Ethernet transmission behavior.
+This application provides an example of Azure RTOS NetX/NetXDuo stack usage. It is used to demonstrate the effect of the Time-Aware Shaper (IEEE 802.1Qbv standard) on Ethernet transmission behavior.
 
 The main entry function tx_application_define() is then called by ThreadX during kernel start, at this stage, all NetX resources are created.
 
@@ -204,3 +203,6 @@ Next, this program can be run in boot from flash mode. This can be done by follo
 
 
 
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

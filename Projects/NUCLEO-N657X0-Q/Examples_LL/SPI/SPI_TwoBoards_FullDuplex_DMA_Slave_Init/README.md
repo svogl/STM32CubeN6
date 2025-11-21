@@ -9,7 +9,7 @@ The communication is done with 2 boards through SPI.
 This example shows how to configure GPIO and SPI peripherals
 to use a Full-Duplex communication using DMA Transfer mode through the STM32N6xx SPI LL API.
 
-This example is splitted in two projects, Master board and Slave board:
+This example is split in two projects, Master board and Slave board:
 
 - Master Board
   SPI5 Peripheral is configured in Master mode.
@@ -92,3 +92,6 @@ Next, this program can be run in boot from flash mode. This is done by following
 
 
 
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

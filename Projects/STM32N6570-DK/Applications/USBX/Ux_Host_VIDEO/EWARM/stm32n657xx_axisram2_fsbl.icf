@@ -4,17 +4,17 @@
 /*-Specials-*/
 define symbol __ICFEDIT_intvec_start__ = 0x34180400;
 /*-Memory Regions-*/
-define symbol __ICFEDIT_region_ROM_start__ = 0x34180400;
-define symbol __ICFEDIT_region_ROM_end__   = 0x341BFFFF;
-define symbol __ICFEDIT_region_RAM_start__ = 0x341C0000;
-define symbol __ICFEDIT_region_RAM_end__   = 0x341FFFFF;
-define symbol __ICFEDIT_region_UXDATA_start__  = 0x341ED800;
-define symbol __ICFEDIT_region_UXDATA_end__   = 0x341EE7FF;
-define symbol __ICFEDIT_region_UXDATA_POOL_start__  = 0x341EE800;
+define symbol __ICFEDIT_region_ROM_start__         = 0x34180400;
+define symbol __ICFEDIT_region_ROM_end__           = 0x341BFFFF;
+define symbol __ICFEDIT_region_RAM_start__         = 0x341C0000;
+define symbol __ICFEDIT_region_RAM_end__           = 0x341FFFFF;
+define symbol __ICFEDIT_region_UXDATA_start__      = 0x341DD800;
+define symbol __ICFEDIT_region_UXDATA_end__        = 0x341DE7FF;
+define symbol __ICFEDIT_region_UXDATA_POOL_start__ = 0x341DE800;
 define symbol __ICFEDIT_region_UXDATA_POOL_end__   = __ICFEDIT_region_RAM_end__;
 /*-Sizes-*/
 define symbol __ICFEDIT_size_cstack__ = 0x800;
-define symbol __ICFEDIT_size_heap__   = 0x200;
+define symbol __ICFEDIT_size_heap__   = 0x400;
 /**** End of ICF editor section. ###ICF###*/
 
 define symbol __region_ITCM_start__  = 0x10000000;

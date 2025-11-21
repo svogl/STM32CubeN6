@@ -155,6 +155,13 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 
+  /** Configure the main internal regulator output voltage
+  */
+  if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
   /* Enable HSI */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
@@ -317,8 +324,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(LED1_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI13_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI13_IRQn);
+  HAL_NVIC_SetPriority(USER_BUTTON_EXTI_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(USER_BUTTON_EXTI_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
   /*IO attributes management functions */
@@ -357,7 +364,6 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
 #ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number

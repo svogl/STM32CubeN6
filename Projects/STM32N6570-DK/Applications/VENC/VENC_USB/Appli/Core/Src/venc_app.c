@@ -443,9 +443,20 @@ HAL_StatusTypeDef MX_DCMIPP_Init(DCMIPP_HandleTypeDef *hdcmipp)
                         hVencH264Instance.cfgH264Main.height);
 
   /* Specific Hardware Handshake if needed*/
-  if (ret == HAL_OK && hVencH264Instance.cfgH264Coding.inputLineBufHwModeEn)
+  if (ret == HAL_OK)
+  {
+    if (hVencH264Instance.cfgH264Coding.inputLineBufHwModeEn)
   {
     ret = dcmipp_enable_HW_Handshake(hdcmipp);
+    }
+    else  /* Frame Mode : avoid spurious interrupts */
+    { 
+      /* Software workaround for Linemult triggering VENC interrupt. Minimize occurrences as much as possible. */
+      MODIFY_REG(DCMIPP->P1PPCR, DCMIPP_P1PPCR_LINEMULT_Msk,DCMIPP_MULTILINE_128_LINES);
+      
+      /* Disable Line events interrupts*/
+      ret = HAL_DCMIPP_PIPE_DisableLineEvent(hdcmipp, DCMIPP_PIPE1);
+    }
   }
 
   return ret;

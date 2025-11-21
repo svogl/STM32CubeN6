@@ -49,7 +49,7 @@
 #ifdef OEMUROT_DEV_MODE
 #define OEMUROT_ERROR_HANDLER_STOP_EXEC /*!< Error handler stops execution (else it resets) */
 #else
-#define OEMUROT_SECURE_BOOT /*!< Device lifecyle expected to be locked */
+#define OEMUROT_SECURE_BOOT /*!< Device lifecycle expected to be locked */
 #endif /* OEMUROT_DEV_MODE */
 
 /* Run time protections */

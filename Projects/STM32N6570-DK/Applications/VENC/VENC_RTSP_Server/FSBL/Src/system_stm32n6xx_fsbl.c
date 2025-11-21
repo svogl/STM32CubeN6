@@ -30,7 +30,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2023 STMicroelectronics.
+  * Copyright (c) 2024 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -232,12 +232,26 @@ void SystemInit(void)
   SAU->RBAR = 0;
   SAU->RLAR = 0;
 
+  /* System configuration setup */
+  RCC->APB4ENSR2 = RCC_APB4ENSR2_SYSCFGENS;
+  /* Delay after an RCC peripheral clock enabling */
+  (void)RCC->APB4ENR2;
+
   /* Set default Vector Table location after system reset or return from Standby */
   SYSCFG->INITSVTORCR = SCB->VTOR;
-  /* Read back the value to make sure it is written before deactivating SYSCFG */
-  (void) SYSCFG->INITSVTORCR;
-  /* Deactivate SYSCFG clock */
-  RCC->APB4ENCR2 = RCC_APB4ENCR2_SYSCFGENC;
+
+  /* Compensation cells setting according to Errata Sheet ES0620 */
+  /* a/ Enable access and configuration of VDDIOxCCCR registers  */
+  PWR->SVMCR1 |= PWR_SVMCR1_VDDIO4SV;
+  PWR->SVMCR2 |= PWR_SVMCR2_VDDIO5SV;
+  PWR->SVMCR3 |= PWR_SVMCR3_VDDIO2SV | PWR_SVMCR3_VDDIO3SV;
+
+  /* b/ Enable access and configuration of VDDIOxCCCR registers */
+  SYSCFG->VDDIO2CCCR = 0x00000287UL; /* VDDIO2 power domain compensation */
+  SYSCFG->VDDIO3CCCR = 0x00000287UL; /* VDDIO3 power domain compensation */
+  SYSCFG->VDDIO4CCCR = 0x00000287UL; /* VDDIO4 power domain compensation */
+  SYSCFG->VDDIO5CCCR = 0x00000287UL; /* VDDIO4 power domain compensation */
+  SYSCFG->VDDCCCR    = 0x00000287UL; /* VDD power domain compensation    */
 
   /* Enable VDDADC CLAMP */
   PWR->SVMCR3 |= PWR_SVMCR3_ASV;
@@ -253,8 +267,22 @@ void SystemInit(void)
   RCC->APB4ENR2 &= ~(0x00000010UL);
 
   /* XSPI2 & XSPIM reset                                  */
-  RCC->AHB5RSTSR = RCC_AHB5RSTSR_XSPIMRSTS | RCC_AHB5RSTSR_XSPI2RSTS;
-  RCC->AHB5RSTCR = RCC_AHB5RSTCR_XSPIMRSTC | RCC_AHB5RSTCR_XSPI2RSTC;
+  RCC->AHB5RSTSR = RCC_AHB5RSTSR_XSPIMRSTS | RCC_AHB5RSTSR_XSPI2RSTS | RCC_AHB5RSTSR_XSPI1RSTS;
+  RCC->AHB5RSTCR = RCC_AHB5RSTCR_XSPIMRSTC | RCC_AHB5RSTCR_XSPI2RSTC | RCC_AHB5RSTCR_XSPI1RSTC;
+
+  /* TIM2 reset */
+  RCC->APB1RSTSR1 = RCC_APB1RSTSR1_TIM2RSTS;
+  RCC->APB1RSTCR1 = RCC_APB1RSTCR1_TIM2RSTC;
+  /* Deactivate TIM2 clock */
+  RCC->APB1ENCR1 = RCC_APB1ENCR1_TIM2ENC;
+
+  /* Deactivate GPIOG clock */
+  RCC->AHB4ENCR = RCC_AHB4ENCR_GPIOGENC;
+
+  /* Read back the value to make sure it is written before deactivating SYSCFG */
+  (void) SYSCFG->INITSVTORCR;
+  /* Deactivate SYSCFG clock */
+  RCC->APB4ENCR2 = RCC_APB4ENCR2_SYSCFGENC;
 
 #if defined(USER_TZ_SAU_SETUP)
   /* SAU/IDAU, FPU and Interrupts secure/non-secure allocation settings */
@@ -457,7 +485,7 @@ void SystemCoreClockUpdate(void)
       /* Compte PLL output frequency (Integer and fractional modes) */
       /* PLLVCO = (Freq * (DIVN + (FRACN / 0x1000000) / DIVM) / (DIVP1 * DIVP2)) */
       pllvco = ((float_t)sysclk * ((float_t)plln + ((float_t)pllfracn/(float_t)0x1000000UL))) / (float_t)pllm;
-      sysclk = (uint32_t)(pllvco/(float_t)(pllp1 * pllp2));
+      sysclk = (uint32_t)((float_t)(pllvco/(((float_t)pllp1) * ((float_t)pllp2))));
     }
     /* Apply IC1 divider */
     ic_divider = (READ_BIT(RCC->IC1CFGR, RCC_IC1CFGR_IC1INT) >> RCC_IC1CFGR_IC1INT_Pos) + 1UL;

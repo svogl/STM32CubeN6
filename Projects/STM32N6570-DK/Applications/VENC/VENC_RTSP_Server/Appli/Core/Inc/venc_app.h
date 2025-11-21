@@ -1,12 +1,12 @@
 /**
   ******************************************************************************
-  * @file    venc_app.h
+  * @file    Appli/Core/Inc/venc_app.h
   * @author  MCD Application Team
   * @brief   Header for venc_app.c module
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2023 STMicroelectronics.
+  * Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -16,28 +16,67 @@
   ******************************************************************************
   */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef VENC_APP_H
-#define VENC_APP_H
+#ifndef __VENC_APP_H__
+#define __VENC_APP_H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stdio.h"
+#include <stdio.h>
+#include <stdint.h>
 #include "stm32n6xx_hal.h"
 #include "tx_api.h"
-/* Exported types ------------------------------------------------------------*/
 
 /* Exported constants --------------------------------------------------------*/
+/* Event flags used by the video pipeline */
+#define FRAME_RECEIVED_FLAG   (1U << 0)
+#define VIDEO_START_FLAG      (1U << 1)
 
-#define FRAME_RECEIVED_FLAG (0b1 << 0)
-#define VIDEO_START_FLAG (0b1 << 1)
 /* Exported variables --------------------------------------------------------*/
+/**
+ * @brief  Event flags group used for USB/video device signalling.
+ * @note   Defined in the corresponding C module.
+ */
 extern TX_EVENT_FLAGS_GROUP USB_video_device_flags;
-extern TX_QUEUE enc_frame_queue;
-/* Exported macros -----------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
 
+/**
+ * @brief  Queue carrying encoded frames (TX_QUEUE).
+ * @note   Defined in the corresponding C module.
+ */
+extern TX_QUEUE enc_frame_queue;
+
+/* Exported functions --------------------------------------------------------*/
+
+/**
+ * @brief  Main VENC thread entry function.
+ * @param  arg Thread argument (unused or user-defined)
+ */
 void venc_thread_func(ULONG arg);
+
+/**
+ * @brief  Start the video encoding pipeline.
+ * @retval None
+ */
 void VENC_APP_EncodingStart(void);
+
+/**
+ * @brief  Retrieve encoded data from the encoder.
+ * @param  data  Output pointer to the data buffer (UCHAR **)
+ * @param  size  Output pointer to the data size (ULONG *)
+ * @retval UINT Status code (NX/ThreadX style, 0 for success)
+ */
 UINT VENC_APP_GetData(UCHAR **data, ULONG *size);
+
+/**
+ * @brief  Stop the video encoding pipeline and release resources.
+ * @retval UINT Status code
+ */
 UINT VENC_APP_EncodingStop(void);
-#endif /* MAIN_H */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __VENC_APP_H__ */

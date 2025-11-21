@@ -235,6 +235,13 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 
+  /** Configure the main internal regulator output voltage
+  */
+  if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
   /* Enable HSI */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
@@ -387,7 +394,7 @@ static void MX_HASH_Init(void)
   /* RIF-Aware IPs Config */
 
   /* set up GPDMA configuration */
-  /* set GPDMA1 channel 0 */
+  /* set GPDMA1 channel 0 used by HASH */
   if (HAL_DMA_ConfigChannelAttributes(&handle_GPDMA1_Channel0,DMA_CHANNEL_SEC|DMA_CHANNEL_PRIV|DMA_CHANNEL_SRC_SEC|DMA_CHANNEL_DEST_SEC)!= HAL_OK )
   {
     Error_Handler();

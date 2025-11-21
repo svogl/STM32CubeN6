@@ -2300,6 +2300,9 @@
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\Appli\Core\Src\time_monitor.c</name>
+                    <excluded>
+                        <configuration>VENC_USB_Debug</configuration>
+                    </excluded>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\Appli\Core\Src\tx_initialize_low_level.S</name>

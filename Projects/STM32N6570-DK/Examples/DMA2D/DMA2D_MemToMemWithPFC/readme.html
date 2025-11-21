@@ -28,31 +28,21 @@
 <li><p>In this example, the code is executed from SRAM memory.</p></li>
 <li><p>At the beginning of the main program the HAL_Init() function is called to set the SysTick.</p></li>
 <li><p>The SystemClock_Config() function is used to configure the CPU clock for STM32N6xx Devices : The CPU at 600MHz</p>
-<p>In this basic example the goal is to explain the different fields of the DMA2D structure in the case of Memory-to-memory with pixel format conversion (PFC) transfer mode and the difference between pixel coded on 32bits (ARGB8888 format) and coded on 16bits (RGB565 format).</p>
+<p>In this basic example the goal is to explain the different fields of the DMA2D structure in the case of Memory-to-memory with pixel format conversion (PFC) transfer mode and the difference between pixel coded on 16bits (RGB565 format) and coded on 24bits (RGB888 format).</p>
 <p>The transformed picture is shown on an LCD screen, which is set up to present an RGB888 format image from the DMA2D’s destination address.</p></li>
-<li>How to convert pixel format from <strong>RGB565</strong> to <strong>RGB888</strong> ? =&gt; transparency information is discarded =&gt; Extract Color Channels from RGB565:
-
- Red (R): Extract the 5-bit red value.
- Green (G): Extract the 6-bit green value.
- Blue (B): Extract the 5-bit blue value.
- Expand Color Channels to 8 Bits:
-
- Red (R): Scale the 5-bit value to 8 bits by replicating the MSBs.
- From R4..R0, expand to R7..R0.
- Green (G): Scale the 6-bit value to 8 bits by replicating the MSBs.
- From G5..G0, expand to G7..G0.
- Blue (B): Scale the 5-bit value to 8 bits by replicating the MSBs.
- From B4..B0, expand to B7..B0.
-
-</p>
-</li>
+<li><p>How to convert pixel format from <strong>RGB565</strong> to <strong>RGB888</strong> ? =&gt; transparency information is discarded Extract Color Channels from RGB565:</p></li>
+</ul>
+<p>Red (R): Extract the 5-bit red value. Green (G): Extract the 6-bit green value. Blue (B): Extract the 5-bit blue value. Expand Color Channels to 8 Bits:</p>
+Red (R): Scale the 5-bit value to 8 bits by replicating the MSBs. From R4..R0, expand to R7..R0. Green (G): Scale the 6-bit value to 8 bits by replicating the MSBs. From G5..G0, expand to G7..G0. Blue (B): Scale the 5-bit value to 8 bits by replicating the MSBs. From B4..B0, expand to B7..B0.
+</pre>
+<ul>
 <li>After DMA2D configuration, the data transfer is performed and then the transferred data is checked by byte to byte memory comparing of the source and destination buffers aBufferInput[] and aBufferResult[].<br />
 </li>
 <li><span style="color: green"><strong>LD1</strong></span> is ON for 100ms then OFF when the DMA2D transfer is complete.<br />
 </li>
 <li><span style="color: green"><strong>LD1</strong></span> is ON when data correctly transferred<br />
 </li>
-<li><p><span style="color: red"><strong>LD2</strong></span> TOGGLES when there is an error occurs.</p></li>
+<li><span style="color: red"><strong>LD2</strong></span> TOGGLES when there is an error occurs.</li>
 </ul>
 <h4 id="notes"><b>Notes</b></h4>
 <ol type="1">
@@ -130,6 +120,7 @@
 <li>Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).</li>
 <li>Press the reset button. The code then executes in boot from external Flash mode.</li>
 </ul>
+<p><strong>Warning</strong> If using CubeProgrammer v2.21 version or more recent, add <em>-align</em> option in the command line.</p>
 </div>
 </div>
 </body>

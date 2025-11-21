@@ -102,7 +102,7 @@ In order to make the program work, you must do the following :
  - Rebuild all files from sub-project FSBL (if no modification is done on FSBL project, this step can be done only once)
  - Select the Appli workspace
  - Rebuild all files from sub-project Appli
- - Resort to CubeProgrammer to add a header to the generated Appli binary Project.bin with the following command
+ - Resort to CubeProgrammer to add a header to the generated Appli binary Project.bin with the following command (depending on your IDE, the binary name can change)
    - *STM32_SigningTool_CLI.exe -bin Project.bin -nk -of 0x80000000 -t fsbl -o Project-trusted.bin -hv 2.3 -dump Project-trusted.bin*
    - The resulting binary is Project-trusted.bin.
  - Next, in resorting again to CubeProgrammer, load the Appli binary and its header (Project-trusted.bin) in DK board external Flash at address 0x7010'0000.
@@ -122,3 +122,6 @@ In order to make the program work, you must do the following :
 
 
 
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

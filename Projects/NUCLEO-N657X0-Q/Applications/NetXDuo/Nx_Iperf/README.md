@@ -1,8 +1,7 @@
 
 ##  <b>Nx_Iperf Application Description</b>
 
-This application provides an example of Azure RTOS NetXDuo stack usage .
-It shows performance when using different modes : TCP_server, UDP_server, TCP_client and UDP_client.
+This application provides an example of Azure RTOS NetXDuo stack usage. It shows performance when using different modes : TCP_server, UDP_server, TCP_client and UDP_client.
 The main entry function tx_application_define() is then called by ThreadX during kernel start, at this stage, all NetXDuo resources are created.
 
  + A NX_PACKET_POOL **NxAppPool** is allocated
@@ -198,3 +197,6 @@ Next, this program can be run in boot from flash mode. This can be done by follo
  - Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).
  - Press the reset button. The code then executes in boot from external Flash mode.
 
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

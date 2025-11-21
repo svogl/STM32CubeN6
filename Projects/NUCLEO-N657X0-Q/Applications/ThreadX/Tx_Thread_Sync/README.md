@@ -32,9 +32,9 @@ the compile flags in the file "app_threadx.h".
   - 'LED_GREEN' toggles every 500ms for 5 seconds
   - 'LED_RED' toggles every 500ms for 5 seconds
   - Messages on HyperTerminal :
-     + "** ThreadXXX : waiting for SyncObject !! **" : When thread is waiting for the SyncObject.
-	 + "** ThreadXXX : SyncObject released **" : When thread put the SyncObject.
-	 + "** ThreadXXX : SyncObject acquired **" : When thread get the SyncObject.
+    + "** ThreadXXX : waiting for SyncObject !! **" : When thread is waiting for the SyncObject.
+    + "** ThreadXXX : SyncObject released **" : When thread put the SyncObject.
+    + "** ThreadXXX : SyncObject acquired **" : When thread get the SyncObject.
 
 #### <b>Error behaviors</b>
 
@@ -50,7 +50,7 @@ None
 #### <b>ThreadX usage hints</b>
 
  - ThreadX uses the Systick as time base, thus it is mandatory that the HAL uses a separate time base through the TIM IPs.
- - ThreadX is configured with 100 ticks/sec by default, this should be taken into account when using delays or timeouts at application. It is always possible to reconfigure it in the "tx_user.h", via the "TX_TIMER_TICKS_PER_SECOND" define, but this should be reflected in "tx_initialize_low_level.S" file too.
+ - ThreadX is configured with 100 ticks/sec by default, this should be taken into account when using delays or timeouts at application. It is always possible to reconfigure it, by updating the "TX_TIMER_TICKS_PER_SECOND" define in the "tx_user.h" file. The update should be reflected in "tx_initialize_low_level.S" file too.
  - TrustZone is enabled by default on STM32N6 devices. When running ThreadX in the Secure world, the `TX_SINGLE_MODE_SECURE` flag must be added to the compiler/assembler's defined preprocessor symbols.
  - ThreadX is disabling all interrupts during kernel start-up to avoid any unexpected behavior, therefore all system related calls (HAL, BSP) should be done either at the beginning of the application or inside the thread entry functions.
  - ThreadX offers the "tx_application_define()" function, which is automatically called by the tx_kernel_enter() API.
@@ -80,11 +80,11 @@ None
        } >RAM AT> RAM
     ```
 
-       The simplest way to provide memory for ThreadX is to define a new section, see ._threadx_heap above.
-       In the example above the ThreadX heap size is set to 64KBytes.
-       The ._threadx_heap must be located between the .bss and the ._user_heap_stack sections in the linker script.
-       Caution: Make sure that ThreadX does not need more than the provided heap memory (64KBytes in this example).
-       Read more in STM32CubeIDE User Guide, chapter: "Linker script".
+    The simplest way to provide memory for ThreadX is to define a new section, see ._threadx_heap above.
+    In the example above the ThreadX heap size is set to 64KBytes.
+    The ._threadx_heap must be located between the .bss and the ._user_heap_stack sections in the linker script.
+    Caution: Make sure that ThreadX does not need more than the provided heap memory (64KBytes in this example).
+    Read more in STM32CubeIDE User Guide, chapter: "Linker script".
 
     + The "tx_initialize_low_level.S" should be also modified to enable the "USE_DYNAMIC_MEMORY_ALLOCATION" flag.
 
@@ -98,11 +98,11 @@ RTOS, ThreadX, Threading, Semaphore, Mutex
   - This application runs on STM32N657X0H3QU devices
   - This application has been tested with STMicroelectronics NUCLEO-N657X0 boards revision MB1940-N657X0-C01 and can be easily tailored to any other supported device and development board.
   - This application uses USART1 to display output, the hyperterminal configuration is as follows:
-      - BaudRate = 115200 baud
-      - Word Length = 8 Bits
-      - Stop Bit = 1
-      - Parity = none
-      - Flow control = None
+    - BaudRate = 115200 baud
+    - Word Length = 8 Bits
+    - Stop Bit = 1
+    - Parity = none
+    - Flow control = None
 
   - **EWARM** : To monitor a variable in the live watch window, you must proceed as follow :
     - Start a debugging session.
@@ -125,3 +125,6 @@ Next, this program can be run in boot from flash mode. This can be done by follo
  - Next, in resorting again to CubeProgrammer, load the binary and its header (Tx_Thread_Sync-trusted.bin) in Nucleo board external Flash at address 0x7000'0000.
  - Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).
  - Press the reset button. The code then executes in boot from external Flash mode.
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

@@ -1,3 +1,19 @@
+/*
+ ******************************************************************************
+ * @file    Appli/NetXDuo/App/app_rtsp_over_rtp.c
+ * @author  MCD Application Team
+ * @brief   RTSP over RTP application (C source)
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2025 STMicroelectronics. All rights reserved.
+ *
+ * This software component is licensed by ST under BSD 3-Clause license,
+ * the "License"; You may obtain a copy of the License in the LICENSE file
+ * in the root directory of this software component.
+ ******************************************************************************
+ */
+
 /* This is the test control routine the NetX RTSP module.  All tests are dispatched from this routine.  */
 
 #include "tx_api.h"
@@ -6,10 +22,11 @@
 #include "nx_rtp_sender.h"
 #include "app_rtsp_over_rtp.h"
 #include "venc_app.h"
+#include "plugin_audio.h"
 
 /* Define the stack size for demo tasks. */
-#define DEMO_TEST_STACK_SIZE              2048
-#define DEMO_RTSP_SERVER_STACK_SIZE       2048
+#define DEMO_TEST_STACK_SIZE              (32*1024)
+#define DEMO_RTSP_SERVER_STACK_SIZE       (32*1024)
 static UCHAR AppServerThread_stack[DEMO_TEST_STACK_SIZE];
 static UCHAR rtsp_server_stack[DEMO_RTSP_SERVER_STACK_SIZE];
 void sample_entry(NX_IP *ip_ptr, NX_PACKET_POOL *pool_ptr, VOID *dns_ptr, UINT (*unix_time_callback)(ULONG *unix_time));
@@ -70,14 +87,14 @@ void sample_entry(NX_IP *ip_ptr, NX_PACKET_POOL *pool_ptr, VOID *dns_ptr, UINT (
 #endif /* DEMO_AAC_ENABLED */
 #endif /* DEMO_RTP_PAYLOAD_TYPE_AUDIO */
 
+
 /* Define video & audio play fps. !Note: this macro shall be the same as the real FPS to guarantee video playing normally */
 #ifndef DEMO_VIDEO_FRAME_PER_SECOND
 #define DEMO_VIDEO_FRAME_PER_SECOND       30
 #endif /* DEMO_VIDEO_FRAME_PER_SECOND */
 
 #ifndef DEMO_AUDIO_FRAME_PER_SECOND
-#define DEMO_AUDIO_FRAME_PER_SECOND       43 /* Reference the comment of DEMO_RTP_AUDIO_SAMPLING_PERIOD
-                                                to understand how this macro is calculated and defined. */
+#define DEMO_AUDIO_FRAME_PER_SECOND       50 /* For 20 ms packets, there are 50 frames per second */
 #endif /* DEMO_AUDIO_FRAME_PER_SECOND */
 
 #ifndef DEMO_AUDIO_SAMPLE_SIZE
@@ -90,7 +107,7 @@ void sample_entry(NX_IP *ip_ptr, NX_PACKET_POOL *pool_ptr, VOID *dns_ptr, UINT (
 
 /* The sampling periods define rtp timestamp increase rate for media. */
 #define DEMO_RTP_VIDEO_SAMPLING_PERIOD    (90000 / DEMO_VIDEO_FRAME_PER_SECOND)
-#define DEMO_RTP_AUDIO_SAMPLING_PERIOD    (44100 / DEMO_AUDIO_FRAME_PER_SECOND)  /* Assume the default AAC sampling rate is 44100.
+#define DEMO_RTP_AUDIO_SAMPLING_PERIOD    (16000 / DEMO_AUDIO_FRAME_PER_SECOND)  /* Assume the default AAC sampling rate is 44100.
                                                                                     Normally, a single ACC frame contains 1024 samples;
                                                                                     So, there are 44100 / 1024 = 43 frames per second.
                                                                                     Therefore, sampling period is 44100 / 43 = 1025. */
@@ -222,6 +239,17 @@ static VOID demo_timer_entry(ULONG address)
     tick_num++;
 }
 
+__weak UINT nx_rtp_sender_session_audio_send(NX_RTP_SESSION *session, UCHAR *frame_data, ULONG frame_data_size,
+                                         ULONG timestamp, ULONG ntp_msw, ULONG ntp_lsw, UINT marker)
+{
+  return NX_NOT_SUPPORTED;
+}
+
+__weak void monitor_bitrate(const char* stream, uint32_t frameSize)
+{
+  return;
+}
+
 static VOID app_server_entry(ULONG thread_input)
 {
 UINT                 i = 0;
@@ -254,14 +282,25 @@ SAMPLE_CLIENT       *client_ptr;
         *********************************************/
         if (events & DEMO_PLAY_EVENT)
         {
-            if (initialized == NX_FALSE)
+          if (initialized == NX_FALSE)
+          {
+            //if (client_ptr -> rtp_session_video_client_count)
             {
-                /* Call user registered callback function to initialize. */
-                VENC_APP_EncodingStart();
+              /* Call user registered callback function to initialize. */
+              printf(" VENC_APP_EncodingStart()\n");
+              VENC_APP_EncodingStart();
             }
-
-            /* Set the initialized flag */
-            initialized = NX_TRUE;
+            
+            //if (client_ptr -> rtp_session_audio_client_count)
+            {
+              /* Call user registered callback function to initialize. */
+              printf(" AUDIO_APP_EncodingStart()\n");
+              AUDIO_APP_EncodingStart();
+            }
+          }
+          
+          /* Set the initialized flag */
+          initialized = NX_TRUE;
         }
 
         /*********************************************
@@ -333,83 +372,104 @@ SAMPLE_CLIENT       *client_ptr;
 
                 status = nx_rtp_sender_session_h264_send(&(client_ptr -> rtp_session_video), data, data_length,
                                                          client_ptr -> rtp_session_video_timestamp, msw, lsw, NX_TRUE);
+                //printf("V:%u - %u - %u\n", client_ptr -> rtp_session_video_timestamp, msw, lsw);
                 if (status)
                 {
-                    printf("Fail to send video frame: %d, %d\r\n", i, status);
+                  printf("Fail to send video frame: %d, %d\r\n", i, status);
                 }
-
+                else
+                {
+                  monitor_bitrate("video",data_length);               
+                }
+                
                 /* Update rtp timestamp video sampling period. */
                 client_ptr -> rtp_session_video_timestamp += DEMO_RTP_VIDEO_SAMPLING_PERIOD;
             }
 #ifndef DEMO_MULTICAST_ENABLED
         }
 #endif /* DEMO_MULTICAST_ENABLED */
+        
+        /*********************************************
+        ******** DEMO_AUDIO_DATA_READY_EVENT *********
+        *********************************************/
+        if (events & DEMO_AUDIO_DATA_READY_EVENT)
+        {
+          /* Check if a play event has already triggered. */
+          if (initialized == NX_FALSE)
+          {
+            initialized = NX_FALSE;
+            continue;
+          }
+          
+          data_length = 0;
+          if ((AUDIO_APP_GetData(&data, (size_t *)&data_length)) || (data_length == 0))
+          {
+            continue;
+          }
+          /* Use systick to compute network time for rtcp sender report */
+          msw = tick_num / (1000 / DEMO_PLAY_TIMER_INTERVAL);
+          lsw = ((ULONG64)tick_num << 32) / TX_TIMER_TICKS_PER_SECOND;
+          
+#ifndef DEMO_MULTICAST_ENABLED
+          for (i = 0; i < NX_RTSP_SERVER_MAX_CLIENTS; i++)
+          {
+            client_ptr = &sample_client[i];
+#endif /* DEMO_MULTICAST_ENABLED */
+            
+            /* Make sure at least one client having setup the connection. */
+            if (client_ptr -> rtp_session_audio_client_count == 0)
+            {
+              continue;
+            }
+            
+            //printf("A:%u - %u - %u\n", client_ptr -> rtp_session_audio_timestamp, msw, lsw);
+            
+            status = nx_rtp_sender_session_audio_send(&(client_ptr -> rtp_session_audio), data, data_length,
+                                                     client_ptr -> rtp_session_audio_timestamp, msw, lsw, NX_TRUE);
+            if (status != NX_SUCCESS)
+            {
+              printf("Fail to send audio frame: %d, %d\r\n", i, status);
+            }
+            
+            /* Update rtp timestamp audio sampling period. */
+            client_ptr -> rtp_session_audio_timestamp += DEMO_RTP_AUDIO_SAMPLING_PERIOD;
+          }
+        }
+        
     }
 }
 
 
 /* SDP string options */
-static UCHAR *sdp =
-#ifdef DEMO_MULTICAST_ENABLED
+static CHAR *sdp =
 #ifdef DEMO_H264_ENABLED
-"v=0\r\ns=H264 video with AAC audio, streamed by the NetX RTSP Server\r\n\
-m=video 6002 RTP/AVP 96\r\n\
-c=IN IP4 224.1.0.55/128\r\n\
-a=rtpmap:96 H264/90000\r\n\
-a=fmtp:96 profile-level-id=42A01E; packetization-mode=1\r\n\
-a=control:trackID=0\r\n\
-m=audio 6002 RTP/AVP 11\r\n\
-c=IN IP4 224.1.0.55/128\r\n\
-a=rtpmap:11 L16/44100/1\r\n\
-a=fmtp:11 emphasis=50-15\r\n\
-a=ptime:5\r\n\
-a=control:trackID=1\r\n";
-#else
-"v=0\r\ns=MJPEG video with AAC audio, streamed by the NetX RTSP Server\r\n\
-m=video 6002 RTP/AVP 26\r\n\
-c=IN IP4 224.1.0.55/128\r\n\
-a=rtpmap:26 JPEG/90000\r\n\
-a=control:trackID=0\r\n\
-m=audio 6002 RTP/AVP 11\r\n\
-c=IN IP4 224.1.0.55/128\r\n\
-a=rtpmap:11 L16/44100/1\r\n\
-a=fmtp:11 emphasis=50-15\r\n\
-a=ptime:5\r\n\
-a=control:trackID=1\r\n";
-#endif /* DEMO_H264_ENABLED */
-#else
-#ifdef DEMO_H264_ENABLED
-"v=0\r\ns=H264 video with AAC audio, streamed by the NetX RTSP Server\r\n\
+"v=0\r\ns=H264 video with PCM audio, streamed by the NetX RTSP Server\r\n\
 m=video 0 RTP/AVP 96\r\n\
 a=rtpmap:96 H264/90000\r\n\
 a=fmtp:96 profile-level-id=42A01E; packetization-mode=1\r\n\
 a=control:trackID=0\r\n";
-#else
-"v=0\r\ns=MJPEG video with AAC audio, streamed by the NetX RTSP Server\r\n\
-m=video 0 RTP/AVP 26\r\n\
-a=rtpmap:26 JPEG/90000\r\n\
-a=control:trackID=0\r\n\
-m=audio 0 RTP/AVP 11\r\n\
-a=rtpmap:11 L16/44100/1\r\n\
-a=fmtp:11 emphasis=50-15\r\n\
-a=ptime:5\r\n\
-a=control:trackID=1\r\n";
-#endif /* DEMO_H264_ENABLED */
 #endif /* DEMO_MULTICAST_ENABLED */
 
-/* If DEMO_AAC_ENABLED defined, replace PCM corresponding string with below string. */
-// m=audio 0 RTP/AVP 97\r\n\
-// a=rtpmap:97 mpeg4-generic/44100/1\r\n\
-// a=fmtp:97 mode=AAC-hbr; SizeLength=13\r\n\
+
+__weak UCHAR * nx_rtsp_server_get_sdp(void)
+{
+  return (UCHAR *)sdp;
+}
+
+__weak ULONG nx_rtsp_server_get_audio_payload_type(void)
+{
+  return DEMO_RTP_PAYLOAD_TYPE_AUDIO;
+}
 
 
 static UINT rtsp_describe_callback(NX_RTSP_CLIENT *rtsp_client_ptr, UCHAR *uri, UINT uri_length)
 {
 UINT status;
 
-
-    status = nx_rtsp_server_sdp_set(rtsp_client_ptr, sdp, strlen((const char *)sdp));
+    UCHAR *localSdp  = nx_rtsp_server_get_sdp();
+    status = nx_rtsp_server_sdp_set(rtsp_client_ptr, localSdp, strlen((const char *)localSdp));
     printf("RTSP request received: DESCRIBE.\r\n");
+    printf("SDP = /%s/\n", localSdp);
     return(status);
 }
 
@@ -525,7 +585,7 @@ UINT i;
 #endif /* DEMO_MULTICAST_ENABLED */
 
             /* Setup rtp sender audio session */
-            status = nx_rtp_sender_session_create(&rtp_0, &(client_ptr -> rtp_session_audio), DEMO_RTP_PAYLOAD_TYPE_AUDIO,
+            status = nx_rtp_sender_session_create(&rtp_0, &(client_ptr -> rtp_session_audio), nx_rtsp_server_get_audio_payload_type(),
                                                   transport_ptr -> interface_index, &(transport_ptr -> client_ip_address),
                                                   transport_ptr -> client_rtp_port, transport_ptr -> client_rtcp_port);
             if (status)
@@ -581,7 +641,7 @@ static UINT rtsp_play_callback(NX_RTSP_CLIENT *rtsp_client_ptr, UCHAR *uri, UINT
 {
 UINT status;
 UINT video_seq, audio_seq, video_rtptime, audio_rtptime;
-SAMPLE_CLIENT *client_ptr;
+SAMPLE_CLIENT *client_ptr = NULL;
 #ifndef DEMO_MULTICAST_ENABLED
 UINT i;
 #endif
@@ -618,7 +678,7 @@ UINT i;
         video_rtptime = client_ptr -> rtp_session_video_timestamp;
 
         /* Set rtp information into rtsp client */
-        status = nx_rtsp_server_rtp_info_set(rtsp_client_ptr, DEMO_RTSP_VIDEO_FILE_NAME, sizeof(DEMO_RTSP_VIDEO_FILE_NAME) - 1, video_seq, video_rtptime);
+        status = nx_rtsp_server_rtp_info_set(rtsp_client_ptr, (UCHAR *)DEMO_RTSP_VIDEO_FILE_NAME, sizeof(DEMO_RTSP_VIDEO_FILE_NAME) - 1, video_seq, video_rtptime);
         if (status)
         {
             return(status);
@@ -635,7 +695,7 @@ UINT i;
         audio_rtptime = client_ptr -> rtp_session_audio_timestamp;
 
         /* Set rtp information into rtsp client */
-        status = nx_rtsp_server_rtp_info_set(rtsp_client_ptr, DEMO_RTSP_AUDIO_FILE_NAME, sizeof(DEMO_RTSP_VIDEO_FILE_NAME) - 1, audio_seq, audio_rtptime);
+        status = nx_rtsp_server_rtp_info_set(rtsp_client_ptr,  (UCHAR *)DEMO_RTSP_AUDIO_FILE_NAME, sizeof(DEMO_RTSP_VIDEO_FILE_NAME) - 1, audio_seq, audio_rtptime);
         if (status)
         {
             return(status);
@@ -650,7 +710,7 @@ UINT i;
 
 static UINT rtsp_teardown_callback(NX_RTSP_CLIENT *rtsp_client_ptr, UCHAR *uri, UINT uri_length)
 {
-SAMPLE_CLIENT *client_ptr;
+SAMPLE_CLIENT *client_ptr = NULL;
 #ifndef DEMO_MULTICAST_ENABLED
 UINT i;
 
@@ -759,12 +819,12 @@ UINT i;
     {
         if (session == &(sample_client[i].rtp_session_video))
         {
-            printf("Video Session: %d\r\n", (i + 1));
+            printf("Video Session: %d - packet_loss : %d - jitter : %d - delay : %d\r\n", (i + 1), report->packet_loss, report->jitter, report->delay);
             break;
         }
         else if (session == &(sample_client[i].rtp_session_audio))
         {
-            printf("Audio Session: %d\r\n", (i + 1));
+            printf("Audio Session: %d - packet_loss : %d - jitter : %d - delay : %d\r\n", (i + 1), report->packet_loss, report->jitter, report->delay);
             break;
         }
     }

@@ -232,7 +232,7 @@ extern "C" {
 #define USE_SD_TRANSCEIVER            0U
 
 /* ################## SDIO peripheral configuration ######################### */
-	
+
 #define USE_SDIO_TRANSCEIVER          0U
 #define SDIO_MAX_IO_NUMBER            7U
 

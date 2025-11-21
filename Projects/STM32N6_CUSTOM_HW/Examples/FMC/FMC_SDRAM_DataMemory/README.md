@@ -18,8 +18,7 @@ provide only the procedure to follow to use the external SDRAM as data memory.
 All FMC configuration and its associated GPIOs are done earlier in system_stm32n6xx_fsbl.c
 through function SystemInit_ExtMemCtl(), to configure SDRAM to be ready to contain data.
 
-The user has to configure his preferred toolchain using the provided linker file.
-The RAM zone is modified in order to use the external SDRAM memory as a RAM.
+The user can resort to the provided linker file.
 
 At this stage, all the used data can be located in the external SDRAM memory.
 
@@ -60,7 +59,7 @@ FMC, NAND, Load and Run, Executable, TC58BVG2S0HBAI4
 
   - This example runs on STM32N6xx devices.
 
-  - This template has been tested with STMicroelectronics STM32N6570 Custom Board with a SDRAM Micron MT48LC16M16A2.
+  - This example can be tested using STM32N6xx devices and a SDRAM memory (Micron MT48LC16M16A2) mounted on a user custom board. 
 
   - The IOs to be connected between the memory and the MCU are detailed in
      FMC/FMC_SDRAM_DataMemory/FSBL/Src/system_stm32n6xx_fsbl.c file section "GPIO Configuration".
@@ -76,3 +75,6 @@ In order to make the program work, you must do the following :
  - Open your preferred toolchain
  - Rebuild all files and load your image into target memory. Code can be executed in this mode for debugging purposes.
 
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

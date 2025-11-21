@@ -224,17 +224,12 @@ int OPENBL_OTP_Write(Otp_Partition_t Otp)
       if (otp_perm_lock_value == HAL_BSEC_LOCK_PROG)
       {
         /* Write the otp value with permanent lock */
-        status = HAL_BSEC_OTP_Program(&hBsec, OtpIdx, otp_value, HAL_BSEC_LOCK_PROG);
+        (void)HAL_BSEC_OTP_Program(&hBsec, OtpIdx, otp_value, HAL_BSEC_LOCK_PROG);
       }
       else if ((otp_perm_lock_value != HAL_BSEC_LOCK_PROG))
       {
         /* Write the otp value */
-        status = HAL_BSEC_OTP_Program(&hBsec, OtpIdx, otp_value, HAL_BSEC_NORMAL_PROG);
-      }
-
-      if (status != HAL_OK)
-      {
-        return OTP_ERROR;
+        (void)HAL_BSEC_OTP_Program(&hBsec, OtpIdx, otp_value, HAL_BSEC_NORMAL_PROG);
       }
     }
 

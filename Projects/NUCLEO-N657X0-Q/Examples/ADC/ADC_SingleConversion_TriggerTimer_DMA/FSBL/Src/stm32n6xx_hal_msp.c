@@ -72,6 +72,8 @@ void HAL_MspInit(void)
 
   /* USER CODE END MspInit 0 */
 
+  HAL_PWREx_EnableVddA();
+
   /* System interrupt init*/
 
   /* USER CODE BEGIN MspInit 1 */
@@ -174,13 +176,6 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
 
     /* USER CODE BEGIN ADC1_MspInit 1 */
   
-   /* Set protection to a peripheral */
-    __HAL_RCC_RIFSC_CLK_ENABLE();
-    __HAL_RCC_ADC12_CLK_ENABLE(); /* Peripheral clock need to be enabled */
-    HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_ADC12, RIF_ATTRIBUTE_SEC);
-   /* Enable Vdda for ADC */
-   HAL_PWREx_EnableVddA();
-
     /* USER CODE END ADC1_MspInit 1 */
 
   }

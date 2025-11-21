@@ -181,6 +181,15 @@ SECTIONS
   } >ROM
   /* Uninitialized data section into "RAM" Ram type memory */
   . = ALIGN(4);
+
+  /* Uninitialized data not overwritten at startup. section into "RAM" Ram type memory */
+  .bss.NoInit (NOLOAD) :
+  {
+    . = ALIGN(4);
+    *(.bss.NoInit*)
+    . = ALIGN(4);
+   } > RAM
+
   .bss :
   {
     /* This is used by the startup in order to initialize the .bss section */

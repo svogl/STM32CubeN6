@@ -94,6 +94,7 @@ void TimerCaptureCompare_Callback(void);
 /* Private defines -----------------------------------------------------------*/
 #define USER_BUTTON_Pin LL_GPIO_PIN_13
 #define USER_BUTTON_GPIO_Port GPIOC
+#define USER_BUTTON_EXTI_IRQn EXTI13_IRQn
 #ifndef NVIC_PRIORITYGROUP_0
 #define NVIC_PRIORITYGROUP_0         ((uint32_t)0x00000007) /*!< 0 bit  for pre-emption priority,
                                                                  4 bits for subpriority */

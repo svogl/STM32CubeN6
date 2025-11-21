@@ -1,7 +1,6 @@
 ##  <b>Nx_FramePreemption_Listener Application Description</b>
 
-This application provides an example of Azure RTOS NetX/NetXDuo stack usage.
-It is used to demonstrate the effect of the Frame Preemption feature (IEEE 802.1Qbu) on Ethernet transmission performance.
+This application provides an example of Azure RTOS NetX/NetXDuo stack usage. It is used to demonstrate the effect of the Frame Preemption feature (IEEE 802.1Qbu) on Ethernet transmission performance.
 
 The main entry function tx_application_define() is then called by ThreadX during kernel start, at this stage, all NetX resources are created.
 
@@ -179,3 +178,6 @@ Next, this program can be run in boot from flash mode. This can be done by follo
  
 
 
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

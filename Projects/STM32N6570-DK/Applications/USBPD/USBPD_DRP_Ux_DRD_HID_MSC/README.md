@@ -1,8 +1,7 @@
 
 ## <b>USBPD_DRP_Ux_DRD_HID_MSC Application Description</b>
 
-This application is a USBPD type C DRP (supporting Data Role Swap) using Azure RTOS.
-USBPD DRP: This application initializes the Type C port 1 in DRP mode, allowing toggling between SNK and SRC roles.
+This application is a USBPD type C DRP (supporting Data Role Swap) using Azure RTOS. USBPD DRP: This application initializes the Type C port 1 in DRP mode, allowing toggling between SNK and SRC roles.
 
 In SNK role, the application is designed to emulate an USB HID mouse device, the code provides all required device descriptors framework
 and associated Class descriptor report to build a compliant USB HID mouse device.
@@ -139,3 +138,5 @@ In order to make the program work, you must do the following :
  - Next, in resorting again to CubeProgrammer, load the binary and its header (USBPD_DRP_Ux_DRD_HID_MSC-trusted.bin) in DK board external Flash at address 0x7000'0000.
  - Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).
  - Press the reset button. The code then executes in boot from external Flash mode.
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

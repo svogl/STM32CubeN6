@@ -80,7 +80,8 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 
 /* USER CODE BEGIN Private defines */
-
+/* Source buffer size */
+#define BUFFER_SIZE 3U
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

@@ -63,6 +63,7 @@ __IO uint8_t ubReceptionComplete = 0;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MPU_Config(void);
+static void SystemIsolation_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_GPDMA1_Init(void);
 static void MX_SPI5_Init(void);
@@ -127,6 +128,7 @@ int main(void)
   MX_GPIO_Init();
   MX_GPDMA1_Init();
   MX_SPI5_Init();
+  SystemIsolation_Config();
   /* USER CODE BEGIN 2 */
 
   /* Wait for USER push-button press to start transfer */
@@ -163,6 +165,13 @@ void SystemClock_Config(void)
   LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_PWR);
   LL_PWR_ConfigSupply(LL_PWR_EXTERNAL_SOURCE_SUPPLY);
   while (LL_PWR_IsActiveFlag_ACTVOSRDY() == 0U)
+  {
+  }
+
+  /** Configure the main internal regulator output voltage
+  */
+  LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
+  while(LL_PWR_IsActiveFlag_VOSRDY() == 0)
   {
   }
 
@@ -319,14 +328,6 @@ static void MX_SPI5_Init(void)
   /* SPI5 DMA Init */
 
   /* GPDMA1_REQUEST_SPI5_RX Init */
-  LL_DMA_EnableChannelSecure(GPDMA1, LL_DMA_CHANNEL_2);
-
-  LL_DMA_EnableChannelPrivilege(GPDMA1, LL_DMA_CHANNEL_2);
-
-  LL_DMA_EnableChannelSrcSecure(GPDMA1, LL_DMA_CHANNEL_2);
-
-  LL_DMA_EnableChannelDestSecure(GPDMA1, LL_DMA_CHANNEL_2);
-
   DMA_InitStruct.SrcAddress = 0x00000000U;
   DMA_InitStruct.DestAddress = 0x00000000U;
   DMA_InitStruct.Direction = LL_DMA_DIRECTION_PERIPH_TO_MEMORY;
@@ -354,14 +355,6 @@ static void MX_SPI5_Init(void)
   LL_DMA_Init(GPDMA1, LL_DMA_CHANNEL_2, &DMA_InitStruct);
 
   /* GPDMA1_REQUEST_SPI5_TX Init */
-  LL_DMA_EnableChannelSecure(GPDMA1, LL_DMA_CHANNEL_1);
-
-  LL_DMA_EnableChannelPrivilege(GPDMA1, LL_DMA_CHANNEL_1);
-
-  LL_DMA_EnableChannelSrcSecure(GPDMA1, LL_DMA_CHANNEL_1);
-
-  LL_DMA_EnableChannelDestSecure(GPDMA1, LL_DMA_CHANNEL_1);
-
   DMA_InitStruct.SrcAddress = 0x00000000U;
   DMA_InitStruct.DestAddress = 0x00000000U;
   DMA_InitStruct.Direction = LL_DMA_DIRECTION_MEMORY_TO_PERIPH;
@@ -490,6 +483,41 @@ static void MX_GPIO_Init(void)
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
   /* USER CODE END MX_GPIO_Init_2 */
+}
+
+/**
+  * @brief RIF Initialization Function
+  * @param None
+  * @retval None
+  */
+  static void SystemIsolation_Config(void)
+{
+
+/* USER CODE BEGIN RIF_Init 0 */
+
+/* USER CODE END RIF_Init 0 */
+
+  /* RIF-Aware IPs Config */
+
+  /* set up GPDMA configuration */
+  /* set GPDMA1 channel 1 used by SPI5 */
+  LL_DMA_EnableChannelSecure(GPDMA1, LL_DMA_CHANNEL_1);
+  LL_DMA_EnableChannelPrivilege(GPDMA1, LL_DMA_CHANNEL_1);
+  LL_DMA_EnableChannelSrcSecure(GPDMA1, LL_DMA_CHANNEL_1);
+  LL_DMA_EnableChannelDestSecure(GPDMA1, LL_DMA_CHANNEL_1);
+  /* set GPDMA1 channel 2 used by SPI5 */
+  LL_DMA_EnableChannelSecure(GPDMA1, LL_DMA_CHANNEL_2);
+  LL_DMA_EnableChannelPrivilege(GPDMA1, LL_DMA_CHANNEL_2);
+  LL_DMA_EnableChannelSrcSecure(GPDMA1, LL_DMA_CHANNEL_2);
+  LL_DMA_EnableChannelDestSecure(GPDMA1, LL_DMA_CHANNEL_2);
+
+/* USER CODE BEGIN RIF_Init 1 */
+
+/* USER CODE END RIF_Init 1 */
+/* USER CODE BEGIN RIF_Init 2 */
+
+/* USER CODE END RIF_Init 2 */
+
 }
 
 /* USER CODE BEGIN 4 */
@@ -722,8 +750,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

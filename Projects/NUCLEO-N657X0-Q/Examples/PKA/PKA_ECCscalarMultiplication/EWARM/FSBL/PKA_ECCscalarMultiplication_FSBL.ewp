@@ -1119,10 +1119,13 @@
     <group>
       <name>STM32N6xx_HAL_Driver</name>
       <file>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_icache.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_cortex.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_icache.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pka.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc.c</name>
@@ -1150,9 +1153,6 @@
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_exti.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pka.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rng.c</name>

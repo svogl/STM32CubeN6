@@ -6,6 +6,8 @@ This application provides an example of Azure RTOS USBX stack usage on STM32N657
 The application is designed to emulate an USB (Out: Speaker/Headset), the code provides all required device descriptors framework
 and associated Class descriptor report to build a compliant USB AUDIO device.
 
+This application supports the Feedback endpoint feature.
+
 At the beginning ThreadX call the entry function tx_application_define(), at this stage, all USBx resources
 are initialized, the AUDIO Class driver is registered and the application creates 2 threads with the same priorities :
 
@@ -38,10 +40,9 @@ User is familiar with USB 2.0 "Universal Serial BUS" specification and AUDIO 2.0
 
 #### <b>Known limitations</b>
 
- - This application does not support synchronization.
- - Footprint are not optimized.
+None
 
-### <b>Notes</b>
+#### <b>Notes</b>
 
 None
 
@@ -91,7 +92,7 @@ None
 
 ### <b>Keywords</b>
 
-RTOS, ThreadX, USBXDevice, USB_OTG, High speed, SAI, Audio, Streaming, PCM
+RTOS, ThreadX, USBXDevice, USB_OTG, High speed, SAI, Audio, Streaming, PCM, Feedback
 
 ### <b>Hardware and Software environment</b>
 
@@ -116,9 +117,11 @@ In order to make the program work, you must do the following :
 
  Next, this program can be run in boot from flash mode. This is done by following the instructions below:
 
- - Resort to CubeProgrammer to add a header to the generated binary Ux_Device_Audio.bin with the following command
-   - *STM32_SigningTool_CLI.exe -bin Ux_Device_Audio.bin -nk -of 0x80000000 -t fsbl -o Ux_Device_Audio-trusted.bin -hv 2.3 -dump Ux_Device_Audio-trusted.bin*
-       - The resulting binary is Ux_Device_Audio-trusted.bin.
- - Next, in resorting again to CubeProgrammer, load the binary and its header (Ux_Device_Audio-trusted.bin) in DK board external Flash at address 0x7000'0000.
+ - Resort to CubeProgrammer to add a header to the generated binary Ux_Device_Audio_2.0_FSBL.bin with the following command
+   - *STM32_SigningTool_CLI.exe -bin Ux_Device_Audio_2.0_FSBL.bin -nk -of 0x80000000 -t fsbl -o Ux_Device_Audio_2.0_FSBL-trusted.bin -hv 2.3 -dump Ux_Device_Audio_2.0_FSBL-trusted.bin*
+       - The resulting binary is Ux_Device_Audio_2.0_FSBL-trusted.bin.
+ - Next, in resorting again to CubeProgrammer, load the binary and its header (Ux_Device_Audio_2.0_FSBL-trusted.bin) in DK board external Flash at address 0x7000'0000.
  - Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).
  - Press the reset button. The code then executes in boot from external Flash mode.
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

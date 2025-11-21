@@ -63,11 +63,11 @@ SD_HandleTypeDef SDHandle;
 __IO uint8_t RxCplt, TxCplt;
 
 /******** SD Transmission Buffer definition *******/
-uint8_t aTxBuffer[BUFFER_SIZE]__NON_CACHEABLE;
+uint8_t aTxBuffer[BUFFER_SIZE];
 /**************************************************/
 
 /******** SD Receive Buffer definition *******/
-uint8_t aRxBuffer[BUFFER_SIZE ]__NON_CACHEABLE;
+uint8_t aRxBuffer[BUFFER_SIZE];
 /**************************************************/
 /* USER CODE END PV */
 
@@ -238,6 +238,13 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 
+  /** Configure the main internal regulator output voltage
+  */
+  if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
   /* Enable HSI */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
@@ -330,11 +337,11 @@ void SystemClock_Config(void)
 
   /* set all required IPs as secure privileged */
   __HAL_RCC_RIFSC_CLK_ENABLE();
+
+  /*RIMC configuration*/
   RIMC_MasterConfig_t RIMC_master = {0};
   RIMC_master.MasterCID = RIF_CID_1;
   RIMC_master.SecPriv = RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV;
-
-  /*RIMC configuration*/
   HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_SDMMC2, &RIMC_master);
 
   /*RISUP configuration*/

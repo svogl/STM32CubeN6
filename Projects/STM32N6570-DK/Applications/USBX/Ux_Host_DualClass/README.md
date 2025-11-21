@@ -1,8 +1,7 @@
 
 ## <b>Ux_Host_DualClass Application Description</b>
 
-This application provides an example of Azure RTOS USBX stack usage.
-It shows how to develop USB Host Human Interface "HID" and Mass Storage "MSC" able to enumerate and communicates with:
+This application provides an example of Azure RTOS USBX stack usage. It shows how to develop USB Host Human Interface "HID" and Mass Storage "MSC" able to enumerate and communicates with:
 
   - A mouse or a keyboard.
   - A removable USB flash disk.
@@ -160,3 +159,6 @@ The user has to check the list of the COM ports in Device Manager to find out th
 of the COM ports that have been assigned (by OS) to the Stlink VCP.
 The application uses the external HSE clock as USB source clock.
 
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

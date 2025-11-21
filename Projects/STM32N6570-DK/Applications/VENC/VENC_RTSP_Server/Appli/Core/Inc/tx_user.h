@@ -107,7 +107,8 @@
 /* Override various options with default values already assigned in tx_port.h. Please also refer
    to tx_port.h for descriptions on each of these options.  */
 
-/*#define TX_MAX_PRIORITIES                32*/
+#define TX_MAX_PRIORITIES                64
+#define TX_THREAD_USER_EXTENSION           ULONG               tx_thread_detached_joinable;
 /*#define TX_TIMER_THREAD_STACK_SIZE                1024*/
 /*#define TX_TIMER_THREAD_PRIORITY                0*/
 
@@ -236,7 +237,7 @@
 
 /* Define the common timer tick reference for use by other middleware components. */
 
-/*#define TX_TIMER_TICKS_PER_SECOND                100*/
+#define TX_TIMER_TICKS_PER_SECOND                100
 
 /* Determine if there is a FileX pointer in the thread control block.
    By default, the pointer is there for legacy/backwards compatibility.
@@ -260,7 +261,7 @@
 
 #ifdef __ICCARM__
 /* Define if the IAR library is supported. */
-/*#define TX_ENABLE_IAR_LIBRARY_SUPPORT*/
+  #define TX_ENABLE_IAR_LIBRARY_SUPPORT
 #endif
 
 /* Define if the safety critical configuration is enabled. */
@@ -272,6 +273,9 @@
 /* Define the user extension field of the thread control block.*/
 /*#define TX_THREAD_USER_EXTENSION                ????*/
 
+#define TX_EXECUTION_PROFILE_ENABLE 1
+/* enable Execution Profile Kit to measure cpu load */
+#define TX_CORTEX_M_EPK
 /* USER CODE END 2 */
 
 #endif

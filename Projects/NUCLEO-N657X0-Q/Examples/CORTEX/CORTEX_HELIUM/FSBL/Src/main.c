@@ -76,7 +76,6 @@ int iar_fputc(int ch);
 #define PUTCHAR_PROTOTYPE int iar_fputc(int ch)
 #elif defined ( __CC_ARM ) || defined(__ARMCC_VERSION)
 /* ARM Compiler 5/6*/
-#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
 #elif defined(__GNUC__)
 #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
 #endif /* __ICCARM__ */
@@ -211,6 +210,13 @@ void SystemClock_Config(void)
   /** Configure the System Power Supply
   */
   if (HAL_PWREx_ConfigSupply(PWR_EXTERNAL_SOURCE_SUPPLY) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure the main internal regulator output voltage
+  */
+  if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -375,6 +381,8 @@ size_t __write(int file, unsigned char const *ptr, size_t len)
   return len;
 }
 #endif /* __ICCARM__ */
+#if defined ( __CC_ARM ) || defined(__ARMCC_VERSION)
+#else
 /**
   * @brief  Retargets the C library printf function to the USART.
   */
@@ -386,6 +394,7 @@ PUTCHAR_PROTOTYPE
 
   return ch;
 }
+#endif
 #endif /* TERMINAL_IO */
 /* USER CODE END 4 */
 

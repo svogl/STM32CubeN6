@@ -116,6 +116,7 @@ void Error_Callback(void);
 #define SLAVE_OWN_ADDRESS 0x5A
 #define USER_BUTTON_Pin LL_GPIO_PIN_13
 #define USER_BUTTON_GPIO_Port GPIOC
+#define USER_BUTTON_EXTI_IRQn EXTI13_IRQn
 #define LED1_Pin LL_GPIO_PIN_8
 #define LED1_GPIO_Port GPIOG
 #ifndef NVIC_PRIORITYGROUP_0

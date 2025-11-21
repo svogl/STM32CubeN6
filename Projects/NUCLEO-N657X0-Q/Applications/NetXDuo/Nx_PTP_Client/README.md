@@ -1,7 +1,6 @@
-##  <b>Nx_PTP_Client application description</b>
+##  <b>Nx_PTP_Client Application Description</b>
 
- This application provides an example of Azure RTOS NetX/NetXDuo stack usage.
-It shows how to develop a PTP Master and Client applications to synchronize using the NetX PTP addon : 
+ This application provides an example of Azure RTOS NetX/NetXDuo stack usage. It shows how to develop a PTP Master and Client applications to synchronize using the NetX PTP addon : 
 
 The main entry function tx_application_define() is then called by ThreadX during kernel start, at this stage, all NetX resources are created.
 
@@ -167,7 +166,7 @@ RTOS, Network, ThreadX, NetXDuo, PTP, UART
 
 ## <b>How to use it ?</b>
 
-The Nx_PTP_Client application supports four diffrent PTP modes :
+The Nx_PTP_Client application supports four different PTP modes :
 
 - PTP Client Ethernet 
 
@@ -238,3 +237,6 @@ In order to make the program work, you must do the following :
  
 
 
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

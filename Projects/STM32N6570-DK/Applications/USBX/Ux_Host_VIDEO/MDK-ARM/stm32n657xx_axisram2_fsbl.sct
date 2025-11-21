@@ -95,11 +95,11 @@ LR_IROM1 0x34180400 0x0003FC00  {    ; load region size_region
    .ANY (.noncacheable)
   }
   
-  RW_UsbHpcd 0x341EC800 0x1000 {
+  RW_UsbHpcd 0x341DD800 0x1000 {
    *(.UsbHpcdSection)
   }
 
-  RW_UsbxPool 0x341ED800 0x12800 {
+  RW_UsbxPool 0x341DE800 0x22800 {
    *(.UsbxPoolSection)
   }
   

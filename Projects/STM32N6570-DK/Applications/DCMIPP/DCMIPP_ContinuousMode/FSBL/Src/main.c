@@ -50,6 +50,13 @@ static __IO uint32_t NbMainFrames = 0;
 static IMX335_Object_t   IMX335Obj;
 static int32_t isp_gain;
 static int32_t isp_exposure;
+/* Calculate division factor for a given source and destination dimension (width or height) */
+#define DIV_FACTOR(SRC, DST) (((uint32_t)((1024 * DST) / SRC)) > 1023 ? 1023 : ((uint32_t)((1024 * DST) / SRC)))
+
+/* Calculate down scale ratio in unsigned 3.13 fixed-point format */
+#define DOWNSCALE_RATIO(SRC, DST) (((uint32_t)(((float_t)(SRC) / (float_t)(DST)) * 8192) < 8192) ? 8192 : \
+                                   ((((uint32_t)(((float_t)(SRC) / (float_t)(DST)) * 8192)) > 65535) ? 65535 : \
+                                   ((uint32_t)(((float_t)(SRC) / (float_t)(DST)) * 8192))))
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -324,12 +331,12 @@ static void MX_DCMIPP_Init(void)
   }
 
   /* Configure the downsize */
-  DonwsizeConf.HRatio      = 25656;
-  DonwsizeConf.VRatio      = 33161;
-  DonwsizeConf.HSize       = 800;
-  DonwsizeConf.VSize       = 480;
-  DonwsizeConf.HDivFactor  = 316;
-  DonwsizeConf.VDivFactor  = 253;
+  DonwsizeConf.HSize       = 800; /* Destination Image Width  */
+  DonwsizeConf.VSize       = 480; /* Destination Image Height */
+  DonwsizeConf.HRatio      = DOWNSCALE_RATIO(IMX335_WIDTH, DonwsizeConf.HSize);
+  DonwsizeConf.VRatio      = DOWNSCALE_RATIO(IMX335_HEIGHT, DonwsizeConf.VSize);
+  DonwsizeConf.HDivFactor  = DIV_FACTOR(IMX335_WIDTH, DonwsizeConf.HSize);
+  DonwsizeConf.VDivFactor  = DIV_FACTOR(IMX335_HEIGHT, DonwsizeConf.VSize);
 
   if(HAL_DCMIPP_PIPE_SetDownsizeConfig(&hdcmipp, DCMIPP_PIPE1, &DonwsizeConf) != HAL_OK)
   {

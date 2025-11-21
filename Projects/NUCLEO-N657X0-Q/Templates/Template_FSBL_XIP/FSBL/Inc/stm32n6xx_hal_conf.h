@@ -1,7 +1,8 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    stm32n6xx_hal_conf.h
-  * @author  GPM Application Team
+  * @author  MCD Application Team
   * @brief   HAL configuration file.
   ******************************************************************************
   * @attention
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STM32N6xx_HAL_CONF_H
@@ -32,59 +34,65 @@ extern "C" {
   * @brief This is the list of modules to be used in the HAL driver
   */
 #define HAL_MODULE_ENABLED
-#define HAL_ADC_MODULE_ENABLED
+/*#define HAL_ADC_MODULE_ENABLED   */
 #define HAL_BSEC_MODULE_ENABLED
-#define HAL_CORTEX_MODULE_ENABLED
-#define HAL_CRC_MODULE_ENABLED
-#define HAL_CRYP_MODULE_ENABLED
-#define HAL_DCMI_MODULE_ENABLED
-#define HAL_DCMIPP_MODULE_ENABLED
-#define HAL_DMA_MODULE_ENABLED
-#define HAL_DMA2D_MODULE_ENABLED
-#define HAL_DTS_MODULE_ENABLED
-#define HAL_ETH_MODULE_ENABLED
-#define HAL_EXTI_MODULE_ENABLED
-#define HAL_FDCAN_MODULE_ENABLED
-#define HAL_GFXMMU_MODULE_ENABLED
-#define HAL_GFXTIM_MODULE_ENABLED
-#define HAL_GPIO_MODULE_ENABLED
-#define HAL_HASH_MODULE_ENABLED
-#define HAL_HCD_MODULE_ENABLED
-#define HAL_I2C_MODULE_ENABLED
-#define HAL_I3C_MODULE_ENABLED
-#define HAL_ICACHE_MODULE_ENABLED
-#define HAL_IRDA_MODULE_ENABLED
-#define HAL_IWDG_MODULE_ENABLED
-#define HAL_JPEG_MODULE_ENABLED
-#define HAL_LPTIM_MODULE_ENABLED
-#define HAL_LTDC_MODULE_ENABLED
-#define HAL_MCE_MODULE_ENABLED
-#define HAL_MDF_MODULE_ENABLED
-#define HAL_MMC_MODULE_ENABLED
-#define HAL_NAND_MODULE_ENABLED
-#define HAL_NOR_MODULE_ENABLED
-#define HAL_PCD_MODULE_ENABLED
-#define HAL_PKA_MODULE_ENABLED
-#define HAL_PSSI_MODULE_ENABLED
-#define HAL_PWR_MODULE_ENABLED
-#define HAL_RAMCFG_MODULE_ENABLED
-#define HAL_RCC_MODULE_ENABLED
-#define HAL_RIF_MODULE_ENABLED
-#define HAL_RNG_MODULE_ENABLED
-#define HAL_RTC_MODULE_ENABLED
-#define HAL_SAI_MODULE_ENABLED
-#define HAL_SD_MODULE_ENABLED
-#define HAL_SDRAM_MODULE_ENABLED
-#define HAL_SMARTCARD_MODULE_ENABLED
-#define HAL_SMBUS_MODULE_ENABLED
-#define HAL_SPDIFRX_MODULE_ENABLED
-#define HAL_SPI_MODULE_ENABLED
-#define HAL_SRAM_MODULE_ENABLED
-#define HAL_TIM_MODULE_ENABLED
-#define HAL_UART_MODULE_ENABLED
-#define HAL_USART_MODULE_ENABLED
-#define HAL_WWDG_MODULE_ENABLED
+/*#define HAL_CRC_MODULE_ENABLED   */
+/*#define HAL_CRYP_MODULE_ENABLED   */
+/*#define HAL_DCMI_MODULE_ENABLED   */
+/*#define HAL_DCMIPP_MODULE_ENABLED   */
+/*#define HAL_DMA2D_MODULE_ENABLED   */
+/*#define HAL_DTS_MODULE_ENABLED   */
+/*#define HAL_ETH_MODULE_ENABLED   */
+/*#define HAL_EXTI_MODULE_ENABLED   */
+/*#define HAL_FDCAN_MODULE_ENABLED   */
+/*#define HAL_GFXMMU_MODULE_ENABLED   */
+/*#define HAL_GFXTIM_MODULE_ENABLED   */
+/*#define HAL_HASH_MODULE_ENABLED   */
+/*#define HAL_HCD_MODULE_ENABLED   */
+/*#define HAL_I2C_MODULE_ENABLED   */
+/*#define HAL_I2S_MODULE_ENABLED   */
+/*#define HAL_I3C_MODULE_ENABLED   */
+/*#define HAL_ICACHE_MODULE_ENABLED   */
+/*#define HAL_IRDA_MODULE_ENABLED   */
+/*#define HAL_IWDG_MODULE_ENABLED   */
+/*#define HAL_JPEG_MODULE_ENABLED   */
+/*#define HAL_LPTIM_MODULE_ENABLED   */
+/*#define HAL_LTDC_MODULE_ENABLED   */
+/*#define HAL_MCE_MODULE_ENABLED   */
+/*#define HAL_MDF_MODULE_ENABLED   */
+/*#define HAL_MMC_MODULE_ENABLED   */
+/*#define HAL_NAND_MODULE_ENABLED   */
+/*#define HAL_NOR_MODULE_ENABLED   */
+/*#define HAL_PCD_MODULE_ENABLED   */
+/*#define HAL_PKA_MODULE_ENABLED   */
+/*#define HAL_PSSI_MODULE_ENABLED   */
+/*#define HAL_RAMCFG_MODULE_ENABLED   */
+/*#define HAL_RIF_MODULE_ENABLED   */
+/*#define HAL_RNG_MODULE_ENABLED   */
+/*#define HAL_RTC_MODULE_ENABLED   */
+/*#define HAL_SAI_MODULE_ENABLED   */
+/*#define HAL_SD_MODULE_ENABLED   */
+/*#define HAL_SDIO_MODULE_ENABLED   */
+/*#define HAL_SDRAM_MODULE_ENABLED   */
+/*#define HAL_SMARTCARD_MODULE_ENABLED   */
+/*#define HAL_SMBUS_MODULE_ENABLED   */
+/*#define HAL_SPDIFRX_MODULE_ENABLED   */
+/*#define HAL_SPI_MODULE_ENABLED   */
+/*#define HAL_SRAM_MODULE_ENABLED   */
+/*#define HAL_TIM_MODULE_ENABLED   */
+/*#define HAL_UART_MODULE_ENABLED   */
+/*#define HAL_USART_MODULE_ENABLED   */
+/*#define HAL_WWDG_MODULE_ENABLED   */
 #define HAL_XSPI_MODULE_ENABLED
+/*#define HAL_CACHEAXI_MODULE_ENABLED   */
+/*#define HAL_MDIOS_MODULE_ENABLED   */
+/*#define HAL_GPU2D_MODULE_ENABLED   */
+#define HAL_GPIO_MODULE_ENABLED
+#define HAL_EXTI_MODULE_ENABLED
+#define HAL_DMA_MODULE_ENABLED
+#define HAL_RCC_MODULE_ENABLED
+#define HAL_PWR_MODULE_ENABLED
+#define HAL_CORTEX_MODULE_ENABLED
 
 /* ########################## Oscillator Values adaptation ####################*/
 /**
@@ -145,7 +153,7 @@ extern "C" {
   * @brief This is the HAL system configuration section
   */
 #define  VDD_VALUE                  3300UL /*!< Value of VDD in mv */
-#define  TICK_INT_PRIORITY          ((1UL<<__NVIC_PRIO_BITS) - 1UL)  /*!< tick interrupt priority (lowest by default) */
+#define  TICK_INT_PRIORITY          15U  /*!< tick interrupt priority (lowest by default) */
 #define  USE_RTOS                   0U
 
 /* ########################## Assert Selection ############################## */
@@ -166,6 +174,7 @@ extern "C" {
   *        for each PPP peripheral).
   */
 #define  USE_HAL_ADC_REGISTER_CALLBACKS       0U /* ADC register callback disabled       */
+#define  USE_HAL_CACHEAXI_REGISTER_CALLBACKS  0U /* CACHEAXI register callback disabled  */
 #define  USE_HAL_CRYP_REGISTER_CALLBACKS      0U /* CRYP register callback disabled      */
 #define  USE_HAL_DCMI_REGISTER_CALLBACKS      0U /* DCMI register callback disabled      */
 #define  USE_HAL_DCMIPP_REGISTER_CALLBACKS    0U /* DCMIPP register callback disabled    */
@@ -178,6 +187,7 @@ extern "C" {
 #define  USE_HAL_HASH_REGISTER_CALLBACKS      0U /* HASH register callback disabled      */
 #define  USE_HAL_HCD_REGISTER_CALLBACKS       0U /* HCD register callback disabled       */
 #define  USE_HAL_I2C_REGISTER_CALLBACKS       0U /* I2C register callback disabled       */
+#define  USE_HAL_I2S_REGISTER_CALLBACKS       0U /* I2S register callback disabled       */
 #define  USE_HAL_I3C_REGISTER_CALLBACKS       0U /* I3C register callback disabled       */
 #define  USE_HAL_IWDG_REGISTER_CALLBACKS      0U /* IWDG register callback disabled      */
 #define  USE_HAL_IRDA_REGISTER_CALLBACKS      0U /* IRDA register callback disabled      */
@@ -215,12 +225,16 @@ extern "C" {
  * Activated: CRC code is present inside driver
  * Deactivated: CRC code cleaned from driver
  */
-#define USE_SPI_CRC                   1U
+#define USE_SPI_CRC                   0U
 
 /* ################## SDMMC peripheral configuration ######################### */
 
 #define USE_SD_TRANSCEIVER            0U
 
+/* ################## SDIO peripheral configuration ######################### */
+
+#define USE_SDIO_TRANSCEIVER          0U
+#define SDIO_MAX_IO_NUMBER            7U
 
 /* Includes ------------------------------------------------------------------*/
 /**
@@ -241,6 +255,10 @@ extern "C" {
 #ifdef HAL_DMA_MODULE_ENABLED
 #include "stm32n6xx_hal_dma.h"
 #endif /* HAL_DMA_MODULE_ENABLED */
+
+#ifdef HAL_CACHEAXI_MODULE_ENABLED
+#include "stm32n6xx_hal_cacheaxi.h"
+#endif /* HAL_CACHEAXI_MODULE_ENABLED */
 
 #ifdef HAL_CORTEX_MODULE_ENABLED
 #include "stm32n6xx_hal_cortex.h"
@@ -302,6 +320,10 @@ extern "C" {
 #include "stm32n6xx_hal_gpio.h"
 #endif /* HAL_GPIO_MODULE_ENABLED */
 
+#ifdef HAL_GPU2D_MODULE_ENABLED
+#include "stm32n6xx_hal_gpu2d.h"
+#endif /* HAL_GPU2D_MODULE_ENABLED */
+
 #ifdef HAL_HASH_MODULE_ENABLED
 #include "stm32n6xx_hal_hash.h"
 #endif /* HAL_HASH_MODULE_ENABLED */
@@ -313,6 +335,10 @@ extern "C" {
 #ifdef HAL_I2C_MODULE_ENABLED
 #include "stm32n6xx_hal_i2c.h"
 #endif /* HAL_I2C_MODULE_ENABLED */
+
+#ifdef HAL_I2S_MODULE_ENABLED
+ #include "stm32n6xx_hal_i2s.h"
+#endif /* HAL_I2S_MODULE_ENABLED */
 
 #ifdef HAL_I3C_MODULE_ENABLED
 #include "stm32n6xx_hal_i3c.h"
@@ -349,6 +375,10 @@ extern "C" {
 #ifdef HAL_MDF_MODULE_ENABLED
 #include "stm32n6xx_hal_mdf.h"
 #endif /* HAL_MDF_MODULE_ENABLED */
+
+#ifdef HAL_MDIOS_MODULE_ENABLED
+#include "stm32n6xx_hal_mdios.h"
+#endif /* HAL_MDIOS_MODULE_ENABLED */
 
 #ifdef HAL_MMC_MODULE_ENABLED
 #include "stm32n6xx_hal_mmc.h"
@@ -449,7 +479,6 @@ extern "C" {
 #ifdef HAL_XSPI_MODULE_ENABLED
 #include "stm32n6xx_hal_xspi.h"
 #endif /* HAL_XSPI_MODULE_ENABLED */
-
 
 /* Exported macros -----------------------------------------------------------*/
 #ifdef  USE_FULL_ASSERT

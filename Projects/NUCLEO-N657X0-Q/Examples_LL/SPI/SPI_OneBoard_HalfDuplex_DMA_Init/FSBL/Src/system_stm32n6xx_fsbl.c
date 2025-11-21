@@ -222,6 +222,19 @@ void SystemInit(void)
   /* Set default Vector Table location after system reset or return from Standby */
   SYSCFG->INITSVTORCR = SCB->VTOR;
 
+  /* Compensation cells setting according to Errata Sheet ES0620 */
+  /* a/ Enable access and configuration of VDDIOxCCCR registers  */
+  PWR->SVMCR1 |= PWR_SVMCR1_VDDIO4SV;
+  PWR->SVMCR2 |= PWR_SVMCR2_VDDIO5SV;
+  PWR->SVMCR3 |= PWR_SVMCR3_VDDIO2SV | PWR_SVMCR3_VDDIO3SV;
+
+  /* b/ Enable access and configuration of VDDIOxCCCR registers */
+  SYSCFG->VDDIO2CCCR = 0x00000287UL; /* VDDIO2 power domain compensation */
+  SYSCFG->VDDIO3CCCR = 0x00000287UL; /* VDDIO3 power domain compensation */
+  SYSCFG->VDDIO4CCCR = 0x00000287UL; /* VDDIO4 power domain compensation */
+  SYSCFG->VDDIO5CCCR = 0x00000287UL; /* VDDIO4 power domain compensation */
+  SYSCFG->VDDCCCR    = 0x00000287UL; /* VDD power domain compensation    */
+
   /* Enable VDDADC CLAMP */
   PWR->SVMCR3 |= PWR_SVMCR3_ASV;
   PWR->SVMCR3 |= PWR_SVMCR3_AVMEN;
@@ -247,39 +260,6 @@ void SystemInit(void)
 
   /* Deactivate GPIOG clock */
   RCC->AHB4ENCR = RCC_AHB4ENCR_GPIOGENC;
-
-
-  /* Check whether patch is required at System initialization */
-#if defined(STM32N6XX_SI_CUT1_1)
-  /*----------Begin patch Cut1.x sample --------------------------------------*/
-  /* Necessary for Cut1.x on exit from bootrom                                */
-  /* Disable LPTIM4 interrupt                                                 */
-  NVIC_DisableIRQ(LPTIM4_IRQn);
-  NVIC_ClearPendingIRQ(LPTIM4_IRQn);
-  /* LPTIM4 and LPTIM4 clock selection reset                                  */
-  RCC->APB4RSTSR1 = RCC_APB4RSTSR1_LPTIM4RSTS;
-  RCC->APB4RSTCR1 = RCC_APB4RSTCR1_LPTIM4RSTC;
-  RCC->CCIPR12 &= ~RCC_CCIPR12_LPTIM4SEL;
-  /* Deactivate LPTIM4 clock */
-  RCC->APB4ENCR1 = RCC_APB4ENCR1_LPTIM4ENC;
-
-  SCB_InvalidateDCache();
-  SCB_InvalidateICache();
-  /* Re-enable interrupts disabled in startup_stm32YYYxx_fsbl.s/.c */
-  __enable_irq();
-
-  /* enable Dcache and Icache lookups */
-  MEMSYSCTL->MSCR |= MEMSYSCTL_MSCR_DCACTIVE_Msk | MEMSYSCTL_MSCR_ICACTIVE_Msk;
-
-  /* Setup I/O compensation cells for */
-  SYSCFG->VDDIO2CCCR = 0x00000278UL; /* SDMMC1 domain compensation */
-  SYSCFG->VDDIO3CCCR = 0x00000278UL; /* SDMMC2 domain compensation */
-  SYSCFG->VDDIO4CCCR = 0x00000278UL; /* Hexa-SPI domain compensation */
-  SYSCFG->VDDIO5CCCR = 0x00000278UL; /* Octo-SPI domain compensation */
-  SYSCFG->VDDCCCR    = 0x00000278UL; /* VDD domain compensation */
-
-  /*----------End patch Cut1.x sample ----------------------------------------*/
-#endif /* STM32N6XX_SI_CUT1_1 */
 
   /* Read back the value to make sure it is written before deactivating SYSCFG */
   (void) SYSCFG->INITSVTORCR;

@@ -82,7 +82,7 @@ VOID MX_NetXDuo_Notify_Video_Frame_Ready(VOID);
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define PAYLOAD_SIZE             1536
-#define NX_PACKET_POOL_SIZE      (( PAYLOAD_SIZE + sizeof(NX_PACKET)) * 45)
+#define NX_PACKET_POOL_SIZE      (( PAYLOAD_SIZE + sizeof(NX_PACKET)) * 16)
 #define QUEUE_MAX_SIZE           512
 
 #define DEFAULT_MEMORY_SIZE      1024

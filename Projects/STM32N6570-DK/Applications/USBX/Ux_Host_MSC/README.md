@@ -129,3 +129,5 @@ In order to make the program work, you must do the following :
 The user has to check the list of the COM ports in Device Manager to find out the number
 of the COM ports that have been assigned (by OS) to the Stlink VCP.
 The application uses the external HSE clock as USB source clock.
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

@@ -61,12 +61,12 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section3" checked aria-hidden="true"> <label for="collapse-section3" checked aria-hidden="true"><strong>V1.2.0 / 04-June-2025</strong></label>
+<input type="checkbox" id="collapse-section4" checked aria-hidden="true"> <label for="collapse-section4" checked aria-hidden="true"><strong>V1.3.0 / 29-October-2025</strong></label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
-<h3 id="second-maintenance-release-of-stm32cuben6-stm32cube-for-stm32n6-series-supporting-stm32n657xx-stm32n655xx-stm32n647xx-and-stm32n645xx-devices">Second maintenance release of <strong>STM32CubeN6</strong> (STM32Cube for STM32N6 Series) supporting <strong>STM32N657xx</strong>, <strong>STM32N655xx</strong>, <strong>STM32N647xx</strong> and <strong>STM32N645xx</strong> devices</h3>
+<h3 id="third-maintenance-release-of-stm32cuben6-stm32cube-for-stm32n6-series-supporting-stm32n657xx-stm32n655xx-stm32n647xx-and-stm32n645xx-devices">Third maintenance release of <strong>STM32CubeN6</strong> (STM32Cube for STM32N6 Series) supporting <strong>STM32N657xx</strong>, <strong>STM32N655xx</strong>, <strong>STM32N647xx</strong> and <strong>STM32N645xx</strong> devices</h3>
 <h2 id="contents">Contents</h2>
-<p>STM32CubeN6 gathers in one single package generic embedded software components to develop an application on STM32N6 microcontrollers.</p>
+<p>STM32CubeN6 gathers in a single package generic embedded software components to develop an application on STM32N6 microcontrollers.</p>
 <ul>
 <li>HAL and LL API drivers, checked with Coverity® static analysis tool, and developed in compliance with MISRA C® guidelines,</li>
 <li>CMSIS CORE component,</li>
@@ -75,6 +75,651 @@
 <li>A rich set of examples and applications for easy understanding, compatible with STM32CubeMX to facilitate the configuration through a graphical tool.</li>
 </ul>
 <h2 id="changes-compared-with-last-release">Changes compared with last release</h2>
+<ul>
+<li><strong>CMSIS Core</strong>
+<ul>
+<li>CMSIS update
+<ul>
+<li>CMSIS Base Software Library V6.2.0</li>
+<li>CMSIS-DSP Software Library V1.16.2</li>
+<li>CMSIS-NN Software Library removed (it is up to the application to add the required CMSIS-NN Software Library pack release version)</li>
+</ul></li>
+</ul></li>
+<li><strong>CMSIS Device drivers</strong>
+<ul>
+<li>Add missing defines in stm32n6xx.h</li>
+<li>Fix gcc linker files to ensure that
+<ul>
+<li>Non-Secure Callable (NSC) functions are mapped in NSC area</li>
+<li>a ROM area is always defined</li>
+</ul></li>
+<li>Correct REVID_BASE_NS and REVID_BASE_S definitions</li>
+<li>Correct DLYB_TypeDef structure definition</li>
+</ul></li>
+<li><strong>HAL/LL drivers</strong>
+<ul>
+<li>HAL CORTEX driver
+<ul>
+<li>Fix Misra-C:2012 R17.11 warning</li>
+</ul></li>
+<li>HAL DCMIPP driver
+<ul>
+<li>Correct HAL_DCMIPP_PIPE_SetConfig() to ensure the API can be called several times without having to go through HAL_DCMIPP_Deinit()/HAL_DCMIPP_Init()</li>
+<li>Addition of HAL_DCMIPP_PIPE_SetFullPlanarMemoryAddress() and HAL_DCMIPP_PIPE_SetSemiPlanarMemoryAddress() APIs</li>
+<li>Ranges correction in DCMIPP_DownsizeTypeDef structure comments</li>
+</ul></li>
+<li>HAL Generic driver
+<ul>
+<li>Deprecate HAL_SYSCFG_EnableVDDCompensationCell() and HAL_SYSCFG_EnableVDDIOxCompensationCell() APIs because I/O compensation cells must remain disabled (refer to Errata Sheet ES0620)</li>
+<li>Make HAL_GetREVID() available in Non-Secure as well as in Secure domain</li>
+<li>Correct HAL_InitTick() in hal_timebase_tim_template.c to make sure callback function is registered before timer start<br />
+</li>
+</ul></li>
+<li>HAL MCE driver
+<ul>
+<li>Remove AccessMode and PrivilegedAccess fields from MCE_RegionConfigTypeDef structure</li>
+<li>Fix SA0054</li>
+<li>Remove unused IS_MCE_AES_INSTANCE() macro</li>
+</ul></li>
+<li>HAL RCC driver
+<ul>
+<li>Add __HAL_RCC_IC_CONFIG() macro to configure sources and dividers of ICx</li>
+<li>Correct HAL_RCCEx_GetPeriphCLKConfig() API to retrieve ICx source</li>
+<li>Add comment to __HAL_RCC_TIMCLKPRESCALER_CONFIG() macro to highlight that the clock ratio tim_ker_ck/tim_pclk must be an integer between 1 and 16</li>
+<li>Fix USBPHY and OTGHS clock sources definitions</li>
+</ul></li>
+<li>HAL RTC driver
+<ul>
+<li>Correct HAL_RTC_Init() to ensure proper initialization in binary mode</li>
+<li>Replace WRITE_REG() by SET_BIT() in HAL_RTCEx_BKUPBlock() and HAL_RTCEx_LockBootHardwareKey() APIs</li>
+</ul></li>
+<li>HAL SDMMC driver
+<ul>
+<li>Remove call to LL_DLYB_Enable(SD_GET_DLYB_INSTANCE(hsd-&gt;Instance)) from SD_UltraHighSpeed() API</li>
+</ul></li>
+<li>HAL SPI driver
+<ul>
+<li>Add IS_SPI_LIMITED_TRANSFER_SIZE() macro to check the transfer size parameter</li>
+<li>Add HAL_I2S_EnableIOSwap(), HAL_I2S_DisableIOSwap() and HAL_I2S_IsEnabledIOSwap() APIs to manage IO swap feature</li>
+<li>Fix packing mode management test in HAL_SPI_TransmitReceive_DMA() API</li>
+<li>Correct HAL_SPI_Abort_IT() API to ensure DMA RX aborts after DMA TX</li>
+<li>Ensure auto suspend flag is cleared in HAL_SPI_Receive() API</li>
+<li>Update SPI_TxISR_8BIT(), SPI_TxISR_16BIT() and SPI_TxISR_32BIT() functions to avoid buffer overflow in TX ISR</li>
+</ul></li>
+<li>HAL USB driver
+<ul>
+<li>Add data toggle support for control EP in HCD_HC_OUT_IRQHandler() API</li>
+</ul></li>
+<li>HAL XSPI driver
+<ul>
+<li>Add HAL_XSPI_IsMemoryMapped() API</li>
+<li>Correct HAL_XSPIM_Config() to ensure correct setting of XSPI3 instance</li>
+<li>Rework DHQC bit de-referencing in XSPI_ConfigCmd() function</li>
+</ul></li>
+<li>LL DLYB driver
+<ul>
+<li>Replace L_DLYB_SetDelay(), L_DLYB_GetDelay() and LL_DLYB_GetClockPeriod() APIs by LL_DLYB_SetDelayNormalSpeed() and LL_DLYB_SetDelayHighSpeed()</li>
+<li>Suppress LL_DLYB_Enable() and LL_DLYB_Disable() APIs</li>
+<li>Suppress DLYB_FLAG_LNGF definition</li>
+</ul></li>
+<li>LL RCC driver
+<ul>
+<li>Add comment to LL_RCC_SetTIMPrescaler() API to highlight that the clock ratio tim_ker_ck/tim_pclk must be an integer between 1 and 16</li>
+</ul></li>
+<li>LL USB driver
+<ul>
+<li>Fix Misra-C:2012 R12.2 warnings<br />
+</li>
+<li>Update USB_HC_StartXfer() API to enable NYET/NAK interrupts</li>
+</ul></li>
+</ul></li>
+<li><strong>STM32N6xx_Nucleo BSP drivers</strong>
+<ul>
+<li>Fix external memory size definition in BSP_XSPI_NOR_Init() API</li>
+</ul></li>
+<li><strong>STM32N6570-DK BSP drivers</strong>
+<ul>
+<li>Fix external memory size definition in BSP_XSPI_NOR_Init() API</li>
+<li>Enhance XSPI_NOR_ResetMemory() and XSPI_NOR_EnterDOPIMode() APIs to decrease NOR initialization time</li>
+<li>Correct XSPI_Ram_Ctx[] array number of entries definition</li>
+<li>Correct SAI_MspInit() to ensure audio output is available when all RAM is non-cacheable</li>
+<li>Update isp_param_conf.h to be aligned with ISP library v1.2.0</li>
+</ul></li>
+<li><strong>Middlewares</strong>
+<ul>
+<li>STM32_ExtMem_Manager
+<ul>
+<li>Solve EMM Initialisation issues with Macronix MX25L25645G QSPI memory</li>
+<li>Correct number of dummy cycles used in 1S1S1S reading on Octal MX66</li>
+<li>Check number of dummy cycles to be used in Octal mode for READ SFDP command</li>
+<li>Adapt the memory interface frequency according to max requested frequency as defined in configuration table in Octal mode</li>
+<li>Correct initialisation of nb of dummy cycles in some cases of 4 lines configuration</li>
+<li>Handle case where MaxFreq is undefined in NOR SFDP extmem_list_config</li>
+<li>Codespell and MCUAstyle corrections</li>
+<li>Add DCache management in EXTMEM_DRIVER_NOR_SFDP_WriteInMappedMode() in Nor Flash driver</li>
+<li>Addition of a new EMM driver type : CUSTOM driver allows end user to handle memories thanks to a configuration file containing all required memory characteristics, register configuration step descriptions, … Examples of configuration files used with this CUSTOM driver are provided.</li>
+</ul></li>
+<li>mbed-TLS
+<ul>
+<li>Move to mbed-TLS V3.6.4 to get fix for CVE-2025-27809 and CVE-2025-27810</li>
+</ul></li>
+<li>mcuboot
+<ul>
+<li>Deliver imgtool python script</li>
+<li>Update shared_data.c from TFM GitHub v2.1.0 with minor adaptations</li>
+<li>Provide AES CTR HW implementation fully relying on SAES HW capabilities</li>
+<li>Improve counter measures</li>
+</ul></li>
+</ul></li>
+<li><strong>Projects</strong>
+<ul>
+<li>General changes
+<ul>
+<li>Update MDK_ARM projects to support __DBG_ITM trace</li>
+<li>Correct IWDG_IRQHandler interrupt handler typo in STM32CubeIDE startup files</li>
+<li>Correct DMA configuration in LL examples</li>
+<li>Update all readme files to indicate a command option change when using CubeProgrammer 2.21</li>
+<li>Ensure HSLV_VDDIO2 is not set for all NUCLEO-N657X0-Q projects</li>
+<li>Correct UsbOtgHs1ClockSelection and UsbPhy1ClockSelection fields setting in all projects configuring USB OTG</li>
+</ul></li>
+<li>Examples
+<ul>
+<li>Correct NUCLEO-N657X0-Q\Examples\TIM\TIM_DMA to output the expected number of duty cycles</li>
+<li>Add SDRAM memory area definition in STM32CubeIDE scatter file of STM32N6_CUSTOM_HW\Examples\FMC\FMC_SDRAM_DataMemory</li>
+<li>Set HSE as FDCAN clock source in NUCLEO-N657X0-Q\Examples\FDCAN\FDCAN_Loopback example</li>
+<li>Align STM32N6570-DK\Examples\MCE\MCE_AESEncryptDecryptData_Block_AES_256 with MCE HAL driver latest updates<br />
+</li>
+</ul></li>
+<li>Templates
+<ul>
+<li>Add FSBL, AppliSecure and AppliNonSecure folders to Template_FSBL_XIP and Template_Isolation_XIP CubeIDE environments</li>
+<li>Add new project STM32N6570-DK\Templates\Template_FSBL_XIP_Custom to illustrate how to use the Custom driver from the External Memory Manager</li>
+<li>Add .ioc files for all template projects (but Template_FSBL_XIP_Custom)</li>
+<li>Correct XSPI2 memory size setting</li>
+</ul></li>
+<li>Applications
+<ul>
+<li>Update DCMIPP applications with latest ISP parameters aligned with ISP library v1.2.0 and clarify the parameters used to configure the downsizing operation</li>
+<li>Correct STM32N6570-DK\Applications\OpenBootloader to ensure proper lock of a single fuse and fix MDK-ARM compilation warnings</li>
+<li>Delete the payload header of STM32N6570-DK\Applications\USBX\Ux_Host_VIDEO</li>
+<li>Remove limitations previously associated with STM32N6570-DK\Applications\USBX\Ux_Device_Audio_2.0:
+<ul>
+<li>application is now functional to play audio clips when USB DMA is enabled</li>
+<li>USBCV CH9 compliance test is passed</li>
+</ul></li>
+<li>Remove limitation previously associated with STM32N6570-DK\Applications\USBPD\USBPD_SRC_UX_Host_MSC: application is now functional when IAR optimization level is set to “none”<br />
+</li>
+<li>Add ioc files for the following projects
+<ul>
+<li>STM32N6570-DK\Applications\USBX\Ux_Device_Audio_2.0</li>
+<li>STM32N6570-DK\Applications\USBX\Ux_Host_CDC_ACM.0<br />
+</li>
+<li>STM32N6570-DK\Applications\FileX\Fx_MultiAccess</li>
+<li>STM32N6570-DK\Applications\FileX\Fx_uSD_File_Edit<br />
+</li>
+<li>STM32N6570-DK\Applications\USBPD\USBPD_SNK_Ux_Device_HID_CDC_ACM<br />
+</li>
+<li>STM32N6570-DK\Applications\NetXDuo\Nx_WebServer<br />
+</li>
+<li>NUCLEO-N657X0-Q\Applications\ThreadX\Tx_Thread_Creation</li>
+<li>NUCLEO-N657X0-Q\Applications\ThreadX\Tx_LowPower</li>
+<li>NUCLEO-N657X0-Q\Applications\ThreadX\Tx_Thread_Sync<br />
+</li>
+<li>NUCLEO-N657X0-Q\Applications\FileX\Fx_File_Edit_Standalone<br />
+</li>
+<li>NUCLEO-N657X0-Q\Applications\USBX\Ux_Host_HID</li>
+<li>NUCLEO-N657X0-Q\Applications\USBX\Ux_Device_HID_CDC_ACM<br />
+</li>
+<li>NUCLEO-N657X0-Q\Applications\NetXDuo\Nx_TCP_Echo_Client</li>
+</ul></li>
+</ul></li>
+<li>ROT applications
+<ul>
+<li>Rename STM32N6570-DK\Templates_ROT into STM32N6570-DK\Templates\ROT\OEMuROT_Appli_Isolation</li>
+<li>Correct the following items in STM32N6570-DK\Applications\ROT\OEMuROT_Boot application
+<ul>
+<li>passive tamper behavior</li>
+<li>wrong error code when reading invalid flash range</li>
+<li>MPU configuration</li>
+</ul></li>
+<li>Force Python 3 usage in all bat scripts of all ROT applications and provisioning</li>
+</ul></li>
+<li>VENC applications
+<ul>
+<li>Correct PSRAM initialization in VENC_USB application</li>
+<li>Enhance VENC_SDCard application to support resolution changes</li>
+</ul></li>
+<li>List of known projects limitations available in <a href="Projects/Release_Notes.html">release notes</a></li>
+</ul></li>
+</ul>
+<p><br />
+</p>
+<p>The exhaustive list of projects is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Version</th>
+<th>Release notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Projects</td>
+<td>V1.3.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><br />
+</p>
+<p>Template projects for each board (MB1939 STM32N6570-DK revC and MB1940 NUCLEO-N657X0-Q revC) are provided with this release.</p>
+<ul>
+<li>Projects\NUCLEO-N657X0-Q\<strong>Templates_LL</strong></li>
+<li>Projects\STM32N6570-DK\<strong>Templates_LL</strong>
+<ul>
+<li>After bootROM execution, template runs from internal SRAM based on Low Layer drivers</li>
+</ul></li>
+<li>Projects\NUCLEO-N657X0-Q\Templates\<strong>Template</strong></li>
+<li>Projects\STM32N6570-DK\Templates\<strong>Template</strong>
+<ul>
+<li>After bootROM execution, template runs from internal SRAM based on HAL drivers</li>
+</ul></li>
+<li>Projects\NUCLEO-N657X0-Q\Templates\<strong>Template_FSBL_LRUN</strong></li>
+<li>Projects\STM32N6570-DK\Templates\<strong>Template_FSBL_LRUN</strong>
+<ul>
+<li>After bootROM execution, FSBL (First Stage Boot Loader) then application run from internal SRAM
+<ul>
+<li>Template_FSBL_LRUN project is composed of two sub-projects:</li>
+<li><strong>FSBL</strong>: FSBL execution from internal RAM with jump to application in internal RAM</li>
+<li><strong>Appli</strong>: application execution from internal RAM</li>
+</ul></li>
+</ul></li>
+<li>Projects\NUCLEO-N657X0-Q\Templates\<strong>Template_Isolation_LRUN</strong></li>
+<li>Projects\STM32N6570-DK\Templates\<strong>Template_Isolation_LRUN</strong>
+<ul>
+<li>After bootROM execution, FSBL (First Stage Boot Loader) followed by secure application then non-secure application run from internal SRAM
+<ul>
+<li>Template_Isolation_LRUN project is composed of three sub-projects:</li>
+<li><strong>FSBL</strong>: FSBL execution from internal RAM with jump to secure application in internal RAM</li>
+<li><strong>AppliSecure</strong>: secure application execution from internal RAM with jump to non-secure application in internal RAM</li>
+<li><strong>AppliNonSecure</strong>: non-secure application execution from internal RAM</li>
+</ul></li>
+</ul></li>
+<li>Projects\NUCLEO-N657X0-Q\Templates\<strong>Template_FSBL_XIP</strong></li>
+<li>Projects\STM32N6570-DK\Templates\<strong>Template_FSBL_XIP</strong>
+<ul>
+<li>After bootROM execution, FSBL (First Stage Boot Loader) runs from internal SRAM, followed by application running from external Flash
+<ul>
+<li>Template_FSBL_XIP project is composed of three sub-projects:</li>
+<li><strong>FSBL</strong>: FSBL execution from internal RAM with jump to application in external Flash</li>
+<li><strong>Appli</strong>: application execution from external Flash</li>
+<li><strong>ExtMemLoader</strong>: build the external Flash loader for the board</li>
+</ul></li>
+</ul></li>
+<li>Projects\NUCLEO-N657X0-Q\Templates\<strong>Template_Isolation_XIP</strong></li>
+<li>Projects\STM32N6570-DK\Templates\<strong>Template_Isolation_XIP</strong>
+<ul>
+<li>After bootROM execution, FSBL (First Stage Boot Loader) runs from internal SRAM, followed by secure application then non-secure application both running from external Flash
+<ul>
+<li>Template_Isolation_XIP project is composed of four sub-projects:</li>
+<li><strong>FSBL</strong>: FSBL execution from internal RAM with jump to secure application in external Flash</li>
+<li><strong>AppliSecure</strong>: secure application execution from external Flash with jump to non-secure application in external Flash</li>
+<li><strong>AppliNonSecure</strong>: non-secure application execution from external Flash</li>
+<li><strong>ExtMemLoader</strong>: build the external Flash loader for the board</li>
+</ul></li>
+</ul></li>
+<li>Projects\STM32N6570-DK\Templates\ROT\<strong>OEMuROT_Appli_Isolation</strong>
+<ul>
+<li>OEMuROT boot path after authenticity and integrity checks of the project firmware and project data images</li>
+</ul></li>
+<li>Projects\STM32N6570-DK\<strong>Templates_Board</strong>
+<ul>
+<li>After bootROM execution, template runs from internal SRAM</li>
+<li>STM32CubeMX “Start my project from ST Board” provides an easy access to ST boards’ features with demonstration code based on HAL and BSP drivers</li>
+</ul></li>
+</ul>
+<p><br />
+</p>
+<ul>
+<li>Projects are provided with a configuration defined for nominal voltage mode and are setting the CPU clock at <strong><span style="color:blue">600 MHz</span></strong> and the System clock at 400 MHz.</li>
+<li>An example of overdrive voltage configuration, setting the CPU clock at <strong><span style="color:green">800 MHz</span></strong> and the System clock at 400 MHz can be found in the project <em>Projects\STM32N6570-DK\Templates\Template</em>.</li>
+</ul>
+<h2 id="components">Components</h2>
+<p><strong>Drivers</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CMSIS</td>
+<td style="text-align: left;">V6.2.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Documentation/index.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32N6xx CMSIS</td>
+<td style="text-align: left;">V1.3.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/cmsis-device-n6/blob/main/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32N6xx_HAL_Driver</td>
+<td style="text-align: left;">V1.3.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32n6xx-hal-driver/blob/main/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><br />
+</p>
+<p><strong>BSP Drivers</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th>Release notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">STM32N6xx_Nucleo</td>
+<td style="text-align: left;">V1.2.0 <span class="icon-st-update"></span></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32n6xx-nucleo-bsp/blob/main/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32N6570-DK</td>
+<td style="text-align: left;">V1.3.0 <span class="icon-st-update"></span></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32l562e-dk-bsp/blob/main/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">aps256xx</td>
+<td style="text-align: left;">V1.0.6</td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32-aps256xx/blob/v1.0.6/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Common</td>
+<td style="text-align: left;">V7.3.0</td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32-bsp-common/blob/v7.3.0/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">lan8742</td>
+<td style="text-align: left;">V1.0.4</td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32-lan8742/blob/v1.0.4/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">mx66uw1g45g</td>
+<td style="text-align: left;">V1.1.0</td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/mx66uw1g45g/blob/v1.1.0/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">mx25um51245g</td>
+<td style="text-align: left;">V1.0.1</td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/mx25um51245g/blob/v1.0.1/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rk050hr18</td>
+<td style="text-align: left;">V1.0.1</td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/rk050hr18/blob/v1.0.1/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rtl8211</td>
+<td style="text-align: left;">V2.0.4</td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/rtl8211/blob/v2.0.4/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">tcpp0203</td>
+<td style="text-align: left;">V1.2.2</td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/tcpp0203/blob/v1.2.2/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">gt911</td>
+<td style="text-align: left;">V1.0.1</td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/gt911/blob/v1.0.1/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">cs42l51</td>
+<td style="text-align: left;">V2.0.6</td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32-cs42l51/blob/v2.0.6/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">imx335</td>
+<td style="text-align: left;">V1.3.2 <span class="icon-st-update"></span></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/imx335/blob/v1.3.1/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">wm8904</td>
+<td style="text-align: left;">V1.1.1 <span class="icon-st-update"></span></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/wm8904/blob/v1.1.0/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><br />
+</p>
+<p><strong>Middlewares</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">STM32_ExtMem_Manager</td>
+<td style="text-align: left;">V1.5.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_ExtMem_Manager/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32_ExtMem_Loader</td>
+<td style="text-align: left;">V1.1.1 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_ExtMem_Loader/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Filex</td>
+<td style="text-align: left;">V6.4.0.250811 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/filex/README.md">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Levelx</td>
+<td style="text-align: left;">V6.4.0.250822 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/levelx/README.md">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Netxduo</td>
+<td style="text-align: left;">V6.4.0.250619 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/netxduo/README.md">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ThreadX</td>
+<td style="text-align: left;">V6.4.0.250822 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/threadx/README.md">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">USBX</td>
+<td style="text-align: left;">V6.4.0.251022 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/usbx/README.md">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32 CMSIS RTOS ThreadX</td>
+<td style="text-align: left;">V1.3.2 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/cmsis_rtos_threadx/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32 USBPD Core Library</td>
+<td style="text-align: left;">V5.3.1 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_USBPD_Library/Core/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32 USBPD Device Library</td>
+<td style="text-align: left;">V1.0.1 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_USBPD_Library/Devices/STM32N6XX/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32 ISP Library</td>
+<td style="text-align: left;">V1.2.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_ISP_Library/README.md">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">VideoEncoder</td>
+<td style="text-align: left;">V9.22.3.7 / ST modified 171224</td>
+<td style="text-align: left;"><a href="Middlewares/Third_Party/VideoEncoder/st_readme.txt">ST release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">VideoEncoder_EWL</td>
+<td style="text-align: left;">V1.2.1 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/VideoEncoder_EWL/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">N6 OpenBootLoader</td>
+<td style="text-align: left;">V1.0.1 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/OpenBootloader/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">mbed-TLS</td>
+<td style="text-align: left;">V3.6.4 / ST modified 010725 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/Third_Party/mbedtls/st_readme.txt">ST release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">mcuboot</td>
+<td style="text-align: left;">V1.7.2.38 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/Third_Party/mcuboot/docs/release-notes.md">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">ST modified 220725 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/Third_Party/mcuboot/st_readme.txt">ST release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><em>N6 OpenBootLoader</em> middleware was named <em>OpenBootLoader</em> in the previous release notes.</p>
+<p><br />
+</p>
+<p><strong>Utilities</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Common</td>
+<td style="text-align: left;">V1.6.1</td>
+<td style="text-align: left;"><a href="Utilities/Common/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fonts</td>
+<td style="text-align: left;">V2.0.3</td>
+<td style="text-align: left;"><a href="Utilities/Fonts/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">lcd</td>
+<td style="text-align: left;">V2.2.0</td>
+<td style="text-align: left;"><a href="Utilities/lcd/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">lcd_trace</td>
+<td style="text-align: left;">V2.0.1</td>
+<td style="text-align: left;"><a href="Utilities/lcd_trace/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GUI_INTERFACE</td>
+<td style="text-align: left;">V3.0.1</td>
+<td style="text-align: left;"><a href="Utilities/GUI_INTERFACE/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TRACER_EMB</td>
+<td style="text-align: left;">V1.12.0</td>
+<td style="text-align: left;"><a href="Utilities/TRACER_EMB/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ROT_AppliConfig</td>
+<td style="text-align: left;">V1.1.4 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Utilities/PC_Software/ROT_AppliConfig/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">JPEG</td>
+<td style="text-align: left;">V2.0.3</td>
+<td style="text-align: left;"><a href="Utilities/JPEG/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><br />
+</p>
+<h2 id="development-toolchains-and-compilers">Development Toolchains and Compilers</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Toolchain + ST-Link</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Patch</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">IAR Embedded Workbench for ARM (EWARM)</td>
+<td style="text-align: left;">V9.40.1</td>
+<td style="text-align: left;"><a href="Utilities/PC_Software/EWARMv9_STM32N6xx_V1.0.0.zip">Patch EWARM</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RealView Microcontroller Development Kit (MDK-ARM)</td>
+<td style="text-align: left;">V5.39</td>
+<td style="text-align: left;"><a href="Utilities\PC_Software\Keil.STM32N6xx_DFP.1.0.0.zip">Patch MDK-ARM</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32CubeIDE</td>
+<td style="text-align: left;">V1.18.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Additional details on Development Toolchains versions are available in projects <a href="Projects/Release_Notes.html">release notes</a>.<br />
+</li>
+</ul>
+<h2 id="supported-devices-and-boards">Supported Devices and Boards</h2>
+<ul>
+<li>STM32N6xx devices</li>
+<li>MB1939 STM32N6570-DK revC</li>
+<li>MB1940 NUCLEO-N657X0-Q revC</li>
+</ul>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li><p>STM32CubeMX V6.16.0</p></li>
+<li><p>STM32CubeProgrammer V2.18</p></li>
+</ul>
+<h2 id="known-limitations">Known Limitations</h2>
+<ul>
+<li>List of known projects limitations is available in projects <a href="Projects/Release_Notes.html">release notes</a>.</li>
+</ul>
+<h2 id="backward-compatibility">Backward Compatibility</h2>
+<ul>
+<li>NA</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section3"  aria-hidden="true"> <label for="collapse-section3" checked aria-hidden="true"><strong>V1.2.0 / 04-June-2025</strong></label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<h3 id="second-maintenance-release-of-stm32cuben6-stm32cube-for-stm32n6-series-supporting-stm32n657xx-stm32n655xx-stm32n647xx-and-stm32n645xx-devices">Second maintenance release of <strong>STM32CubeN6</strong> (STM32Cube for STM32N6 Series) supporting <strong>STM32N657xx</strong>, <strong>STM32N655xx</strong>, <strong>STM32N647xx</strong> and <strong>STM32N645xx</strong> devices</h3>
+<h2 id="contents-1">Contents</h2>
+<p>STM32CubeN6 gathers in one single package generic embedded software components to develop an application on STM32N6 microcontrollers.</p>
+<ul>
+<li>HAL and LL API drivers, checked with Coverity® static analysis tool, and developed in compliance with MISRA C® guidelines,</li>
+<li>CMSIS CORE component,</li>
+<li>BSP and RTOS software components,</li>
+<li>Consistent set of middleware components (Azure® RTOS USBX, FileX/LevelX, ThreadX, NetX Duo, USB Power Delivery, mcu-boot, mbed-TLS, external memory manager and loader, Image Signal Processing (ISP) and OpenBootloader),</li>
+<li>A rich set of examples and applications for easy understanding, compatible with STM32CubeMX to facilitate the configuration through a graphical tool.</li>
+</ul>
+<h2 id="changes-compared-with-last-release-1">Changes compared with last release</h2>
 <ul>
 <li><strong>SBOM</strong>
 <ul>
@@ -154,7 +799,7 @@
 <li>Add MDK-ARM and STM32CubeIDE projects for examples and applications when missing in v1.1.0 release</li>
 <li>Align XSPI examples with the rework of XSPI_AutoPollingMemReady()/XSPI_WriteEnable() functions in order to use Auto Polling feature of XSPI peripheral</li>
 <li>Enhance XSPI_PSRAM_MemoryMapped to ensure a 200 MHz transfer rate</li>
-<li>Correct HAL_TimeBase_TIM exemple to return the expected output frequency</li>
+<li>Correct HAL_TimeBase_TIM example to return the expected output frequency</li>
 <li>Correct DMA2D_MemToMemWithPFC example</li>
 <li>Enhance OEMuROT applications and fix minor issues</li>
 <li>Enhance VENC applications</li>
@@ -255,7 +900,7 @@
 <li>Projects are provided with a configuration defined for nominal voltage mode and are setting the CPU clock at <strong><span style="color:blue">600 MHz</span></strong> and the System clock at 400 MHz.</li>
 <li>An example of overdrive voltage configuration, setting the CPU clock at <strong><span style="color:green">800 MHz</span></strong> and the System clock at 400 MHz can be found in the project <em>Projects\STM32N6570-DK\Templates\Template</em>.</li>
 </ul>
-<h2 id="components">Components</h2>
+<h2 id="components-1">Components</h2>
 <p><strong>Drivers</strong></p>
 <table>
 <thead>
@@ -274,12 +919,12 @@
 <tr class="even">
 <td style="text-align: left;">STM32N6xx CMSIS</td>
 <td style="text-align: left;">V1.2.0 <span class="icon-st-update"></span></td>
-<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32N6xx/Release_Notes.html">release notes</a></td>
+<td style="text-align: left;"><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/cmsis-device-n6/blob/main/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">STM32N6xx_HAL_Driver</td>
 <td style="text-align: left;">V1.2.0 <span class="icon-st-update"></span></td>
-<td style="text-align: left;"><a href="Drivers/STM32N6xx_HAL_Driver/Release_Notes.html">release notes</a></td>
+<td style="text-align: left;"><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32n6xx-hal-driver/blob/main/Release_Notes.html">release notes</a></td>
 </tr>
 </tbody>
 </table>
@@ -298,72 +943,72 @@
 <tr class="odd">
 <td style="text-align: left;">STM32N6xx_Nucleo</td>
 <td style="text-align: left;">V1.1.0 <span class="icon-st-update"></span></td>
-<td><a href="Drivers/BSP/STM32N6xx_Nucleo/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32n6xx-nucleo-bsp/blob/main/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">STM32N6570-DK</td>
 <td style="text-align: left;">V1.2.0 <span class="icon-st-update"></span></td>
-<td><a href="Drivers/BSP/STM32N6570-DK/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32l562e-dk-bsp/blob/main/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">aps256xx</td>
 <td style="text-align: left;">V1.0.6</td>
-<td><a href="Drivers/BSP/Components/aps256xx/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32-aps256xx/blob/v1.0.6/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Common</td>
 <td style="text-align: left;">V7.3.0</td>
-<td><a href="Drivers/BSP/Components/Common/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32-bsp-common/blob/v7.3.0/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">lan8742</td>
 <td style="text-align: left;">V1.0.4</td>
-<td><a href="Drivers/BSP/Components/lan8742/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32-lan8742/blob/v1.0.4/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mx66uw1g45g</td>
 <td style="text-align: left;">V1.1.0</td>
-<td><a href="Drivers/BSP/Components/mx66uw1g45g/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/mx66uw1g45g/blob/v1.1.0/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">mx25um51245g</td>
 <td style="text-align: left;">V1.0.1</td>
-<td><a href="Drivers/BSP/Components/mx25um51245g/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/mx25um51245g/blob/v1.0.1/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">rk050hr18</td>
 <td style="text-align: left;">V1.0.1</td>
-<td><a href="Drivers/BSP/Components/rk050hr18/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/rk050hr18/blob/v1.0.1/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">rtl8211</td>
 <td style="text-align: left;">V2.0.4</td>
-<td><a href="Drivers/BSP/Components/rtl8211/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/rtl8211/blob/v2.0.4/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">tcpp0203</td>
 <td style="text-align: left;">V1.2.2</td>
-<td><a href="Drivers/BSP/Components/tcpp0203/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/tcpp0203/blob/v1.2.2/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">gt911</td>
 <td style="text-align: left;">V1.0.1</td>
-<td><a href="Drivers/BSP/Components/gt911/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/gt911/blob/v1.0.1/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">cs42l51</td>
 <td style="text-align: left;">V2.0.6</td>
-<td><a href="Drivers/BSP/Components/cs42l51/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32-cs42l51/blob/v2.0.6/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">imx335</td>
 <td style="text-align: left;">V1.3.1</td>
-<td><a href="Drivers/BSP/Components/imx335/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/imx335/blob/v1.3.1/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">wm8904</td>
 <td style="text-align: left;">V1.1.0</td>
-<td><a href="Drivers/BSP/Components/wm8904/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/wm8904/blob/v1.1.0/Release_Notes.html">release notes</a></td>
 </tr>
 </tbody>
 </table>
@@ -523,7 +1168,7 @@
 </table>
 <p><br />
 </p>
-<h2 id="development-toolchains-and-compilers">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-1">Development Toolchains and Compilers</h2>
 <table>
 <thead>
 <tr class="header">
@@ -552,13 +1197,13 @@
 </table>
 <p><br />
 </p>
-<h2 id="supported-devices-and-boards">Supported Devices and Boards</h2>
+<h2 id="supported-devices-and-boards-1">Supported Devices and Boards</h2>
 <ul>
 <li>STM32N6xx devices</li>
 <li>MB1939 STM32N6570-DK revC</li>
 <li>MB1940 NUCLEO-N657X0-Q revC</li>
 </ul>
-<h2 id="dependencies">Dependencies</h2>
+<h2 id="dependencies-1">Dependencies</h2>
 <ul>
 <li>STM32CubeMX V6.15.0
 <ul>
@@ -566,11 +1211,11 @@
 </ul></li>
 <li>STM32CubeProgrammer V2.18</li>
 </ul>
-<h2 id="known-limitations">Known Limitations</h2>
+<h2 id="known-limitations-1">Known Limitations</h2>
 <ul>
 <li>List of known projects limitations is available in projects <a href="Projects/Release_Notes.html">release notes</a></li>
 </ul>
-<h2 id="backward-compatibility">Backward Compatibility</h2>
+<h2 id="backward-compatibility-1">Backward Compatibility</h2>
 <ul>
 <li>NA</li>
 </ul>
@@ -579,9 +1224,9 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" checked aria-hidden="true"><strong>V1.1.0 / 05-February-2025</strong></label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <h3 id="first-maintenance-release-of-stm32cuben6-stm32cube-for-stm32n6-series-supporting-stm32n657xx-stm32n655xx-stm32n647xx-and-stm32n645xx-devices">First maintenance release of <strong>STM32CubeN6</strong> (STM32Cube for STM32N6 Series) supporting <strong>STM32N657xx</strong>, <strong>STM32N655xx</strong>, <strong>STM32N647xx</strong> and <strong>STM32N645xx</strong> devices</h3>
-<h2 id="contents-1">Contents</h2>
+<h2 id="contents-2">Contents</h2>
 <p>STM32CubeN6 gathers in one single package generic embedded software components to develop an application on STM32N6 microcontrollers.</p>
 <ul>
 <li>HAL and LL API drivers, checked with Coverity® static analysis tool, and developed in compliance with MISRA C® guidelines,</li>
@@ -590,7 +1235,7 @@
 <li>Consistent set of middleware components (Azure® RTOS USBX, FileX/LevelX, ThreadX, NetX Duo, USB Power Delivery, mcu-boot, mbed-TLS, external memory manager and loader, Image Signal Processing (ISP) and OpenBootloader),</li>
 <li>A rich set of examples and applications for easy understanding, compatible with STM32CubeMX to facilitate the configuration through a graphical tool.</li>
 </ul>
-<h2 id="changes-compared-with-last-release-1">Changes compared with last release</h2>
+<h2 id="changes-compared-with-last-release-2">Changes compared with last release</h2>
 <ul>
 <li>Deliver SBOM in CycloneDX v1.5 format and Notices file in txt format</li>
 <li>Add new STM32N6570-DK and NUCLEO-N657X0-Q projects<br />
@@ -696,7 +1341,7 @@
 <li>Projects are provided with a configuration defined for nominal voltage mode and are setting the CPU clock at <strong><span style="color:blue">600 MHz</span></strong> and the System clock at 400 MHz.</li>
 <li>An example of overdrive voltage configuration, setting the CPU clock at <strong><span style="color:green">800 MHz</span></strong> and the System clock at 400 MHz can be found in the project <em>Projects\STM32N6570-DK\Templates\Template</em>.</li>
 </ul>
-<h2 id="components-1">Components</h2>
+<h2 id="components-2">Components</h2>
 <p><strong>Drivers</strong></p>
 <table>
 <thead>
@@ -715,12 +1360,12 @@
 <tr class="even">
 <td style="text-align: left;">STM32N6xx CMSIS</td>
 <td style="text-align: left;">V1.1.0 <span class="icon-st-update"></span></td>
-<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32N6xx/Release_Notes.html">release notes</a></td>
+<td style="text-align: left;"><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/cmsis-device-n6/blob/main/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">STM32N6xx_HAL_Driver</td>
 <td style="text-align: left;">V1.1.0 <span class="icon-st-update"></span></td>
-<td style="text-align: left;"><a href="Drivers/STM32N6xx_HAL_Driver/Release_Notes.html">release notes</a></td>
+<td style="text-align: left;"><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32n6xx-hal-driver/blob/main/Release_Notes.html">release notes</a></td>
 </tr>
 </tbody>
 </table>
@@ -739,72 +1384,72 @@
 <tr class="odd">
 <td style="text-align: left;">STM32N6xx_Nucleo</td>
 <td style="text-align: left;">V1.0.0</td>
-<td><a href="Drivers/BSP/STM32N6xx_Nucleo/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32n6xx-nucleo-bsp/blob/main/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">STM32N6570-DK</td>
 <td style="text-align: left;">V1.1.0 <span class="icon-st-update"></span></td>
-<td><a href="Drivers/BSP/STM32N6570-DK/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32l562e-dk-bsp/blob/main/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">aps256xx</td>
 <td style="text-align: left;">V1.0.6</td>
-<td><a href="Drivers/BSP/Components/aps256xx/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32-aps256xx/blob/v1.0.6/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Common</td>
 <td style="text-align: left;">V7.3.0</td>
-<td><a href="Drivers/BSP/Components/Common/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32-bsp-common/blob/v7.3.0/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">lan8742</td>
 <td style="text-align: left;">V1.0.4</td>
-<td><a href="Drivers/BSP/Components/lan8742/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32-lan8742/blob/v1.0.4/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mx66uw1g45g</td>
 <td style="text-align: left;">V1.1.0</td>
-<td><a href="Drivers/BSP/Components/mx66uw1g45g/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/mx66uw1g45g/blob/v1.1.0/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">mx25um51245g</td>
 <td style="text-align: left;">V1.0.1</td>
-<td><a href="Drivers/BSP/Components/mx25um51245g/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/mx25um51245g/blob/v1.0.1/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">rk050hr18</td>
 <td style="text-align: left;">V1.0.1 <span class="icon-st-update"></span></td>
-<td><a href="Drivers/BSP/Components/rk050hr18/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/rk050hr18/blob/v1.0.1/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">rtl8211</td>
 <td style="text-align: left;">V2.0.4 <span class="icon-st-update"></span></td>
-<td><a href="Drivers/BSP/Components/rtl8211/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/rtl8211/blob/v2.0.4/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">tcpp0203</td>
 <td style="text-align: left;">V1.2.2</td>
-<td><a href="Drivers/BSP/Components/tcpp0203/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/tcpp0203/blob/v1.2.2/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">gt911</td>
 <td style="text-align: left;">V1.0.1</td>
-<td><a href="Drivers/BSP/Components/gt911/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/gt911/blob/v1.0.1/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">cs42l51</td>
 <td style="text-align: left;">V2.0.6</td>
-<td><a href="Drivers/BSP/Components/cs42l51/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32-cs42l51/blob/v2.0.6/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">imx335</td>
 <td style="text-align: left;">V1.3.1</td>
-<td><a href="Drivers/BSP/Components/imx335/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/imx335/blob/v1.3.1/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">wm8904</td>
 <td style="text-align: left;">V1.1.0</td>
-<td><a href="Drivers/BSP/Components/wm8904/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/wm8904/blob/v1.1.0/Release_Notes.html">release notes</a></td>
 </tr>
 </tbody>
 </table>
@@ -963,7 +1608,7 @@
 </table>
 <p><br />
 </p>
-<h2 id="development-toolchains-and-compilers-1">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-2">Development Toolchains and Compilers</h2>
 <table>
 <thead>
 <tr class="header">
@@ -992,13 +1637,13 @@
 </table>
 <p><br />
 </p>
-<h2 id="supported-devices-and-boards-1">Supported Devices and Boards</h2>
+<h2 id="supported-devices-and-boards-2">Supported Devices and Boards</h2>
 <ul>
 <li>STM32N6xx devices</li>
 <li>MB1939 STM32N6570-DK revC</li>
 <li>MB1940 NUCLEO-N657X0-Q revC</li>
 </ul>
-<h2 id="dependencies-1">Dependencies</h2>
+<h2 id="dependencies-2">Dependencies</h2>
 <ul>
 <li>STM32CubeMX V6.14.0
 <ul>
@@ -1006,11 +1651,11 @@
 </ul></li>
 <li>STM32CubeProgrammer V2.18</li>
 </ul>
-<h2 id="known-limitations-1">Known Limitations</h2>
+<h2 id="known-limitations-2">Known Limitations</h2>
 <ul>
 <li>None</li>
 </ul>
-<h2 id="backward-compatibility-1">Backward Compatibility</h2>
+<h2 id="backward-compatibility-2">Backward Compatibility</h2>
 <ul>
 <li>NA</li>
 </ul>
@@ -1021,7 +1666,7 @@
 <div>
 <h2 id="first-release">First Release</h2>
 <h3 id="first-official-release-of-stm32cuben6-stm32cube-for-stm32n6-series-supporting-stm32n657xx-stm32n655xx-stm32n647xx-and-stm32n645xx-devices">First official release of <strong>STM32CubeN6</strong> (STM32Cube for STM32N6 Series) supporting <strong>STM32N657xx</strong>, <strong>STM32N655xx</strong>, <strong>STM32N647xx</strong> and <strong>STM32N645xx</strong> devices</h3>
-<h2 id="contents-2">Contents</h2>
+<h2 id="contents-3">Contents</h2>
 <p>STM32CubeN6 gathers in one single package generic embedded software components to develop an application on STM32N6 microcontrollers.</p>
 <ul>
 <li>HAL and LL API drivers, checked with Coverity® static analysis tool, and developed in compliance with MISRA C® guidelines,</li>
@@ -1118,7 +1763,7 @@
 </ul>
 <p><br />
 </p>
-<h2 id="components-2">Components</h2>
+<h2 id="components-3">Components</h2>
 <p><strong>Drivers</strong></p>
 <table>
 <thead>
@@ -1137,12 +1782,12 @@
 <tr class="even">
 <td style="text-align: left;">STM32N6xx CMSIS</td>
 <td style="text-align: left;">V1.0.0</td>
-<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32N6xx/Release_Notes.html">release notes</a></td>
+<td style="text-align: left;"><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/cmsis-device-n6/blob/main/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">STM32N6xx_HAL_Driver</td>
 <td style="text-align: left;">V1.0.0</td>
-<td style="text-align: left;"><a href="Drivers/STM32N6xx_HAL_Driver/Release_Notes.html">release notes</a></td>
+<td style="text-align: left;"><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32n6xx-hal-driver/blob/main/Release_Notes.html">release notes</a></td>
 </tr>
 </tbody>
 </table>
@@ -1161,72 +1806,72 @@
 <tr class="odd">
 <td style="text-align: left;">STM32N6xx_Nucleo</td>
 <td style="text-align: left;">V1.0.0</td>
-<td><a href="Drivers/BSP/STM32N6xx_Nucleo/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32n6xx-nucleo-bsp/blob/main/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">STM32N6570-DK</td>
 <td style="text-align: left;">V1.0.0</td>
-<td><a href="Drivers/BSP/STM32N6570-DK/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32l562e-dk-bsp/blob/main/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">aps256xx</td>
 <td style="text-align: left;">V1.0.6</td>
-<td><a href="Drivers/BSP/Components/aps256xx/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32-aps256xx/blob/v1.0.6/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Common</td>
 <td style="text-align: left;">V7.3.0</td>
-<td><a href="Drivers/BSP/Components/Common/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32-bsp-common/blob/v7.3.0/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">lan8742</td>
 <td style="text-align: left;">V1.0.4</td>
-<td><a href="Drivers/BSP/Components/lan8742/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32-lan8742/blob/v1.0.4/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mx66uw1g45g</td>
 <td style="text-align: left;">V1.1.0</td>
-<td><a href="Drivers/BSP/Components/mx66uw1g45g/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/mx66uw1g45g/blob/v1.1.0/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">mx25um51245g</td>
 <td style="text-align: left;">V1.0.1</td>
-<td><a href="Drivers/BSP/Components/mx25um51245g/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/mx25um51245g/blob/v1.0.1/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">rk050hr18</td>
 <td style="text-align: left;">V1.0.0</td>
-<td><a href="Drivers/BSP/Components/rk050hr18/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/rk050hr18/blob/v1.0.1/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">rtl8211</td>
 <td style="text-align: left;">V2.0.3</td>
-<td><a href="Drivers/BSP/Components/rtl8211/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/rtl8211/blob/v2.0.4/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">tcpp0203</td>
 <td style="text-align: left;">V1.2.2</td>
-<td><a href="Drivers/BSP/Components/tcpp0203/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/tcpp0203/blob/v1.2.2/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">gt911</td>
 <td style="text-align: left;">V1.0.1</td>
-<td><a href="Drivers/BSP/Components/gt911/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/gt911/blob/v1.0.1/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">cs42l51</td>
 <td style="text-align: left;">V2.0.6</td>
-<td><a href="Drivers/BSP/Components/cs42l51/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/stm32-cs42l51/blob/v2.0.6/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">imx335</td>
 <td style="text-align: left;">V1.3.1</td>
-<td><a href="Drivers/BSP/Components/imx335/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/imx335/blob/v1.3.1/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">wm8904</td>
 <td style="text-align: left;">V1.1.0</td>
-<td><a href="Drivers/BSP/Components/wm8904/Release_Notes.html">release notes</a></td>
+<td><a href="https://htmlpreview.github.io/?https://github.com/STMicroelectronics/wm8904/blob/v1.1.0/Release_Notes.html">release notes</a></td>
 </tr>
 </tbody>
 </table>
@@ -1385,7 +2030,7 @@
 </table>
 <p><br />
 </p>
-<h2 id="development-toolchains-and-compilers-2">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-3">Development Toolchains and Compilers</h2>
 <table>
 <thead>
 <tr class="header">
@@ -1414,13 +2059,13 @@
 </table>
 <p><br />
 </p>
-<h2 id="supported-devices-and-boards-2">Supported Devices and Boards</h2>
+<h2 id="supported-devices-and-boards-3">Supported Devices and Boards</h2>
 <ul>
 <li>STM32N6xx devices</li>
 <li>MB1939 STM32N6570-DK revC</li>
 <li>MB1940 NUCLEO-N657X0-Q revC</li>
 </ul>
-<h2 id="dependencies-2">Dependencies</h2>
+<h2 id="dependencies-3">Dependencies</h2>
 <ul>
 <li>STM32CubeMX V6.13.0
 <ul>
@@ -1428,11 +2073,11 @@
 </ul></li>
 <li>STM32CubeProgrammer V2.18</li>
 </ul>
-<h2 id="known-limitations-2">Known Limitations</h2>
+<h2 id="known-limitations-3">Known Limitations</h2>
 <ul>
 <li>None</li>
 </ul>
-<h2 id="backward-compatibility-2">Backward Compatibility</h2>
+<h2 id="backward-compatibility-3">Backward Compatibility</h2>
 <ul>
 <li>NA</li>
 </ul>

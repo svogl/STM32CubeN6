@@ -126,3 +126,5 @@ The user has to check the list of the COM ports in Device Manager to find out th
 To support audio class 2.0 this flag "UX_HOST_CLASS_AUDIO_2_SUPPORT" should be defined in ux_user.h.
 
 Please note that audio class 1.0 works only in FS mode.
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

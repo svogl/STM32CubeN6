@@ -181,6 +181,13 @@ void SystemClock_Config(void)
   {
   }
 
+  /** Configure the main internal regulator output voltage
+  */
+  LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
+  while(LL_PWR_IsActiveFlag_VOSRDY() == 0)
+  {
+  }
+
   LL_RCC_HSI_Enable();
 
    /* Wait till HSI is ready */
@@ -453,6 +460,9 @@ void EnterSTOPMode(void)
     *  - See PWR part, section Low-power modes, STOP mode
     */
   LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE0);
+  while (LL_PWR_IsActiveFlag_VOSRDY() == 0U)
+  {
+  }
   /* Set STOP mode when CPU enters deepsleep */
   LL_PWR_SetPowerDownModeDS(LL_PWR_POWERDOWN_MODE_DS_STOP);
 

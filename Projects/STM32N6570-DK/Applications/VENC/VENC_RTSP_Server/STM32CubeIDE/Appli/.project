@@ -57,6 +57,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/main.c</locationURI>
 		</link>
 		<link>
+			<name>Src/power.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/power.c</locationURI>
+		</link>
+		<link>
 			<name>Src/stm32n6xx_hal_msp.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/stm32n6xx_hal_msp.c</locationURI>
@@ -92,6 +97,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/venc_app.c</locationURI>
 		</link>
 		<link>
+			<name>Src/venc_h264_config.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/venc_h264_config.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/BSP/stm32n6570_discovery.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery.c</locationURI>
@@ -110,6 +120,11 @@
 			<name>Drivers/BSP/stm32n6570_discovery_lcd.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_lcd.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/BSP/stm32n6570_discovery_xspi.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_xspi.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal.c</name>
@@ -182,6 +197,11 @@
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_ltdc_ex.c</locationURI>
 		</link>
 		<link>
+			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_mdf.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_mdf.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_pwr.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pwr.c</locationURI>
@@ -205,6 +225,11 @@
 			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rif.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rif.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_sai.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_sai.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_sd.c</name>
@@ -235,6 +260,11 @@
 			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart_ex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_uart_ex.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_xspi.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_xspi.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_ll_sdmmc.c</name>
@@ -1187,6 +1217,41 @@
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/txe_timer_info_get.c</locationURI>
 		</link>
 		<link>
+			<name>Src/Monitoring/st_monitor.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/st_monitor.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Monitoring/st_monitor_bitrate.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/st_monitor_bitrate.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Monitoring/st_monitor_cpu_threadx.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/st_monitor_cpu_threadx.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Monitoring/st_monitor_network.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/st_monitor_network.c</locationURI>
+		</link>
+		<link>
+			<name>Src/audio/stm32n6570_discovery_audio.patch.hsi_600_400.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/stm32n6570_discovery_audio.patch.hsi_600_400.c</locationURI>
+		</link>
+		<link>
+			<name>Src/audio/stm32n6570_discovery_audio_multi.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/stm32n6570_discovery_audio_multi.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/BSP/Components/aps256xx.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/Components/aps256xx/aps256xx.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/BSP/Components/imx335.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/Components/imx335/imx335.c</locationURI>
@@ -1200,6 +1265,16 @@
 			<name>Drivers/BSP/Components/rtl8211.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/Components/rtl8211/rtl8211.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/BSP/Components/wm8904.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/Components/wm8904/wm8904.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/BSP/Components/wm8904_reg.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/Components/wm8904/wm8904_reg.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/NetXDuo/Addons DHCP Client/nxd_dhcp_client.c</name>
@@ -3870,6 +3945,11 @@
 			<name>Middlewares/ThreadX/port/txe_thread_secure_stack_free.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/ports/cortex_m55/gnu/src/txe_thread_secure_stack_free.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/ThreadX/utilities/tx_execution_profile.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/utility/execution_profile_kit/tx_execution_profile.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/VideoEncoder/EWL/ewl_impl.c</name>

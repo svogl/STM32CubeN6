@@ -72,6 +72,8 @@ void HAL_MspInit(void)
 
   /* USER CODE END MspInit 0 */
 
+  HAL_PWREx_EnableVddA();
+
   /* System interrupt init*/
 
   /* USER CODE BEGIN MspInit 1 */
@@ -176,8 +178,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     HAL_NVIC_SetPriority(ADC1_2_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(ADC1_2_IRQn);
     /* USER CODE BEGIN ADC1_MspInit 1 */
-   /* Enable Vdda for ADC */
-   HAL_PWREx_EnableVddA();
+
     /* USER CODE END ADC1_MspInit 1 */
 
   }

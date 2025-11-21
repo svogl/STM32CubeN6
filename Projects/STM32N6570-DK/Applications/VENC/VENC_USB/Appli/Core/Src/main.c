@@ -21,6 +21,7 @@
 #include "app_threadx.h"
 #include "usbpd.h"
 #include "stm32n6570_discovery.h"
+#include "stm32n6570_discovery_xspi.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -61,6 +62,20 @@ static void RISAF_Config(void);
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
+void  XSPI1_Source_Init(void)
+{ 
+  
+  RCC_PeriphCLKInitTypeDef PeriphClkInit;
+  
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_XSPI1;
+  PeriphClkInit.Xspi1ClockSelection = RCC_XSPI1CLKSOURCE_HCLK;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  return;
+}
+
 
 /**
   * @brief  The application entry point.
@@ -102,6 +117,11 @@ int main(void)
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
+
+  /*  External RAM  Init */
+  XSPI1_Source_Init();
+  BSP_XSPI_RAM_Init(0);
+  BSP_XSPI_RAM_EnableMemoryMappedMode(0);
 
   /* Initialize all configured peripherals */
   MX_GPDMA1_Init();
@@ -260,6 +280,17 @@ void MPU_Config(void){
   default_config.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
   default_config.AttributesIndex = MPU_ATTRIBUTES_NUMBER0;
   HAL_MPU_ConfigRegion(&default_config);
+
+  /* Create a non shareable  region for externam RAM*/
+  /* Normal memory type, code execution allowed */
+  default_config.Enable = MPU_REGION_ENABLE;
+  default_config.Number = MPU_REGION_NUMBER1;
+  default_config.BaseAddress =  0x90000000;
+  default_config.LimitAddress = 0x91ffffff;
+  default_config.AccessPermission = MPU_REGION_ALL_RW;
+  default_config.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
+  default_config.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
+  HAL_MPU_ConfigRegion(&default_config);  
 
   /* enable the MPU */
   HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);

@@ -1,8 +1,7 @@
 
 ## <b>USBPD_SRC_UX_Host_MSC Application Description</b>
 
-This application is a USBPD type C Provider using Azure RTOS.
-USBPD Provider: This application initialize the type C port 1 in source mode with only one PDO at 5V.
+This application is a USBPD type C Provider using Azure RTOS. USBPD Provider: This application initialize the type C port 1 in source mode with only one PDO at 5V.
 
 The application is designed to behave as a USB MSC Host able to operate with an USB flash disk using the Bulk Only Transfer (BOT) and Small Computer System Interface (SCSI) transparent commands combined with a file system Azure RTOS FileX.
 
@@ -130,3 +129,5 @@ In order to make the program work, you must do the following :
 The user has to check the list of the COM ports in Device Manager to find out the number
 of the COM ports that have been assigned (by OS) to the Stlink VCP.
 The application uses the external HSE clock as USB source clock.
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

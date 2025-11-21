@@ -100,7 +100,7 @@
 /* USER CODE BEGIN USB Private define */
 #if defined(_TRACE)
 #define USBPD_USBIF_TRACE(__PORT__, __DATA__) \
-  USBPD_TRACE_Add(USBPD_TRACE_DEBUG, (__PORT__), 0, (uint8_t *)(__DATA__), sizeof(__DATA__));
+USBPD_TRACE_Add(USBPD_TRACE_DEBUG, (__PORT__), 0, (uint8_t *)(__DATA__), sizeof(__DATA__));
 #else
 #define USBPD_USBIF_TRACE(__PORT__, __DATA__)
 #endif /* _TRACE */
@@ -122,7 +122,7 @@
 extern TX_QUEUE        ux_app_MsgQueue_UCPD;
 
 #if defined ( __ICCARM__ ) /* IAR Compiler */
-  #pragma data_alignment=4
+#pragma data_alignment=4
 #endif /* defined ( __ICCARM__ ) */
 __ALIGN_BEGIN USB_MODE_STATE  USB_Host_EVENT  __ALIGN_END;
 

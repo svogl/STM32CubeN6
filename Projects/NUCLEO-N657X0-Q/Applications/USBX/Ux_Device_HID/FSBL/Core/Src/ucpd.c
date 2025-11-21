@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2025 STMicroelectronics.
+  * Copyright (c) 2024 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -40,14 +40,6 @@ void MX_UCPD1_Init(void)
   /* UCPD1 DMA Init */
 
   /* GPDMA1_REQUEST_UCPD1_TX Init */
-  LL_DMA_EnableChannelSecure(GPDMA1, LL_DMA_CHANNEL_1);
-
-  LL_DMA_EnableChannelPrivilege(GPDMA1, LL_DMA_CHANNEL_1);
-
-  LL_DMA_EnableChannelSrcSecure(GPDMA1, LL_DMA_CHANNEL_1);
-
-  LL_DMA_EnableChannelDestSecure(GPDMA1, LL_DMA_CHANNEL_1);
-
   DMA_InitStruct.SrcAddress = 0x00000000U;
   DMA_InitStruct.DestAddress = 0x00000000U;
   DMA_InitStruct.Direction = LL_DMA_DIRECTION_MEMORY_TO_PERIPH;
@@ -75,14 +67,6 @@ void MX_UCPD1_Init(void)
   LL_DMA_Init(GPDMA1, LL_DMA_CHANNEL_1, &DMA_InitStruct);
 
   /* GPDMA1_REQUEST_UCPD1_RX Init */
-  LL_DMA_EnableChannelSecure(GPDMA1, LL_DMA_CHANNEL_0);
-
-  LL_DMA_EnableChannelPrivilege(GPDMA1, LL_DMA_CHANNEL_0);
-
-  LL_DMA_EnableChannelSrcSecure(GPDMA1, LL_DMA_CHANNEL_0);
-
-  LL_DMA_EnableChannelDestSecure(GPDMA1, LL_DMA_CHANNEL_0);
-
   DMA_InitStruct.SrcAddress = 0x00000000U;
   DMA_InitStruct.DestAddress = 0x00000000U;
   DMA_InitStruct.Direction = LL_DMA_DIRECTION_MEMORY_TO_PERIPH;

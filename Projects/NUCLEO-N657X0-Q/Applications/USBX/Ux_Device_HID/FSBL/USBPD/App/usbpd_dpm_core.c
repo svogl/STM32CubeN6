@@ -100,7 +100,7 @@ static void USBPD_DPM_CADTaskWakeUp(void);
   */
 USBPD_StatusTypeDef USBPD_DPM_InitCore(void)
 {
-  /* variable to get dynamique memory allocated by usbpd stack */
+  /* Variable to get dynamic memory allocated by USBPD stack */
   uint32_t stack_dynamemsize;
   USBPD_StatusTypeDef _retr = USBPD_OK;
 

@@ -190,18 +190,12 @@ void SystemInit(void)
   /* Delay after an RCC peripheral clock enabling */
   (void)RCC->APB4ENR2;
 
-  /* Setup I/O compensation cells for */
-  SYSCFG->VDDIO2CCCR = 0x00000278UL; /* SDMMC1 domain compensation */
-  SYSCFG->VDDIO3CCCR = 0x00000278UL; /* SDMMC2 domain compensation */
-  SYSCFG->VDDIO4CCCR = 0x00000278UL; /* Hexa-SPI domain compensation */
-  SYSCFG->VDDIO5CCCR = 0x00000278UL; /* Octo-SPI domain compensation */
-  SYSCFG->VDDCCCR    = 0x00000278UL; /* VDD domain compensation */
-
   /* Set default Vector Table location after system reset or return from Standby */
   SYSCFG->INITSVTORCR = SCB->VTOR;
+  /* Read back the value to make sure it is written before deactivating SYSCFG */
+  (void) SYSCFG->INITSVTORCR;
   /* Deactivate SYSCFG clock */
   RCC->APB4ENCR2 = RCC_APB4ENCR2_SYSCFGENC;
-
   /* FPU settings ------------------------------------------------------------*/
 #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
   SCB->CPACR |= ((3UL << 20U)|(3UL << 22U));  /* set CP10 and CP11 Full Access */

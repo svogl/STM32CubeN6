@@ -20,179 +20,107 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32n6xx_it.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "app_rtsp_over_rtp.h"
 #include "stm32n6570_discovery_camera.h"
 /* USER CODE END Includes */
 
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN TD */
-
-/* USER CODE END TD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
-/* USER CODE BEGIN PFP */
-
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
 /* External variables --------------------------------------------------------*/
 extern ETH_HandleTypeDef heth;
 extern TIM_HandleTypeDef htim6;
-/* USER CODE BEGIN EV */
 
-/* USER CODE END EV */
 
-/******************************************************************************/
-/*           Cortex Processor Interruption and Exception Handlers             */
-/******************************************************************************/
+/* Cortex Processor Interruption and Exception Handlers ----------------------*/
+
 /**
-  * @brief This function handles Non maskable interrupt.
+  * @brief  This function handles Non maskable interrupt (NMI).
+  * @note   Default implementation: loop indefinitely for debugging.
   */
 void NMI_Handler(void)
 {
-  /* USER CODE BEGIN NonMaskableInt_IRQn 0 */
-
-  /* USER CODE END NonMaskableInt_IRQn 0 */
-  /* USER CODE BEGIN NonMaskableInt_IRQn 1 */
-  while (1)
-  {
-  }
-  /* USER CODE END NonMaskableInt_IRQn 1 */
+    while (1)
+    {
+    }
 }
 
 /**
-  * @brief This function handles Memory management fault.
+  * @brief  This function handles Memory management fault.
+  * @note   Indicates MPU or memory access violation.
   */
 void MemManage_Handler(void)
 {
-  /* USER CODE BEGIN MemoryManagement_IRQn 0 */
-
-  /* USER CODE END MemoryManagement_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_MemoryManagement_IRQn 0 */
-    /* USER CODE END W1_MemoryManagement_IRQn 0 */
-  }
+    while (1)
+    {
+    }
 }
 
 /**
   * @brief  This function handles Secure Fault exception.
-  * @param  None
-  * @retval None
+  * @note   Enter infinite loop on secure fault to facilitate debugging.
   */
 void SecureFault_Handler(void)
 {
-  /* Go to infinite loop when Secure Fault exception occurs */
-  while (1)
-  {
-  }
+    while (1)
+    {
+    }
 }
 
-
 /**
-  * @brief This function handles Pre-fetch fault, memory access fault.
+  * @brief  This function handles Bus Fault (pre-fetch/memory access fault).
   */
 void BusFault_Handler(void)
 {
-  /* USER CODE BEGIN BusFault_IRQn 0 */
-
-  /* USER CODE END BusFault_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_BusFault_IRQn 0 */
-    /* USER CODE END W1_BusFault_IRQn 0 */
-  }
+    while (1)
+    {
+    }
 }
 
 /**
-  * @brief This function handles Debug monitor.
+  * @brief  This function handles Debug Monitor exception.
+  * @note   Kept empty by default.
   */
 void DebugMon_Handler(void)
 {
-  /* USER CODE BEGIN DebugMonitor_IRQn 0 */
-
-  /* USER CODE END DebugMonitor_IRQn 0 */
-  /* USER CODE BEGIN DebugMonitor_IRQn 1 */
-
-  /* USER CODE END DebugMonitor_IRQn 1 */
 }
 
-/******************************************************************************/
-/* STM32N6xx Peripheral Interrupt Handlers                                    */
-/* Add here the Interrupt Handlers for the used peripherals.                  */
-/* For the available peripheral interrupt handler names,                      */
-/* please refer to the startup file (startup_stm32n6xx.s).                    */
-/******************************************************************************/
+/* Peripheral Interrupt Handlers --------------------------------------------*/
 
-
-/* USER CODE BEGIN 1 */
 /**
-  * @brief This function handles Ethernet global interrupt.
+  * @brief  This function handles Ethernet global interrupt.
+  * @note   Forwards handling to HAL Ethernet IRQ handler.
   */
 void ETH1_IRQHandler(void)
 {
-  /* USER CODE BEGIN ETH_IRQn 0 */
-
-  /* USER CODE END ETH_IRQn 0 */
-  HAL_ETH_IRQHandler(&heth);
-  /* USER CODE BEGIN ETH_IRQn 1 */
-
-  /* USER CODE END ETH_IRQn 1 */
+    HAL_ETH_IRQHandler(&heth);
 }
 
 /**
-  * @brief  This function handles TIM interrupt request.
-  * @param  None
-  * @retval None
+  * @brief  This function handles TIM6 interrupt request.
+  * @note   HAL_TIM_IRQHandler will call HAL callbacks (e.g., HAL_TIM_PeriodElapsedCallback).
   */
 void TIM6_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
-
-  /* USER CODE END TIM6_DAC_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim6);
-  /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
-  /* USER CODE END TIM6_DAC_IRQn 1 */
+    HAL_TIM_IRQHandler(&htim6);
 }
 
 /**
-  * @brief  This function handles DCMIPP Handler.
-  * @param  None
-  * @retval None
+  * @brief  This function handles CSI (Camera Sensor Interface) interrupt.
+  * @note   Forwards handling to HAL DCMIPP CSI IRQ handler provided by BSP/HAL.
   */
 void CSI_IRQHandler(void)
 {
-  HAL_DCMIPP_CSI_IRQHandler(&hcamera_dcmipp);
+    HAL_DCMIPP_CSI_IRQHandler(&hcamera_dcmipp);
 }
 
 /**
   * @brief  This function handles DCMIPP interrupt request.
-  * @param  None
-  * @retval None
+  * @note   Forwards to BSP camera IRQ handler for camera instance 0.
   */
 void DCMIPP_IRQHandler(void)
 {
-  BSP_CAMERA_IRQHandler(0);
+    BSP_CAMERA_IRQHandler(0);
 }
-/* USER CODE END 1 */
+
+

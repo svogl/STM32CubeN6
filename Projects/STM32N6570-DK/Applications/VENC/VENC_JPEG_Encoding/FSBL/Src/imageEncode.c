@@ -125,6 +125,7 @@ int32_t encode_jpeg_frame(const void *pFrame2Encode )
     switch (ret)
     {
     case JPEGENC_RESTART_INTERVAL:
+      break;
     case JPEGENC_FRAME_READY:
       return jpegEncOut.jfifSize;
     case JPEGENC_SYSTEM_ERROR:

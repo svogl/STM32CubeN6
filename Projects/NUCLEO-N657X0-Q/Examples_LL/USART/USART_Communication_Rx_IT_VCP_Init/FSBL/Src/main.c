@@ -140,6 +140,13 @@ void SystemClock_Config(void)
   {
   }
 
+  /** Configure the main internal regulator output voltage
+  */
+  LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
+  while(LL_PWR_IsActiveFlag_VOSRDY() == 0)
+  {
+  }
+
   LL_RCC_HSI_Enable();
 
    /* Wait till HSI is ready */

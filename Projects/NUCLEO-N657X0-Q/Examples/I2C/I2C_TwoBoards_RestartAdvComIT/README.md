@@ -1,3 +1,11 @@
+
+---
+pagetitle: Readme
+lang: en
+---
+::: {.row}
+::: {.col-sm-12 .col-lg-8}
+
 ## <b>I2C_TwoBoards_RestartAdvComIT Example Description</b>
 
 How to perform multiple I2C data buffer transmission/reception between two boards, 
@@ -274,4 +282,11 @@ In order to make the program work, you must do the following :
 
 
 
+
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.
+
+:::
+:::
 

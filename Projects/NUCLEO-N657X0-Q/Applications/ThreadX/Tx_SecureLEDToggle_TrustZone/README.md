@@ -165,3 +165,5 @@ To run the template in boot from flash mode,
  - With CubeProgrammer, load the FSBL binary and its header (FSBL-trusted.bin) in Nucleo board external Flash at address 0x7000'0000.
  - Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).
  - Press the reset button. The code then executes in boot from Flash mode.
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

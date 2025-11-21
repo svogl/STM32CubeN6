@@ -106,3 +106,5 @@ To run this example in development mode :
 
 
 This example is made to run in debug mode only.
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

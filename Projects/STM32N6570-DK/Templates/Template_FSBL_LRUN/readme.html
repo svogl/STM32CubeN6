@@ -87,7 +87,7 @@
 <li>Rebuild all files from sub-project FSBL (if no modification is done on FSBL project, this step can be done only once)</li>
 <li>Select the Appli workspace</li>
 <li>Rebuild all files from sub-project Appli</li>
-<li>Resort to CubeProgrammer to add a header to the generated Appli binary Project.bin with the following command
+<li>Resort to CubeProgrammer to add a header to the generated Appli binary Project.bin with the following command (depending on your IDE, the binary name can change)
 <ul>
 <li><em>STM32_SigningTool_CLI.exe -bin Project.bin -nk -of 0x80000000 -t fsbl -o Project-trusted.bin -hv 2.3 -dump Project-trusted.bin</em></li>
 <li>The resulting binary is Project-trusted.bin.</li>
@@ -107,6 +107,7 @@
 <li>Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).</li>
 <li>Press the reset button. The code then executes in boot from external Flash mode.</li>
 </ul>
+<p><strong>Warning</strong> If using CubeProgrammer v2.21 version or more recent, add <em>-align</em> option in the command line.</p>
 </div>
 </div>
 </body>

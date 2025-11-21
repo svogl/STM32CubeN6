@@ -55,18 +55,19 @@ current_log_file="$project_dir/postbuild.log"
 config=$1
 projname=$2
 
-applicfg="$cube_fw_path/Utilities/PC_Software/ROT_AppliConfig/dist/AppliCfg.exe"
-uname | grep -i -e windows -e mingw
-if [ $? == 0 ] && [ -e "$applicfg" ]; then
-  #Window executable
-  echo "AppliCfg with windows executable"
-  python=""
+# Check if Python is installed
+if ! python3 --version > /dev/null 2>&1; then
+  if ! python --version > /dev/null 2>&1; then
+    echo "Python installation missing. Refer to Utilities/PC_Software/ROT_AppliConfig/README.md"
+    step_error;
+  fi
+  python="python "
 else
-  #Python
-  echo "AppliCfg with python script"
-  applicfg="$cube_fw_path/Utilities/PC_Software/ROT_AppliConfig/AppliCfg.py"
   python="python3 "
 fi
+# Environment variable for AppliCfg
+applicfg="$cube_fw_path/Utilities/PC_Software/ROT_AppliConfig/AppliCfg.py"
+
 
 error()
 {
@@ -78,7 +79,7 @@ error()
     exit 1
 }
 
-crypted=0
+encrypted=0
 appli_dir=../../../../$oemurot_appli_path_project
 binary_file=$binarydir/OEMuROT_Boot.bin
 trusted_binary_file=$binarydir/OEMuROT_Boot_Trusted.bin
@@ -100,7 +101,7 @@ enck=$bootrom_path/Keys/OEM_SECRET.bin
 version=0x00000001
 
 scmd="-pubk $pbk1 $pbk2 $pbk3 $pbk4 $pbk5 $pbk6 $pbk7 $pbk8 -prvk $pvk -pwd rot1"
-if [ $crypted = 1 ]; then
+if [ $encrypted = 1 ]; then
   enccmd="-encdc $derivval -enck $enck"
   optionflag="-t fsbl -iv $version -la 0x34180000 -of 0x80000003"
 else

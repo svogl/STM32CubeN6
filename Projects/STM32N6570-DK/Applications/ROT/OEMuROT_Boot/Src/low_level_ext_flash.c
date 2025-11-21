@@ -298,8 +298,7 @@ static int32_t Ext_Flash_ReadData(uint32_t addr, void *data, uint32_t cnt)
   is_valid = is_range_valid(&ARM_EXT_FLASH0_DEV, addr + cnt - 1);
   if (is_valid != true)
   {
-    memset(data, 0xff, cnt);
-    return ARM_DRIVER_OK;
+    return ARM_DRIVER_ERROR_PARAMETER;
   }
   /*  ECC to implement with NMI */
   /*  do a memcpy */

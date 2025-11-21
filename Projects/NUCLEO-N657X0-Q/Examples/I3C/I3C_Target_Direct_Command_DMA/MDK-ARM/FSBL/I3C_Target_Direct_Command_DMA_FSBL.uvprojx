@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32N657xx,__DBG_ITM</Define>
+              <Define>USE_HAL_DRIVER,STM32N657xx</Define>
               <Undefine></Undefine>
               <IncludePath>../../FSBL/Inc;../../../../../../../Drivers/BSP/STM32N6xx_Nucleo;../../../../../../../Drivers/STM32N6xx_HAL_Driver/Inc;../../../../../../../Drivers/CMSIS/Device/ST/STM32N6xx/Include;../../../../../../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy;../../../../../../../Drivers/CMSIS/Include</IncludePath>
             </VariousControls>

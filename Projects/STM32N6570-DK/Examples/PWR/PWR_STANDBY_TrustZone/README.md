@@ -142,3 +142,6 @@ This example is meant to run in development mode only.
 
 
 
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

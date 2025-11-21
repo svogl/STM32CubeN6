@@ -81,7 +81,7 @@
 <ul>
 <li>VDDIO3_HSLV=1 I/O XSPIM_P2 High speed option enabled</li>
 </ul></li>
-<li><p>To ensure the project runs properly, the SD card must be formatted in FAT32.</p>
+<li><p>To ensure the project runs properly, the SD card must be formatted in FAT32.</p></li>
 </ul>
 <p><strong>WARNING</strong></p>
 <p>When OTP fuses are set, they can not be reset. The NO_OTP_FUSE option is selected by default using the Preprocessor definition in the IDE. XSPI speed will however be limited to 50MHz. To use the full XSPI speed, delete the NO_OTP_FUSE definition.</p>
@@ -125,6 +125,7 @@
 <li>The resulting binary is Project-trusted.bin.</li>
 </ul></li>
 </ul>
+<p><strong>Warning</strong> If using CubeProgrammer v2.21 version or more recent, add <em>-align</em> option in the command line.</p>
 </div>
 </div>
 </body>

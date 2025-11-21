@@ -276,14 +276,15 @@ const MPU_Region_Config_t mpu_region_cfg[] = {
   /* Region 0: Allows RW access to peripherals */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER0,
-      MPU_ATTRIBUTE_DEVICE,
-      PERIPH_BASE_S,
-      PERIPH_BASE_S + 0xFFFFFFF,
-      MPU_REGION_PRIV_RW,
-      MPU_INSTRUCTION_ACCESS_DISABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER0,
+      .AttributesIndex  = MPU_ATTRIBUTE_DEVICE,
+      .BaseAddress      = PERIPH_BASE_S,
+      .LimitAddress     = PERIPH_BASE_S + 0xFFFFFFF,
+      .AccessPermission = MPU_REGION_PRIV_RW,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_I_EN_R0,
@@ -295,14 +296,15 @@ const MPU_Region_Config_t mpu_region_cfg[] = {
   /* Region 1: Allows reading access on revision ID area */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER1,
-      MPU_ATTRIBUTE_DATANOCACHE,
-      REVID_BASE_S,
-      REVID_BASE_S + 0x1F,
-      MPU_REGION_PRIV_RO,
-      MPU_INSTRUCTION_ACCESS_DISABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER1,
+      .AttributesIndex  = MPU_ATTRIBUTE_DATANOCACHE,
+      .BaseAddress      = REVID_BASE_S,
+      .LimitAddress     = REVID_BASE_S + 0x1F,
+      .AccessPermission = MPU_REGION_PRIV_RO,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_I_EN_R1,
@@ -314,14 +316,15 @@ const MPU_Region_Config_t mpu_region_cfg[] = {
   /* Region 2: Allows RW access to all slots + HASH REF + SCRATCH */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER2,
-      MPU_ATTRIBUTE_DATANOCACHE,
-      FLASH_AREA_BEGIN_ADDRESS,
-      FLASH_AREA_END_ADDRESS - 1,
-      MPU_REGION_PRIV_RW,
-      MPU_INSTRUCTION_ACCESS_DISABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER2,
+      .AttributesIndex  = MPU_ATTRIBUTE_DATANOCACHE,
+      .BaseAddress      = FLASH_AREA_BEGIN_ADDRESS,
+      .LimitAddress     = FLASH_AREA_END_ADDRESS - 1,
+      .AccessPermission = MPU_REGION_PRIV_RW,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_I_EN_R2,
@@ -333,14 +336,15 @@ const MPU_Region_Config_t mpu_region_cfg[] = {
   /* Region 3: Allows execution of boot */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER3,
-      MPU_ATTRIBUTE_CODE,
-      BL2_CODE_START - BOOTROM_HEADER_SIZE,
-      BL2_CODE_LIMIT,
-      MPU_REGION_PRIV_RO,
-      MPU_INSTRUCTION_ACCESS_ENABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER3,
+      .AttributesIndex  = MPU_ATTRIBUTE_CODE,
+      .BaseAddress      = BL2_CODE_START - BOOTROM_HEADER_SIZE,
+      .LimitAddress     = BL2_CODE_LIMIT,
+      .AccessPermission = MPU_REGION_PRIV_RO,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE,
+      .DisablePrivExec  = MPU_INSTRUCTION_ACCESS_ENABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_I_EN_R3,
@@ -352,14 +356,15 @@ const MPU_Region_Config_t mpu_region_cfg[] = {
   /* Region 4: Allows execution of the jumper */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER4,
-      MPU_ATTRIBUTE_CODE,
-      BL2_JUMP_CODE_START,
-      BL2_JUMP_CODE_LIMIT,
-      MPU_REGION_PRIV_RO,
-      MPU_INSTRUCTION_ACCESS_ENABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER4,
+      .AttributesIndex  = MPU_ATTRIBUTE_CODE,
+      .BaseAddress      = BL2_JUMP_CODE_START,
+      .LimitAddress     = BL2_JUMP_CODE_LIMIT,
+      .AccessPermission = MPU_REGION_PRIV_RO,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE,
+      .DisablePrivExec  = MPU_INSTRUCTION_ACCESS_ENABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_I_EN_R4,
@@ -371,14 +376,15 @@ const MPU_Region_Config_t mpu_region_cfg[] = {
   /* Region 5: Allows RW access on boot DATA area */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER5,
-      MPU_ATTRIBUTE_DATA,
-      BL2_DATA_START,
-      BL2_DATA_LIMIT,
-      MPU_REGION_PRIV_RW,
-      MPU_INSTRUCTION_ACCESS_DISABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER5,
+      .AttributesIndex  = MPU_ATTRIBUTE_DATA,
+      .BaseAddress      = BL2_DATA_START,
+      .LimitAddress     = BL2_DATA_LIMIT,
+      .AccessPermission = MPU_REGION_PRIV_RW,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_I_EN_R5,
@@ -390,14 +396,15 @@ const MPU_Region_Config_t mpu_region_cfg[] = {
   /* Region 6: Allows RW access on boot DATA area */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER6,
-      MPU_ATTRIBUTE_DATA,
-      SRAM2_AHB_BASE_S,
-      SRAM2_AHB_BASE_S + SRAM2_AHB_SIZE - 1,
-      MPU_REGION_PRIV_RW,
-      MPU_INSTRUCTION_ACCESS_DISABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER6,
+      .AttributesIndex  = MPU_ATTRIBUTE_DATA,
+      .BaseAddress      = SRAM2_AHB_BASE_S,
+      .LimitAddress     = SRAM2_AHB_BASE_S + SRAM2_AHB_SIZE - 1,
+      .AccessPermission = MPU_REGION_PRIV_RW,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_I_EN_R6,
@@ -410,14 +417,15 @@ const MPU_Region_Config_t mpu_region_cfg[] = {
 /* Region 7: Allows writing of the secure application in the execution area */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER7,
-      MPU_ATTRIBUTE_DATANOCACHE,
-      S_CODE_START,
-      S_CODE_LIMIT,
-      MPU_REGION_PRIV_RW,
-      MPU_INSTRUCTION_ACCESS_DISABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER7,
+      .AttributesIndex  = MPU_ATTRIBUTE_DATANOCACHE,
+      .BaseAddress      = S_CODE_START,
+      .LimitAddress     = S_CODE_LIMIT,
+      .AccessPermission = MPU_REGION_PRIV_RW,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_I_EN_R7,
@@ -429,14 +437,15 @@ const MPU_Region_Config_t mpu_region_cfg[] = {
   /* Region 8: Allows writing of the non secure application in the execution area */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER8,
-      MPU_ATTRIBUTE_DATANOCACHE,
-      NS_CODE_START,
-      NS_CODE_LIMIT,
-      MPU_REGION_PRIV_RW,
-      MPU_INSTRUCTION_ACCESS_DISABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER8,
+      .AttributesIndex  = MPU_ATTRIBUTE_DATANOCACHE,
+      .BaseAddress      = NS_CODE_START,
+      .LimitAddress     = NS_CODE_LIMIT,
+      .AccessPermission = MPU_REGION_PRIV_RW,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_I_EN_R8,
@@ -449,14 +458,15 @@ const MPU_Region_Config_t mpu_region_cfg[] = {
   /* Region 9: Allows writing in secure DATA area */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER9,
-      MPU_ATTRIBUTE_DATANOCACHE,
-      S_DATA2_START,
-      S_DATA2_LIMIT,
-      MPU_REGION_PRIV_RW,
-      MPU_INSTRUCTION_ACCESS_DISABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER9,
+      .AttributesIndex  = MPU_ATTRIBUTE_DATANOCACHE,
+      .BaseAddress      = S_DATA2_START,
+      .LimitAddress     = S_DATA2_LIMIT,
+      .AccessPermission = MPU_REGION_PRIV_RW,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_I_EN_R9,
@@ -470,14 +480,15 @@ const MPU_Region_Config_t mpu_region_cfg[] = {
   /* Region 10: Allows writing in non secure DATA area */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER10,
-      MPU_ATTRIBUTE_DATANOCACHE,
-      NS_DATA2_START,
-      NS_DATA2_LIMIT,
-      MPU_REGION_PRIV_RW,
-      MPU_INSTRUCTION_ACCESS_DISABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER10,
+      .AttributesIndex  = MPU_ATTRIBUTE_DATANOCACHE,
+      .BaseAddress      = NS_DATA2_START,
+      .LimitAddress     = NS_DATA2_LIMIT,
+      .AccessPermission = MPU_REGION_PRIV_RW,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_I_EN_R10,
@@ -497,14 +508,15 @@ const MPU_Region_Config_t mpu_region_cfg_appli_s[] __attribute__((section(".BL2_
   /* Region 3: Forbid execution of the boot and allow erase */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER3,
-      MPU_ATTRIBUTE_CODE,
-      BL2_CODE_START - BOOTROM_HEADER_SIZE,
-      BL2_CODE_LIMIT,
-      MPU_REGION_PRIV_RW,
-      MPU_INSTRUCTION_ACCESS_DISABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER3,
+      .AttributesIndex  = MPU_ATTRIBUTE_CODE,
+      .BaseAddress      = BL2_CODE_START - BOOTROM_HEADER_SIZE,
+      .LimitAddress     = BL2_CODE_LIMIT,
+      .AccessPermission = MPU_REGION_PRIV_RW,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_S_A_EN_R3,
@@ -516,18 +528,19 @@ const MPU_Region_Config_t mpu_region_cfg_appli_s[] __attribute__((section(".BL2_
   /* Region 2/6: Allows execution of application secure */
   {
     {
-      MPU_REGION_ENABLE,
+      .Enable           = MPU_REGION_ENABLE,
 #if (OEMUROT_LOAD_AND_RUN == NO_LOAD_AND_RUN)
-      MPU_REGION_NUMBER2,
+      .Number           = MPU_REGION_NUMBER2,
 #else
-      MPU_REGION_NUMBER7,
+      .Number           = MPU_REGION_NUMBER7,
 #endif /* OEMUROT_LOAD_AND_RUN == NO_LOAD_AND_RUN */
-      MPU_ATTRIBUTE_CODE,
-      S_CODE_START,
-      S_CODE_LIMIT,
-      MPU_REGION_PRIV_RO,
-      MPU_INSTRUCTION_ACCESS_ENABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .AttributesIndex  = MPU_ATTRIBUTE_CODE,
+      .BaseAddress      = S_CODE_START,
+      .LimitAddress     = S_CODE_LIMIT,
+      .AccessPermission = MPU_REGION_PRIV_RO,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE,
+      .DisablePrivExec  = MPU_INSTRUCTION_ACCESS_ENABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_S_A_EN_R,
@@ -539,14 +552,15 @@ const MPU_Region_Config_t mpu_region_cfg_appli_s[] __attribute__((section(".BL2_
   /* Region 8: Allows reading of the non secure application */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER8,
-      MPU_ATTRIBUTE_CODE,
-      NS_CODE_START,
-      NS_CODE_LIMIT,
-      MPU_REGION_PRIV_RO,
-      MPU_INSTRUCTION_ACCESS_DISABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER8,
+      .AttributesIndex  = MPU_ATTRIBUTE_CODE,
+      .BaseAddress      = NS_CODE_START,
+      .LimitAddress     = NS_CODE_LIMIT,
+      .AccessPermission = MPU_REGION_PRIV_RO,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_S_A_EN_R8,
@@ -558,14 +572,15 @@ const MPU_Region_Config_t mpu_region_cfg_appli_s[] __attribute__((section(".BL2_
   /* Region 11: Allows RW access on application secure DATA area */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER11,
-      MPU_ATTRIBUTE_DATA,
-      S_DATA_START,
-      S_DATA_LIMIT,
-      MPU_REGION_PRIV_RW,
-      MPU_INSTRUCTION_ACCESS_DISABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER11,
+      .AttributesIndex  = MPU_ATTRIBUTE_DATA,
+      .BaseAddress      = S_DATA_START,
+      .LimitAddress     = S_DATA_LIMIT,
+      .AccessPermission = MPU_REGION_PRIV_RW,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_S_A_EN_R11,
@@ -577,14 +592,15 @@ const MPU_Region_Config_t mpu_region_cfg_appli_s[] __attribute__((section(".BL2_
   /* Region 12: Allows RW access on application non secure DATA area */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER12,
-      MPU_ATTRIBUTE_DATA,
-      NS_DATA_START,
-      NS_DATA_LIMIT,
-      MPU_REGION_PRIV_RW,
-      MPU_INSTRUCTION_ACCESS_DISABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER12,
+      .AttributesIndex  = MPU_ATTRIBUTE_DATA,
+      .BaseAddress      = NS_DATA_START,
+      .LimitAddress     = NS_DATA_LIMIT,
+      .AccessPermission = MPU_REGION_PRIV_RW,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_S_A_EN_R12,
@@ -602,14 +618,15 @@ const MPU_Region_Config_t mpu_region_cfg_appli_ns[] __attribute__((section(".BL2
   /* Region 0: Allows RW access to peripherals */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER0,
-      MPU_ATTRIBUTE_DEVICE,
-      PERIPH_BASE_NS,
-      PERIPH_BASE_NS + 0xFFFFFFF,
-      MPU_REGION_PRIV_RW,
-      MPU_INSTRUCTION_ACCESS_DISABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER0,
+      .AttributesIndex  = MPU_ATTRIBUTE_DEVICE,
+      .BaseAddress      = PERIPH_BASE_NS,
+      .LimitAddress     = PERIPH_BASE_NS + 0xFFFFFFF,
+      .AccessPermission = MPU_REGION_PRIV_RW,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_NS_A_EN_R0,
@@ -621,14 +638,15 @@ const MPU_Region_Config_t mpu_region_cfg_appli_ns[] __attribute__((section(".BL2
   /* Region 1: Allows execution of application non secure */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER1,
-      MPU_ATTRIBUTE_CODE,
-      NS_CODE_START,
-      NS_CODE_LIMIT,
-      MPU_REGION_PRIV_RO,
-      MPU_INSTRUCTION_ACCESS_ENABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER1,
+      .AttributesIndex  = MPU_ATTRIBUTE_CODE,
+      .BaseAddress      = NS_CODE_START,
+      .LimitAddress     = NS_CODE_LIMIT,
+      .AccessPermission = MPU_REGION_PRIV_RO,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_ENABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_NS_A_EN_R1,
@@ -640,14 +658,15 @@ const MPU_Region_Config_t mpu_region_cfg_appli_ns[] __attribute__((section(".BL2
   /* Region 2: Allows RW access on application non secure DATA area */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER2,
-      MPU_ATTRIBUTE_DATA,
-      NS_DATA_START,
-      NS_DATA_LIMIT,
-      MPU_REGION_PRIV_RW,
-      MPU_INSTRUCTION_ACCESS_DISABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER2,
+      .AttributesIndex  = MPU_ATTRIBUTE_DATA,
+      .BaseAddress      = NS_DATA_START,
+      .LimitAddress     = NS_DATA_LIMIT,
+      .AccessPermission = MPU_REGION_PRIV_RW,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_NS_A_EN_R2,
@@ -660,14 +679,15 @@ const MPU_Region_Config_t mpu_region_cfg_appli_ns[] __attribute__((section(".BL2
   /* Region 3: Allows reading of non secure DATA */
   {
     {
-      MPU_REGION_ENABLE,
-      MPU_REGION_NUMBER3,
-      MPU_ATTRIBUTE_DATANOCACHE,
-      NS_DATA2_START,
-      NS_DATA2_LIMIT,
-      MPU_REGION_PRIV_RO,
-      MPU_INSTRUCTION_ACCESS_DISABLE,
-      MPU_ACCESS_NOT_SHAREABLE,
+      .Enable           = MPU_REGION_ENABLE,
+      .Number           = MPU_REGION_NUMBER3,
+      .AttributesIndex  = MPU_ATTRIBUTE_DATANOCACHE,
+      .BaseAddress      = NS_DATA2_START,
+      .LimitAddress     = NS_DATA2_LIMIT,
+      .AccessPermission = MPU_REGION_PRIV_RO,
+      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
+      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
+      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
     },
 #ifdef FLOW_CONTROL
     FLOW_STEP_MPU_NS_A_EN_R3,
@@ -1220,6 +1240,7 @@ static int8_t MPU_CheckRegion(MPU_Type *MPUx, const MPU_Region_InitTypeDef *MPU_
               ((uint32_t)MPU_Init->DisableExec      << MPU_RBAR_XN_Pos));
 
   limit_cfg = (((uint32_t)MPU_Init->LimitAddress & 0xFFFFFFE0UL) |
+               ((uint32_t)MPU_Init->DisablePrivExec  << MPU_RLAR_PXN_Pos) |
                ((uint32_t)MPU_Init->AttributesIndex  << MPU_RLAR_AttrIndx_Pos) |
                ((uint32_t)MPU_Init->Enable           << MPU_RLAR_EN_Pos));
 

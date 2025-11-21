@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>STM32N657X0HxQ</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32N6xx_DFP.1.0.0</PackID>
+          <PackID>Keil.STM32N6xx_DFP.0.1.2</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
           <Cpu>IRAM(0x30000000-0x3003FFFF) IROM(0x0C000000-0xC07DFFF) IROM2(0x0C07E000-0xC07FFFF) CLOCK(8000000) FPU3(DFPU) CPUTYPE("Cortex-M55") ELITTLE TZ DSP</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -281,8 +281,8 @@
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0x0</Size>
+                <StartAddress>0xc07e000</StartAddress>
+                <Size>0x2000</Size>
               </OCR_RVCT5>
               <OCR_RVCT6>
                 <Type>0</Type>

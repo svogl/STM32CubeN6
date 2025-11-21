@@ -1,8 +1,7 @@
 
 ## <b>USBPD_DRP_DRD Application Description</b>
 
-This application is a USBPD type C DRP (supporting Data Role Swap) using Azure RTOS.
-USBPD DRP: This application initializes the Type C port 1 in DRP mode, allowing toggling between SNK and SRC roles.
+This application is a USBPD type C DRP (supporting Data Role Swap) using Azure RTOS. USBPD DRP: This application initializes the Type C port 1 in DRP mode, allowing toggling between SNK and SRC roles.
 
 Please note that this application does not embed any USB middleware. It could be used as a basis for adding 
 USB support (Host and Device), as USBPD Dual Role Data is supported by USBPD part.
@@ -99,3 +98,6 @@ In order to make the program work, you must do the following :
 <b>Note</b>
 
    The application uses the internal HSI clock as system clock source.
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

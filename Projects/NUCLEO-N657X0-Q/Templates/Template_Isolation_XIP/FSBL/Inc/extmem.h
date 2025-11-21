@@ -1,7 +1,7 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file           : extmem.h
+  * @file           :  extmem.h
   * @brief          : Header for external memory manager extmem.c file.
   ******************************************************************************
   * @attention

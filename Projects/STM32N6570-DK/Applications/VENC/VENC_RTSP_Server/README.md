@@ -2,69 +2,84 @@
 ##  <b>VENC_RTSP_Server Application Description</b>
 
 This application provides an example of the H264 video encoder streamed through Azure RTOS NetX/NetXDuo on STM32N6570-DK board.
-It also shows how to use the VENC with the camera pipeline in hardware handshake mode.
+It allows easy testing of the following use cases:
++ h264 encoding in 1080p, 720p, or 480p in Frame mode or Hardware Handshake mode (aka "Slice mode" aka "Streaming mode")
++ h264 + Audio uncompressed (PCM)
 
-The application aims to stream an encoded video format H264. Then,the H264 frames are sent through Ethernet peripheral
-using the RTP protocol (Real-time Transport Protocol) to a remote client for example
-VLC media player. The RTSP protocol (Real Time Streaming Protocol) is used to control
+The application aims to stream an encoded H264 video (+ audio) format. 
+
+Then,the frames are sent through Ethernet peripheral using the RTP protocol (Real-time Transport Protocol) to a remote client (for example VLC media player or ffmpeg). 
+
+The RTSP protocol (Real Time Streaming Protocol) is used to control
 media sessions (SETUP, PLAY, TEARDOWN).
 
-The main entry function tx_application_define() is called by ThreadX during kernel start, at this stage, all NetX resources are created.
 
- + A <i>NX_PACKET_POOL</i>is allocated
- + A <i>NX_IP</i> instance using that pool is initialized
- + The <i>ARP</i>, <i>ICMP</i>, <i>UDP</i> and <i>TCP</i> protocols are enabled for the <i>NX_IP</i> instance
- + A <i>DHCP client is created.</i>
+### Thread Overview
 
-The application then creates 2 threads with different priorities:
+The main entry function tx_application_define() is called by ThreadX during kernel start.
+The following threads are created.
 
- + **NxAppThread** (priority 10, PreemtionThreashold 10) : created with the <i>TX_AUTO_START</i> flag to start automatically.
- + **AppServerThread** (priority 4, PreemtionThreashold 4) : created with the <i>TX_AUTO_START</i> flag to start automatically.
- + **VENCAppThread** (priority 10, PreemtionThreashold 10) : created with the <i>TX_AUTO_START</i> flag to start automatically.
+**User Threads:**
 
-The **NxAppThread** starts and perform the following actions:
+- **Monitor App Thread** (`monitor_thread_func`, priority 63):  
+  Monitors system performance metrics such as CPU load and bitrates.
 
-  + Starts the DHCP client
-  + Waits for the IP address resolution
-  + Resumes the **AppServerThread**
+- **VENC App Thread** (`venc_thread_func`, priority 12):  
+  Handles video encoding operations, manages the video capture pipeline, and streams encoded video frames over the network.
 
-The **AppServerThread**, once started:
+**NetXDuo Threads:**
 
-  + Starts RTSP server
-  + Starts the demo video
-  + Displays a report message on the HyperTerminal at each received frame on the VLC media player
+- **App Main Thread** (`App_Main_Thread_Entry`, priority 10):  
+  Manages the main application logic, coordinating initialization, control flow, and high-level events for the RTSP server application.
 
+- **App Link Thread** (`App_Link_Thread_Entry`, priority 11):  
+  Handles the initialization and management of the application’s network link status and related events.
 
-The **VENCAppThread**, once started:
+- **NetX DHCP Client** (`_nx_dhcp_thread_entry`, priority 3):  
+  Manages the DHCP client operations, including requesting and renewing the IP address for the network interface.
 
-  + Initialize the camera stream
-  + Initialize the video encoder
-  + Encode the video stream and place in an output buffer
+- **RTSP Server** (`_nx_rtsp_server_thread_entry`, priority 3):  
+  Manages the RTSP server operations, handling client connections, session control, and streaming setup for real-time audio/video transmission.
 
-Note that this examples uses the VENC and DCMIPP in low latency "streaming" mode. Through a hardware signal, the encoding is done on the fly without needing a full picture input buffer.
+- **Test Thread** (`app_server_entry`, priority 4):  
+  Manages the RTSP server thread, handling client connections, session control, and coordinating video/audio streaming operations.
 
+- **Main IP Instance** (`_nx_ip_thread_entry`, priority 1):  
+  Manages the IP stack operations, including packet processing, routing, and network interface management for the application.
 
 ####  <b>Expected success behavior</b>
 
- + The board IP address is printed on the HyperTerminal
- + Streaming video is well displayed on the VLC media player after entering the url: rtsp://[IP]:554  in the Media/Open Network Stream/Open Media window
++ The board IP address is printed on the HyperTerminal@115200 bauds
+
+#####  <b>Playback using ffplay</b>
+Playback with low latency can be done using ffplay ;
+```sh
+ffplay -flags low_delay rtsp://[IP]
+```
+ Note : This application was tested with ffplay version 6.1.1-3ubuntu5
+
+#####  <b>Playback using VLC</b>
+Enter rtsp://[IP]:554 in the Media/Open Network Stream window.
+ 
+ + Streaming video is well displayed on the VLC media player after entering the URL: rtsp://[IP]:554  in the Media/Open Network Stream/Open Media window
   (example rtsp://192.168.0.27:554)
  + It is recommended that the caching value is set to 500ms on the VLC to keep the stream running smoothly
   (Media/Open Network Stream/Open Media window => Show more options), then press Play on VLC Play button.
  + The response messages sent by the server are printed on the HyperTerminal.
 
  Note : This application was tested with VLC version 3.0.19
+ Limitation: When using PCM, VLC audio rendering is scattered. This issue is pending resolution.
 
 #### <b>Expected error behavior</b>
 
-+ The red LED toggles each 1000ms to indicate that an error has occurred.
-+ In case the message exchange is not completed the Hyperterminal is not printing the received messages.
++ The red LED toggles every 1000ms to indicate that an error has occurred.
++ In case the message exchange is not completed the Hyperterminal does not print the received messages.
 + ""Critical error has occurred" message is printed on the HyperTerminal.
 
 #### <b>Assumptions if any</b>
 
 - The application is using the DHCP to acquire IP address, thus a DHCP server should be reachable by the board in the RTL used to test the application.
-- The application is configuring the Ethernet IP with a static predefined <i>MAC Address</i>, make sure to change it in case multiple boards are connected on the same RTL to avoid any potential network traffic issues.
+- The application is configuring the Ethernet IP with a static predefined <i>MAC Address</i>. Ensure to change it if multiple boards are connected on the same RTL to avoid any potential network traffic issues.
 - The <i>MAC Address</i> is defined in the `main.c`
 
 ```
@@ -87,18 +102,18 @@ void MX_ETH_Init(void)
   MACAddr[5] = 0x00;
 ```
 #### <b>Known limitations</b>
-None
+
+The RTSP server is minimalist and does not support client multiple connections/disconnections.
 
 #### <b>ThreadX usage hints</b>
 
  - ThreadX uses the Systick as time base, thus it is mandatory that the HAL uses a separate time base through the TIM IPs.
- - ThreadX is configured with 100 ticks/sec by default, this should be taken into account when using delays or timeouts at application. It is always possible to reconfigure it, by updating the "TX_TIMER_TICKS_PER_SECOND" define in the "tx_user.h" file. The update should be reflected in "tx_initialize_low_level.S" file too.
+ - ThreadX is configured with 100 ticks/sec by default, this should be considered when using delays or timeouts at application. It can be reconfigured by updating the "TX_TIMER_TICKS_PER_SECOND" define in the "tx_user.h" file. The update should be reflected in "tx_initialize_low_level.S" file too.
  - ThreadX is disabling all interrupts during kernel start-up to avoid any unexpected behavior, therefore all system related calls (HAL, BSP) should be done either at the beginning of the application or inside the thread entry functions.
  - ThreadX offers the "tx_application_define()" function, that is automatically called by the tx_kernel_enter() API.
    It is highly recommended to use it to create all applications ThreadX related resources (threads, semaphores, memory pools...)  but it should not in any way contain a system API call (HAL or BSP).
  - Using dynamic memory allocation requires to apply some changes to the linker file.
-   ThreadX needs to pass a pointer to the first free memory location in RAM to the tx_application_define() function,
-   using the "first_unused_memory" argument.
+   ThreadX needs to pass a pointer to the first free memory location in RAM to the tx_application_define() function using the first_unused_memory argument.
    This requires changes in the linker files to expose this memory location.
     + For EWARM add the following section into the .icf file:
      ```
@@ -107,33 +122,25 @@ None
 
 #### <b>NetX Duo usage hints</b>
 
-- Depending on the application scenario, the total TX and RX descriptors may need to be increased by updating respectively  the "ETH_TX_DESC_CNT" and "ETH_RX_DESC_CNT" in the "stm32n6xx_hal_conf.h", to guarantee the application correct behaviour, but this will cost extra memory to allocate.
-- The NetXDuo application needs to allocate the <b> <i> NX_PACKET </i> </b> pool in a dedicated section.
-Below is an example of the section declaration for different IDEs.
-   + For EWARM ".icf" file
-   ```
-   define symbol __ICFEDIT_region_NXDATA_start__ = 0x341F8180;
-   define symbol __ICFEDIT_region_NXDATA_end__   = 0x341FF980;
-   define region NXApp_region  = mem:[from __ICFEDIT_region_NXDATA_start__ to __ICFEDIT_region_NXDATA_end__];
-   place in NXApp_region { section .NetXPoolSection};
-
-  This section is then used in the <code> app_azure_rtos.c</code> file to force the <code>nx_byte_pool_buffer</code> allocation.
+- Depending on the application scenario, the total TX and RX descriptors may need to be increased by updating respectively  the "ETH_TX_DESC_CNT" and "ETH_RX_DESC_CNT" in the "stm32n6xx_hal_conf.h", to ensure the application correct behaviour, but this will cost extra memory to allocate.
+- The NetXDuo application needs to allocate a specific pool in a uncached section.
+Below is an example of the declaration of the nx pool.
 
 ```
-/* USER CODE BEGIN NX_Pool_Buffer */
-
-#if defined ( __ICCARM__ ) /* IAR Compiler */
-#pragma location = ".NetXPoolSection"
-
-#else /* GNU and AC6 compilers */
-__attribute__((section(".NetXPoolSection")))
-
-#endif
-
-/* USER CODE END NX_Pool_Buffer */
-static UCHAR  nx_byte_pool_buffer[NX_APP_MEM_POOL_SIZE];
-static TX_BYTE_POOL nx_app_byte_pool;
+  #if (USE_STATIC_ALLOCATION == 1)
+  static UCHAR nx_byte_pool_buffer[NX_APP_MEM_POOL_SIZE] __ALIGN_END __NON_CACHEABLE;
+  static TX_BYTE_POOL nx_app_byte_pool;
+  #endif
 ```
+
+with 
+```
+#define __NON_CACHEABLE __attribute__((section(".noncacheable")))
+```
+
+The definition of the uncached section must be consistent between the link file and the MPU configuration.
+
+
 For more details about the MPU configuration please refer to the [AN4838](https://www.st.com/resource/en/application_note/dm00272912-managing-memory-protection-unit-in-stm32-mcus-stmicroelectronics.pdf)
 
 ### <b>Keywords</b>
@@ -163,8 +170,6 @@ RTOS, Network, ThreadX, NetXDuo, RTP, RTSP, TCP, UDP, UART
 
 In order to make the program work, you must do the following :
 
-In order to make the program work, you must do the following :
-
  - Set the boot mode in development mode (BOOT1 switch position is 1-3, BOOT0 switch position doesn't matter).
  - Open your preferred toolchain
  - Select first the FSBL workspace
@@ -187,4 +192,6 @@ In order to make the program work, you must do the following :
  - Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).
  - Press the reset button. The code then executes in boot from external Flash mode.
 
-Note : when using CubeIDE, make sure to use the Debug configuration for development mode and the Release configuration for boot from flash.
+Note :
+-  when using CubeIDE, make sure to use the Debug configuration for development mode and the Release configuration for boot from flash.
+- 2 scripts have been added under Projects/STM32N6570-DK/Applications/VENC/VENC_RTSP_Server_Ext/Tools. These are helper to flash IAR and CubeIDE configurations. They are provided as reference and need adaptation to each environment (path)

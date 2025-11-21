@@ -1,15 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    stm32n6xx_hal_msp.c
-  * @author  GPM Application Team
-  * @brief   HAL MSP module.
-  *          This file should be copied to the application folder and renamed
-  *          to stm32n6xx_hal_msp.c
-  *
+  * @file         stm32n6xx_hal_msp.c
+  * @brief        This file provides code for the MSP Initialization
+  *               and de-Initialization codes.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2023 STMicroelectronics.
+  * Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -18,80 +16,66 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32n6xx_hal.h"
+#include "main.h"
+/* USER CODE BEGIN Includes */
 
-/** @addtogroup STM32N6xx_HAL_Driver
-  * @{
-  */
+/* USER CODE END Includes */
 
-/** @defgroup HAL_MSP HAL MSP module driver
-  * @brief HAL MSP module.
-  * @{
-  */
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN TD */
 
-/* Private typedefs ----------------------------------------------------------*/
-/* Private defines -----------------------------------------------------------*/
-/* Private macros ------------------------------------------------------------*/
+/* USER CODE END TD */
+
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN Define */
+
+/* USER CODE END Define */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN Macro */
+
+/* USER CODE END Macro */
+
 /* Private variables ---------------------------------------------------------*/
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
+
 /* Private function prototypes -----------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/
+/* USER CODE BEGIN PFP */
 
-/** @defgroup HAL_MSP_Private_Functions
-  * @{
-  */
+/* USER CODE END PFP */
 
+/* External functions --------------------------------------------------------*/
+/* USER CODE BEGIN ExternalFunctions */
+
+/* USER CODE END ExternalFunctions */
+
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
 /**
-  * @brief  Initialize the Global MSP.
-  * @retval None
+  * Initializes the Global MSP.
   */
 void HAL_MspInit(void)
 {
-  /* NOTE : This function is generated automatically by STM32CubeMX and eventually
-            modified by the user
-   */
+
+  /* USER CODE BEGIN MspInit 0 */
+
+  /* USER CODE END MspInit 0 */
+
+  /* System interrupt init*/
+
+  HAL_PWREx_EnableVddIO3();
+
+  /* USER CODE BEGIN MspInit 1 */
+
+  /* USER CODE END MspInit 1 */
 }
 
-/**
-  * @brief  DeInitialize the Global MSP.
-  * @retval None
-  */
-void HAL_MspDeInit(void)
-{
-  /* NOTE : This function is generated automatically by STM32CubeMX and eventually
-            modified by the user
-   */
-}
+/* USER CODE BEGIN 1 */
 
-/**
-  * @brief  Initialize the PPP MSP.
-  * @retval None
-  */
-/*
-void HAL_PPP_MspInit(void)
-{
-}
-*/
-
-/**
-  * @brief  DeInitialize the PPP MSP.
-  * @retval None
-  */
-/*
-void HAL_PPP_MspDeInit(void)
-{
-}
-*/
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
+/* USER CODE END 1 */

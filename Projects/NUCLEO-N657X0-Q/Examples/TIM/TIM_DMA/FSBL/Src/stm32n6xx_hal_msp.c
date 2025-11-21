@@ -107,8 +107,8 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef* htim_pwm)
     NodeConfig.Init.Direction = DMA_MEMORY_TO_PERIPH;
     NodeConfig.Init.SrcInc = DMA_SINC_INCREMENTED;
     NodeConfig.Init.DestInc = DMA_DINC_FIXED;
-    NodeConfig.Init.SrcDataWidth = DMA_SRC_DATAWIDTH_BYTE;
-    NodeConfig.Init.DestDataWidth = DMA_DEST_DATAWIDTH_BYTE;
+    NodeConfig.Init.SrcDataWidth = DMA_SRC_DATAWIDTH_WORD;
+    NodeConfig.Init.DestDataWidth = DMA_DEST_DATAWIDTH_WORD;
     NodeConfig.Init.SrcBurstLength = 1;
     NodeConfig.Init.DestBurstLength = 1;
     NodeConfig.Init.TransferAllocatedPort = DMA_SRC_ALLOCATED_PORT1|DMA_DEST_ALLOCATED_PORT0;

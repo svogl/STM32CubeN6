@@ -2,7 +2,6 @@
 ## <b>Ux_Host_CDC_ACM Application Description </b>
 
 This application provides an example of Azure RTOS USBX stack usage .
-
 The application is designed to behave as a USB CDC_ACM Host, the code provides required requests to properly enumerate
 CDC devices, CDC_ACM class APIs to send or receive data and display data on UART HyperTerminal.
 
@@ -75,7 +74,7 @@ None
 
 #### <b>USBX usage hints</b>
 
-- None
+None
 
 ### <b>Keywords</b>
 
@@ -142,3 +141,4 @@ The user has to check the list of the COM ports in Device Manager to find out th
 of the COM ports that have been assigned (by OS) to the Stlink VCP.
 The application uses the external HSE clock as USB source clock.
 
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

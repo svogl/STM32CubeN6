@@ -69,6 +69,8 @@ void HAL_MspInit(void)
 
   /* USER CODE END MspInit 0 */
 
+  HAL_PWREx_EnableVddA();
+
   /* System interrupt init*/
 
   /* USER CODE BEGIN MspInit 1 */
@@ -186,9 +188,6 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     {
       Error_Handler();
     }
-
-   /* Enable Vdda for ADC */
-   HAL_PWREx_EnableVddA();
 
     /* USER CODE END ADC1_MspInit 1 */
 

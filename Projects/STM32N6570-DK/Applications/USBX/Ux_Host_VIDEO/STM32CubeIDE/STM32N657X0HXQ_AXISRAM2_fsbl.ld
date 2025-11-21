@@ -190,12 +190,12 @@ SECTIONS
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
   } >RAM
-  .usbx_data 0x341EC800 (NOLOAD):
+  .usbx_data 0x341DD800 (NOLOAD):
   {
     *(.UsbHpcdSection)
   } >RAM
 
-  .usbx_bss 0x341ED800 (NOLOAD):
+  .usbx_bss 0x341DE800 (NOLOAD):
   {
     *(.UsbxPoolSection)
   } >RAM

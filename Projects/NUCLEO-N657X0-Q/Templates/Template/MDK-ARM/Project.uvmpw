@@ -5,7 +5,7 @@
 
   <Header>### uVision Project, (C) Keil Software</Header>
 
-  <WorkspaceName></WorkspaceName>
+  <WorkspaceName>C:\git\n6_master\Firmware\Projects\NUCLEO-N657X0-Q\Templates\Template\MDK-ARM\Project.uvmpw</WorkspaceName>
 
   <project>
     <PathAndName>.\FSBL\Template_FSBL.uvprojx</PathAndName>

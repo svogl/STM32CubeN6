@@ -1,8 +1,7 @@
 
 ## <b>USBPD_SNK Application Description</b>
 
-This application is a USBPD type C Provider using Azure RTOS.
-USBPD Provider: This application initialize the type C port 1 in source mode with only one PDO at 5V.
+This application is a USBPD type C Provider using Azure RTOS. USBPD Provider: This application initialize the type C port 1 in source mode with only one PDO at 5V.
 
 ####  <b>Expected success behavior</b>
 Connect UCPD cube Monitor on the VCP associated to our board (only available if USB cable is connected)
@@ -97,3 +96,6 @@ In order to make the program work, you must do the following :
 <b>Note</b>
 
    The application uses the internal HSI clock as system clock source.
+
+
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.
