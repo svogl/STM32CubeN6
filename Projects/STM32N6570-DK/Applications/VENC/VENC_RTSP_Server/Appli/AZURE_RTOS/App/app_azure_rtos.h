@@ -1,9 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    app_azure_rtos.h
-  * @author  MCD Application Team
-  * @brief   app_azure_rtos application header file
+  * @file           : app_azure_rtos.h
+  * @brief          : Header for app_azure_rtos.c file.
+  *                   app_azure_rtos application header file
   ******************************************************************************
   * @attention
   *
@@ -27,39 +27,16 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_azure_rtos_config.h"
-
 #include "app_threadx.h"
-
 #include "app_netxduo.h"
+
 /* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
 /* Exported types ------------------------------------------------------------*/
-/* USER CODE BEGIN ET */
-
-/* USER CODE END ET */
-
 /* Exported constants --------------------------------------------------------*/
-/* USER CODE BEGIN EC */
-
-/* USER CODE END EC */
-
 /* Exported macro ------------------------------------------------------------*/
-/* USER CODE BEGIN EM */
-
-/* USER CODE END EM */
-
 /* Exported functions prototypes ---------------------------------------------*/
-/* USER CODE BEGIN EFP */
-
-/* USER CODE END EFP */
-
 /* Private defines -----------------------------------------------------------*/
-/* USER CODE BEGIN PD */
 
-/* USER CODE END PD */
 
 #ifdef __cplusplus
 }

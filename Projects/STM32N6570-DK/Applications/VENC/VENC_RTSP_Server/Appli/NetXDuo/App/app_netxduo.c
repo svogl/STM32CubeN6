@@ -1,9 +1,8 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    app_netxduo.c
-  * @author  MCD Application Team
-  * @brief   NetXDuo applicative file
+  * @file           : app_netxduo.c
+  * @brief          : NetXDuo applicative file
   ******************************************************************************
   * @attention
   *
@@ -301,7 +300,7 @@ static VOID App_Link_Thread_Entry(ULONG thread_input)
     status = nx_ip_interface_status_check(&IpInstance, 0, NX_IP_LINK_ENABLED,
                                       &actual_status, 10);
 
-    if(status == NX_SUCCESS)
+    if (status == NX_SUCCESS)
     {
       if(linkdown == 1)
       {
@@ -317,7 +316,7 @@ static VOID App_Link_Thread_Entry(ULONG thread_input)
         /* Send request to check if an address is resolved. */
         status = nx_ip_interface_status_check(&IpInstance, 0, NX_IP_ADDRESS_RESOLVED,
                                       &actual_status, 10);
-        if(status == NX_SUCCESS)
+        if (status == NX_SUCCESS)
         {
           /* Stop DHCP */
           nx_dhcp_stop(&DHCPClient);
@@ -347,7 +346,7 @@ static VOID App_Link_Thread_Entry(ULONG thread_input)
     }
     else
     {
-      if(0 == linkdown)
+      if (0 == linkdown)
       {
         linkdown = 1;
         /* The network cable is not connected. */

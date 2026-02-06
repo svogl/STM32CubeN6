@@ -1,9 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    app_netxduo.h
-  * @author  MCD Application Team
-  * @brief   NetXDuo applicative header file
+  * @file           : app_netxduo.h
+  * @brief          : Header for app_netxduo.c file.
+  *                   NetXDuo applicative header file
   ******************************************************************************
   * @attention
   *
@@ -82,7 +82,8 @@ VOID MX_NetXDuo_Notify_Video_Frame_Ready(VOID);
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define PAYLOAD_SIZE             1536
-#define NX_PACKET_POOL_SIZE      (( PAYLOAD_SIZE + sizeof(NX_PACKET)) * 16)
+/* Increase packet count for high-throughput RTP: was 16, now 64 */
+#define NX_PACKET_POOL_SIZE      (( PAYLOAD_SIZE + sizeof(NX_PACKET)) * 64)
 #define QUEUE_MAX_SIZE           512
 
 #define DEFAULT_MEMORY_SIZE      1024

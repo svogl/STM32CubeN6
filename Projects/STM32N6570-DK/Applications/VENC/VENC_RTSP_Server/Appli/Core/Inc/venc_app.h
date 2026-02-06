@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    Appli/Core/Inc/venc_app.h
+  * @file    venc_app.h
   * @author  MCD Application Team
   * @brief   Header for venc_app.c module
   ******************************************************************************
@@ -16,18 +16,15 @@
   ******************************************************************************
   */
 
-#ifndef __VENC_APP_H__
-#define __VENC_APP_H__
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef VENC_APP_H
+#define VENC_APP_H
 
 /* Includes ------------------------------------------------------------------*/
-#include <stdio.h>
-#include <stdint.h>
+#include "stdio.h"
 #include "stm32n6xx_hal.h"
 #include "tx_api.h"
+/* Exported types ------------------------------------------------------------*/
 
 /* Exported constants --------------------------------------------------------*/
 /* Event flags used by the video pipeline */
@@ -67,16 +64,10 @@ void VENC_APP_EncodingStart(void);
  * @param  size  Output pointer to the data size (ULONG *)
  * @retval UINT Status code (NX/ThreadX style, 0 for success)
  */
-UINT VENC_APP_GetData(UCHAR **data, ULONG *size);
-
+INT VENC_APP_GetData(UCHAR **data, ULONG *size);
 /**
  * @brief  Stop the video encoding pipeline and release resources.
  * @retval UINT Status code
  */
 UINT VENC_APP_EncodingStop(void);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* __VENC_APP_H__ */
+#endif /* VENC_APP_H */

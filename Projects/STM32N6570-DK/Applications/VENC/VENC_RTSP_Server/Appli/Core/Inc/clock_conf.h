@@ -1,19 +1,18 @@
 /**
-******************************************************************************
-* @file    Appli/Core/Inc/clock_conf.h
-* @author  MCD Application Team
-* @brief   Clock configuration header
-******************************************************************************
-* @attention
-*
-* Copyright (c) 2025 STMicroelectronics.
-* All rights reserved.
-*
-* This software component is licensed by ST under BSD 3-Clause license,
-* the "License"; You may obtain a copy of the License in the LICENSE file
-* in the root directory of this software component.
-******************************************************************************
-*/
+  ******************************************************************************
+  * @file           : clock_conf.h
+  * @brief          : Clock configuration header
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2025 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may obtain a copy of the License in the LICENSE file
+  * in the root directory of this software component.
+  ******************************************************************************
+  */
 
 #ifndef _CLOCK_CONF_H_
 #define _CLOCK_CONF_H_

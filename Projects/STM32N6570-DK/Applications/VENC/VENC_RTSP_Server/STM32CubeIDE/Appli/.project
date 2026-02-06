@@ -32,6 +32,16 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>Src/SystemClock_Config_600MHz.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/SystemClock_Config_600MHz.c</locationURI>
+		</link>
+		<link>
+			<name>Src/SystemClock_Config_800MHz.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/SystemClock_Config_800MHz.c</locationURI>
+		</link>
+		<link>
 			<name>Src/app_azure_rtos.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Appli/AZURE_RTOS/App/app_azure_rtos.c</locationURI>
@@ -52,14 +62,14 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/app_threadx.c</locationURI>
 		</link>
 		<link>
+			<name>Src/dcmipp_app.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/dcmipp_app.c</locationURI>
+		</link>
+		<link>
 			<name>Src/main.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/main.c</locationURI>
-		</link>
-		<link>
-			<name>Src/power.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/power.c</locationURI>
 		</link>
 		<link>
 			<name>Src/stm32n6xx_hal_msp.c</name>
@@ -110,11 +120,6 @@
 			<name>Drivers/BSP/stm32n6570_discovery_bus.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/BSP/stm32n6570_discovery_camera.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_camera.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/stm32n6570_discovery_lcd.c</name>
@@ -1237,9 +1242,14 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/st_monitor_network.c</locationURI>
 		</link>
 		<link>
-			<name>Src/audio/stm32n6570_discovery_audio.patch.hsi_600_400.c</name>
+			<name>Src/Patch/nx_stm32_eth_driver.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/stm32n6570_discovery_audio.patch.hsi_600_400.c</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/Patch/nx_stm32_eth_driver.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Patch/stm32n6570_discovery_camera.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/Patch/stm32n6570_discovery_camera.c</locationURI>
 		</link>
 		<link>
 			<name>Src/audio/stm32n6570_discovery_audio_multi.c</name>

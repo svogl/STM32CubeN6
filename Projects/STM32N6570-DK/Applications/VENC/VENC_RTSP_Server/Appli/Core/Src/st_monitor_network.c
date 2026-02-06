@@ -1,20 +1,19 @@
 /**
-******************************************************************************
-* @file          st_monitor_network.c
-* @author        MCD Application Team
-* @brief         Implement bitrate monitoring
-*******************************************************************************
-* @attention
-*
-* Copyright (c) 2019(-2025) STMicroelectronics.
-* All rights reserved.
-*
-* This software is licensed under terms that can be found in the LICENSE file
-* in the root directory of this software component.
-* If no LICENSE file comes with this software, it is provided AS-IS.
-*
-********************************************************************************
-*/
+  ******************************************************************************
+  * @file           : st_monitor_network.c
+  * @brief          : Implement bitrate monitoring
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019(-2025) STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -50,6 +49,6 @@ void monitor_network(void)
                  &ip_total_fragments_sent,
                  &ip_total_fragments_received);
                  
-  printf("NetX/packet dropped : Rx = %lu/%lu - Tx = %lu/%lu\n", ip_receive_packets_dropped, ip_total_packets_received, ip_send_packets_dropped, ip_total_packets_sent);
+  //printf("NetX/packet dropped : Rx = %lu/%lu - Tx = %lu/%lu\n", ip_receive_packets_dropped, ip_total_packets_received, ip_send_packets_dropped, ip_total_packets_sent);
   
 }

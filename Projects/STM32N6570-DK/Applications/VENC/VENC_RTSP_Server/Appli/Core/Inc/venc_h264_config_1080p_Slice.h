@@ -1,6 +1,6 @@
 /**
  ******************************************************************************
- * @file    Appli/Core/Inc/venc_h264_config_1080p_Slice.h
+* @file          venc_h264_config_1080p_Slice.h
  * @author  MCD Application Team
  * @brief   VENC H.264 configuration for 1080p slice mode
  ******************************************************************************
@@ -9,9 +9,10 @@
  * Copyright (c) 2025 STMicroelectronics.
  * All rights reserved.
  *
- * This software component is licensed by ST under BSD 3-Clause license,
- * the "License"; You may obtain a copy of the License in the LICENSE file
+* This software is licensed under terms that can be found in the LICENSE file
  * in the root directory of this software component.
+* If no LICENSE file comes with this software, it is provided AS-IS.
+*
  ******************************************************************************
  */
 
@@ -40,6 +41,7 @@ extern "C" {
 /** Location macro for input frame buffer */
 #define INPUT_FRAME_LOCATION    IN_RAM
 
+  
 #ifdef __cplusplus
 }
 #endif

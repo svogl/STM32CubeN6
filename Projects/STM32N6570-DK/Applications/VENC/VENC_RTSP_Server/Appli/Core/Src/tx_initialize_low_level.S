@@ -60,8 +60,7 @@
     EXTERN  _tx_execution_isr_exit
     EXTERN  _tx_execution_thread_exit
     
-
-SYSTEM_CLOCK        EQU     600000000
+SYSTEM_CLOCK        EQU     800000000
 SYSTICK_CYCLES      EQU     ((SYSTEM_CLOCK / 100) -1)
 
 #ifdef USE_DYNAMIC_MEMORY_ALLOCATION
@@ -300,7 +299,7 @@ __tx_DBGHandler:
 #include "tx_user.h"
 #endif
 
-SYSTEM_CLOCK        =     600000000
+SYSTEM_CLOCK        =     800000000
 SYSTICK_CYCLES      =     ((SYSTEM_CLOCK / 100) -1)
 
 /* Setup the stack and heap areas.  */

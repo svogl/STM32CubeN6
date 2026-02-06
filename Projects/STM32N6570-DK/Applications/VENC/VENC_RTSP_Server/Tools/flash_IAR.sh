@@ -1,4 +1,4 @@
-export PATH_PROG="/c/Program Files/STMicroelectronics/STM32Cube/STM32CubeProgrammeN6-B03/bin"
+export PATH_PROG="/c/Program Files/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin"
 export PATH=$PATH_PROG:$PATH
 LOADER_EXT="-el $PATH_PROG/ExternalLoader/MX66UW1G45G_STM32N6570-DK.stldr"
 export OFFSET_IMAGE=0x70100000
@@ -62,8 +62,9 @@ fi
 
 echo "Boot switches must be in 1-3"
 
-waitType "1:2:3:4" "Select application to sign and flash (1=VENC_RTSP, 2=VENC_PCM_RTSP, 3=VENC_RTSP_LRUN)> " "" "1"
+waitType "1:2:3" "Select application to sign and flash (1=VENC_RTSP, 2=VENC_PCM_RTSP)> " "" "1"
 APP_CHOICE="$val_waitType"
+FSBL_PATH="../EWARM/FSBL/VENC_RTSP_FSBL/Exe/FSBL.bin"
 
 case "$APP_CHOICE" in
 	1)
@@ -74,25 +75,19 @@ case "$APP_CHOICE" in
 		APP_NAME="VENC_PCM_RTSP"
 		BIN_PATH="../EWARM/Appli/VENC_PCM_RTSP_Debug/Exe/Project.bin"
 		;;
-	3)
-		APP_NAME="VENC_RTSP_LRUN"
-		BIN_PATH="../EWARM/Appli/VENC_RTSP_LRUN/Exe/Project.bin"
-		;;
 	*)
 		echo "Invalid selection."
 		exit 1
 		;;
 esac
 
-waitType "yes:no" "Ready to sign $APP_NAME? (Yes/no)> " "" "yes"
-echo "Signing $APP_NAME ....."
 
-STM32MP_SigningTool_CLI.exe --version
+waitType "yes:no" "Ready to sign ? (Yes/no)> " "" "yes"
+echo Signing .....
+STM32_SigningTool_CLI.exe --version
 
-STM32MP_SigningTool_CLI.exe -bin "$BIN_PATH" -nk -of 0x80000000 -t fsbl -o tmp/firmware-trusted.bin -hv 2.3 -dump tmp/firmware-trusted.bin
-STM32MP_SigningTool_CLI.exe -bin ../EWARM/FSBL/VENC_RTSP_FSBL/Exe/FSBL.bin -nk -of 0x80000000 -t fsbl -o tmp/FSBL-trusted.bin -hv 2.3 -dump tmp/FSBL-trusted.bin
-
-
+STM32_SigningTool_CLI.exe  -s  -bin "$BIN_PATH"  -nk -of 0x80000000 -t fsbl -o tmp/firmware-trusted.bin -hv 2.3 -align -dump tmp/firmware-trusted.bin
+STM32_SigningTool_CLI.exe  -s  -bin "$FSBL_PATH" -nk -of 0x80000000 -t fsbl -o tmp/FSBL-trusted.bin     -hv 2.3 -align -dump tmp/FSBL-trusted.bin
 
 waitType "yes:no" "Do you want to flash the image? (Yes/no)> " "" "yes"
 if [ "$val_waitType" == "yes" ]; then

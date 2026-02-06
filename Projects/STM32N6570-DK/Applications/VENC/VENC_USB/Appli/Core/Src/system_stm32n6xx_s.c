@@ -3,7 +3,8 @@
   * @file    system_stm32n6xx_s.c
   * @author  MCD Application Team
   * @brief   CMSIS Cortex-M55 Device Peripheral Access Layer System Source File
-  *          to be used in secure application.
+  *          to be used in secure application when the system implements
+  *          the TrustZone-M security.
   *
   *   This file provides two functions and one global variable to be called from
   *   user application:

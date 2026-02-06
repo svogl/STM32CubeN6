@@ -1,9 +1,8 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    app_threadx.c
-  * @author  MCD Application Team
-  * @brief   ThreadX applicative file
+  * @file           : app_threadx.c
+  * @brief          : ThreadX applicative file
   ******************************************************************************
   * @attention
   *

@@ -32,29 +32,59 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>Src/SystemClock_Config_800MHz.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/SystemClock_Config_800MHz.c</locationURI>
+		</link>
+		<link>
+			<name>Src/app_azure_rtos.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/AZURE_RTOS/App/app_azure_rtos.c</locationURI>
+		</link>
+		<link>
 			<name>Src/app_filex.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Appli/Src/app_filex.c</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/app_filex.c</locationURI>
+		</link>
+		<link>
+			<name>Src/app_threadx.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/app_threadx.c</locationURI>
+		</link>
+		<link>
+			<name>Src/dcmipp_app.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/dcmipp_app.c</locationURI>
 		</link>
 		<link>
 			<name>Src/fx_stm32_sd_driver_glue.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Appli/Src/fx_stm32_sd_driver_glue.c</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/fx_stm32_sd_driver_glue.c</locationURI>
 		</link>
 		<link>
-			<name>Src/hal_timebase_tim.c</name>
+			<name>Src/lcd_app.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Appli/Src/hal_timebase_tim.c</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/lcd_app.c</locationURI>
 		</link>
 		<link>
 			<name>Src/main.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Appli/Src/main.c</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/main.c</locationURI>
+		</link>
+		<link>
+			<name>Src/sdcard_app.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/sdcard_app.c</locationURI>
+		</link>
+		<link>
+			<name>Src/stm32n6xx_hal_timebase_tim.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/stm32n6xx_hal_timebase_tim.c</locationURI>
 		</link>
 		<link>
 			<name>Src/stm32n6xx_it.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Appli/Src/stm32n6xx_it.c</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/stm32n6xx_it.c</locationURI>
 		</link>
 		<link>
 			<name>Src/system_stm32n6xx_fsbl.c</name>
@@ -69,7 +99,17 @@
 		<link>
 			<name>Src/tx_initialize_low_level.S</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Appli/Src/tx_initialize_low_level.S</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/tx_initialize_low_level.S</locationURI>
+		</link>
+		<link>
+			<name>Src/venc_app.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/venc_app.c</locationURI>
+		</link>
+		<link>
+			<name>Src/venc_h264_config.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/venc_h264_config.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/stm32n6570_discovery.c</name>
@@ -82,14 +122,14 @@
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.c</locationURI>
 		</link>
 		<link>
-			<name>Drivers/BSP/stm32n6570_discovery_camera.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_camera.c</locationURI>
-		</link>
-		<link>
 			<name>Drivers/BSP/stm32n6570_discovery_lcd.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_lcd.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/BSP/stm32n6570_discovery_xspi.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_xspi.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal.c</name>
@@ -205,6 +245,11 @@
 			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart_ex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_uart_ex.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_xspi.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_xspi.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_ll_sdmmc.c</name>
@@ -2345,6 +2390,16 @@
 			<name>Middlewares/ThreadX/txe_timer_info_get.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/txe_timer_info_get.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Patch/stm32n6570_discovery_camera.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/Patch/stm32n6570_discovery_camera.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/BSP/Components/aps256xx.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/Components/aps256xx/aps256xx.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/Components/imx335.c</name>

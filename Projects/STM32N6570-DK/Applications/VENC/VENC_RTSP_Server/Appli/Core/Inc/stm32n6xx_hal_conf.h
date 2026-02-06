@@ -35,8 +35,8 @@ extern "C" {
 //#define HAL_ADC_MODULE_ENABLED
 #define HAL_BSEC_MODULE_ENABLED
 #define HAL_CORTEX_MODULE_ENABLED
-#define HAL_CRC_MODULE_ENABLED
-#define HAL_CRYP_MODULE_ENABLED
+//#define HAL_CRC_MODULE_ENABLED
+//#define HAL_CRYP_MODULE_ENABLED
 #define HAL_CSI_MODULE_ENABLED
 #define HAL_DCMI_MODULE_ENABLED
 #define HAL_DCMIPP_MODULE_ENABLED
@@ -402,6 +402,10 @@ extern "C" {
 #ifdef HAL_SD_MODULE_ENABLED
 #include "stm32n6xx_hal_sd.h"
 #endif /* HAL_SD_MODULE_ENABLED */
+
+#ifdef HAL_SDIO_MODULE_ENABLED
+#include "stm32n6xx_hal_sdio.h"
+#endif /* HAL_SDIO_MODULE_ENABLED */
 
 #ifdef HAL_SDRAM_MODULE_ENABLED
 #include "stm32n6xx_hal_sdram.h"

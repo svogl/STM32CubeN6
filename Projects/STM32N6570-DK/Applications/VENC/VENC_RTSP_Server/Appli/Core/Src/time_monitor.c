@@ -1,17 +1,19 @@
-/*
+/**
  *******************************************************************************
- * @file    Appli/Core/Src/time_monitor.c
- * @author  MCD Application Team
+ * @file    time_monitor.c
  * @brief   Time monitor implementation (DWT cycle counter based)
  *******************************************************************************
  * @attention
  *
- * Copyright (c) 2025 STMicroelectronics. All rights reserved.
+ * Copyright (c) 2025 STMicroelectronics.
+ * All rights reserved.
  *
- * This software component is licensed under BSD 3-Clause license.
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
  *******************************************************************************
  */
-
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -52,7 +54,7 @@ void initCycleCounter(void)
     {
         /* Capture CPU clock frequency (Hz) */
         system_clock_frequency = HAL_RCC_GetCpuClockFreq();
-        printf("Monitoring : Cpu : %lu MHz\n", (unsigned long)(system_clock_frequency / 1000000UL));
+        printf("Monitoring: CPU: %lu MHz\n", (unsigned long)(system_clock_frequency / 1000000UL));
 
         /* Enable trace and DWT if not already enabled */
         if (!(CoreDebug->DEMCR & CoreDebug_DEMCR_TRCENA_Msk))

@@ -33,6 +33,8 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "ux_dcd_stm32.h"
+#include "utils.h"
+  
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -41,11 +43,19 @@ extern "C" {
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
-#define USBX_DEVICE_MEMORY_STACK_SIZE       30 * 1024
+#define UX_DEVICE_APP_MEM_CACHED_SIZE       (32 * 1024)
+#define UX_DEVICE_APP_MEM_UNCACHED_SIZE     (32 * 1024)
+  
+  
 
 #define UX_DEVICE_APP_THREAD_STACK_SIZE   8*1024
 #define UX_DEVICE_APP_THREAD_PRIO         10
 
+#define UX_VIDEO_THREAD_STACK_SIZE   1024
+#define UX_VIDEO_THREAD_PRIO         10
+  
+  
+  
 /* USER CODE BEGIN EC */
 #define APP_QUEUE_SIZE                               5
 /* USER CODE END EC */
@@ -60,6 +70,7 @@ UINT MX_USBX_Device_Init(VOID *memory_ptr);
 
 /* USER CODE BEGIN EFP */
 VOID USBX_APP_Device_Init(VOID);
+void MX_USB1_OTG_HS_PCD_Init(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -69,6 +80,10 @@ VOID USBX_APP_Device_Init(VOID);
 
 #ifndef UX_DEVICE_APP_THREAD_NAME
 #define UX_DEVICE_APP_THREAD_NAME  "USBX Device App Main Thread"
+#endif
+
+#ifndef UX_VIDEO__THREAD_NAME
+#define UX_VIDEO_THREAD_NAME  "USBX Video Thread"
 #endif
 
 #ifndef UX_DEVICE_APP_THREAD_PREEMPTION_THRESHOLD

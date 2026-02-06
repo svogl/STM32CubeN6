@@ -1,18 +1,19 @@
-/*
- ******************************************************************************
- * @file    Appli/NetXDuo/App/pcm_over_rtp.c
- * @author  MCD Application Team
- * @brief   PCM over RTP application (C source)
- ******************************************************************************
- * @attention
- *
- * Copyright (c) 2025 STMicroelectronics. All rights reserved.
- *
- * This software component is licensed by ST under BSD 3-Clause license,
- * the "License"; You may obtain a copy of the License in the LICENSE file
- * in the root directory of this software component.
- ******************************************************************************
- */
+/**
+  ******************************************************************************
+  * @file           : pcm_over_rtp.c
+  * @brief          : PCM over RTP application (C source)
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2025 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 #include    "nx_rtp_sender.h"
 #include "stm32n6xx_hal.h"

@@ -1,18 +1,19 @@
-/*
- ******************************************************************************
- * @file    Appli/NetXDuo/App/app_rtsp_over_rtp.c
- * @author  MCD Application Team
- * @brief   RTSP over RTP application (C source)
- ******************************************************************************
- * @attention
- *
- * Copyright (c) 2025 STMicroelectronics. All rights reserved.
- *
- * This software component is licensed by ST under BSD 3-Clause license,
- * the "License"; You may obtain a copy of the License in the LICENSE file
- * in the root directory of this software component.
- ******************************************************************************
- */
+/**
+  ******************************************************************************
+  * @file           : app_rtsp_over_rtp.c
+  * @brief          : RTSP over RTP application (C source)
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2025 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* This is the test control routine the NetX RTSP module.  All tests are dispatched from this routine.  */
 
@@ -106,14 +107,14 @@ void sample_entry(NX_IP *ip_ptr, NX_PACKET_POOL *pool_ptr, VOID *dns_ptr, UINT (
 #endif /* DEMO_AUDIO_CHANNEL_NUM */
 
 /* The sampling periods define rtp timestamp increase rate for media. */
-#define DEMO_RTP_VIDEO_SAMPLING_PERIOD    (90000 / DEMO_VIDEO_FRAME_PER_SECOND)
+#define DEMO_RTP_VIDEO_SAMPLING_PERIOD    (90000 /  GetVideoFramerate())
 #define DEMO_RTP_AUDIO_SAMPLING_PERIOD    (16000 / DEMO_AUDIO_FRAME_PER_SECOND)  /* Assume the default AAC sampling rate is 44100.
                                                                                     Normally, a single ACC frame contains 1024 samples;
                                                                                     So, there are 44100 / 1024 = 43 frames per second.
                                                                                     Therefore, sampling period is 44100 / 43 = 1025. */
 
 /* Define frame play internal for media */
-#define DEMO_RTP_VIDEO_PLAY_INTERVAL      (1000 / DEMO_VIDEO_FRAME_PER_SECOND)
+#define DEMO_RTP_VIDEO_PLAY_INTERVAL      (1000 / GetVideoFramerate())
 #define DEMO_RTP_AUDIO_PLAY_INTERVAL      (1000 / DEMO_AUDIO_FRAME_PER_SECOND)
 
 #ifndef DEMO_PLAY_TIMER_INTERVAL
@@ -178,7 +179,10 @@ static UINT rtsp_disconnect_callback(NX_RTSP_CLIENT *rtsp_client_ptr);
 static UINT test_rtcp_receiver_report_callback(NX_RTP_SESSION *session, NX_RTCP_RECEIVER_REPORT *report);
 static UINT test_rtcp_sdes_callback(NX_RTCP_SDES_INFO *sdes_info);
 
-
+__weak uint32_t GetVideoFramerate(void)
+{
+  return DEMO_VIDEO_FRAME_PER_SECOND;
+}
 
 /* Define what the initial system looks like.  */
 void sample_entry(NX_IP *ip_ptr, NX_PACKET_POOL *pool_ptr, VOID *dns_ptr, UINT (*unix_time_callback)(ULONG *unix_time))
@@ -294,7 +298,6 @@ SAMPLE_CLIENT       *client_ptr;
             //if (client_ptr -> rtp_session_audio_client_count)
             {
               /* Call user registered callback function to initialize. */
-              printf(" AUDIO_APP_EncodingStart()\n");
               AUDIO_APP_EncodingStart();
             }
           }
@@ -379,9 +382,9 @@ SAMPLE_CLIENT       *client_ptr;
                 }
                 else
                 {
-                  monitor_bitrate("video",data_length);               
+                  monitor_bitrate("video", data_length);
                 }
-                
+
                 /* Update rtp timestamp video sampling period. */
                 client_ptr -> rtp_session_video_timestamp += DEMO_RTP_VIDEO_SAMPLING_PERIOD;
             }
@@ -401,38 +404,42 @@ SAMPLE_CLIENT       *client_ptr;
             continue;
           }
           
-          data_length = 0;
-          if ((AUDIO_APP_GetData(&data, (size_t *)&data_length)) || (data_length == 0))
+          /* Drain all pending audio frames from jitter buffer to avoid backlog. */
+          while (1)
           {
-            continue;
-          }
-          /* Use systick to compute network time for rtcp sender report */
-          msw = tick_num / (1000 / DEMO_PLAY_TIMER_INTERVAL);
-          lsw = ((ULONG64)tick_num << 32) / TX_TIMER_TICKS_PER_SECOND;
-          
+            data_length = 0;
+            if ((AUDIO_APP_GetData(&data, (size_t *)&data_length)) || (data_length == 0))
+            {
+              break;
+            }
+            /* Use systick to compute network time for rtcp sender report */
+            msw = tick_num / (1000 / DEMO_PLAY_TIMER_INTERVAL);
+            lsw = ((ULONG64)tick_num << 32) / TX_TIMER_TICKS_PER_SECOND;
+            
 #ifndef DEMO_MULTICAST_ENABLED
-          for (i = 0; i < NX_RTSP_SERVER_MAX_CLIENTS; i++)
-          {
-            client_ptr = &sample_client[i];
+            for (i = 0; i < NX_RTSP_SERVER_MAX_CLIENTS; i++)
+            {
+              client_ptr = &sample_client[i];
 #endif /* DEMO_MULTICAST_ENABLED */
-            
-            /* Make sure at least one client having setup the connection. */
-            if (client_ptr -> rtp_session_audio_client_count == 0)
-            {
-              continue;
+              
+              /* Make sure at least one client having setup the connection. */
+              if (client_ptr -> rtp_session_audio_client_count == 0)
+              {
+                continue;
+              }
+              
+              //printf("A:%u - %u - %u\n", client_ptr -> rtp_session_audio_timestamp, msw, lsw);
+              
+              status = nx_rtp_sender_session_audio_send(&(client_ptr -> rtp_session_audio), data, data_length,
+                                                        client_ptr -> rtp_session_audio_timestamp, msw, lsw, NX_TRUE);
+              if (status != NX_SUCCESS)
+              {
+                printf("Fail to send audio frame: %d, %d\r\n", i, status);
+              }
+              
+              /* Update rtp timestamp audio sampling period. */
+              client_ptr -> rtp_session_audio_timestamp += DEMO_RTP_AUDIO_SAMPLING_PERIOD;
             }
-            
-            //printf("A:%u - %u - %u\n", client_ptr -> rtp_session_audio_timestamp, msw, lsw);
-            
-            status = nx_rtp_sender_session_audio_send(&(client_ptr -> rtp_session_audio), data, data_length,
-                                                     client_ptr -> rtp_session_audio_timestamp, msw, lsw, NX_TRUE);
-            if (status != NX_SUCCESS)
-            {
-              printf("Fail to send audio frame: %d, %d\r\n", i, status);
-            }
-            
-            /* Update rtp timestamp audio sampling period. */
-            client_ptr -> rtp_session_audio_timestamp += DEMO_RTP_AUDIO_SAMPLING_PERIOD;
           }
         }
         
@@ -796,7 +803,7 @@ UINT i;
 #endif /* DEMO_MULTICAST_ENABLED */
 
 
-    printf("==== RTCP Receive report ====\r\n");
+    //printf("==== RTCP Receive report ====\r\n");
 
     /* Search the rtsp client table and find which session it is*/
 #ifdef DEMO_MULTICAST_ENABLED
@@ -819,12 +826,12 @@ UINT i;
     {
         if (session == &(sample_client[i].rtp_session_video))
         {
-            printf("Video Session: %d - packet_loss : %d - jitter : %d - delay : %d\r\n", (i + 1), report->packet_loss, report->jitter, report->delay);
+            //printf("Video Session: %d - packet_loss : %d - jitter : %d - delay : %d\r\n", (i + 1), report->packet_loss, report->jitter, report->delay);
             break;
         }
         else if (session == &(sample_client[i].rtp_session_audio))
         {
-            printf("Audio Session: %d - packet_loss : %d - jitter : %d - delay : %d\r\n", (i + 1), report->packet_loss, report->jitter, report->delay);
+            //printf("Audio Session: %d - packet_loss : %d - jitter : %d - delay : %d\r\n", (i + 1), report->packet_loss, report->jitter, report->delay);
             break;
         }
     }

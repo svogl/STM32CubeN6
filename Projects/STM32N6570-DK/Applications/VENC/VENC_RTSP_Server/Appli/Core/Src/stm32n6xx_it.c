@@ -1,4 +1,3 @@
-/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    stm32n6xx_it.c
@@ -15,24 +14,30 @@
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32n6xx_it.h"
-
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-#include "app_rtsp_over_rtp.h"
 #include "stm32n6570_discovery_camera.h"
-/* USER CODE END Includes */
+#include "app_rtsp_over_rtp.h"
+
+
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
+
 
 /* External variables --------------------------------------------------------*/
 extern ETH_HandleTypeDef heth;
 extern TIM_HandleTypeDef htim6;
 
 
-/* Cortex Processor Interruption and Exception Handlers ----------------------*/
+/******************************************************************************/
+/*            Cortex-M55 Processor Exceptions Handlers                         */
+/******************************************************************************/
 
 /**
   * @brief  This function handles Non maskable interrupt (NMI).
@@ -83,18 +88,16 @@ void BusFault_Handler(void)
   */
 void DebugMon_Handler(void)
 {
+  while (1)
+  {
+  }
 }
-
-/* Peripheral Interrupt Handlers --------------------------------------------*/
-
-/**
-  * @brief  This function handles Ethernet global interrupt.
-  * @note   Forwards handling to HAL Ethernet IRQ handler.
-  */
-void ETH1_IRQHandler(void)
-{
-    HAL_ETH_IRQHandler(&heth);
-}
+/******************************************************************************/
+/*                 STM32N6xx Peripherals Interrupt Handlers                   */
+/*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
+/*  available peripheral interrupt handler's name please refer to the startup */
+/*  file (startup_stm32n6xx.s).                                               */
+/******************************************************************************/
 
 /**
   * @brief  This function handles TIM6 interrupt request.
@@ -121,6 +124,16 @@ void CSI_IRQHandler(void)
 void DCMIPP_IRQHandler(void)
 {
     BSP_CAMERA_IRQHandler(0);
+}
+
+
+/**
+  * @brief  This function handles Ethernet global interrupt.
+  * @note   Forwards handling to HAL Ethernet IRQ handler.
+  */
+void ETH1_IRQHandler(void)
+{
+    HAL_ETH_IRQHandler(&heth);
 }
 
 

@@ -27,6 +27,7 @@ extern "C"
 #include <stdint.h>
 #include <stddef.h>
 
+  
 /**
  * @brief  Return the last PCM frame sequence number produced by the audio ISR.
  * @retval uint32_t Last PCM frame number (incrementing counter)
@@ -39,7 +40,7 @@ uint32_t AUDIO_APP_LastPcmFrameNumber(void);
  * @param  size  Output size in bytes of the PCM buffer region pointed by data
  * @retval uint32_t Status code (0 = success)
  */
-uint32_t AUDIO_APP_GetData(uint8_t **data, size_t *size);
+int32_t AUDIO_APP_GetData(uint8_t **data, size_t *size);
 
 /**
  * @brief  Start audio encoding pipeline (optional implementation).
@@ -47,6 +48,12 @@ uint32_t AUDIO_APP_GetData(uint8_t **data, size_t *size);
  */
 uint32_t AUDIO_APP_EncodingStart(void);
 
+
+/**
+ * @brief  Stop the video encoding pipeline and release resources.
+ * @retval UINT Status code
+ */
+uint32_t AUDIO_APP_EncodingStop(void);
 
 #ifdef __cplusplus
 };

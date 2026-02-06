@@ -1,18 +1,18 @@
-/*
- ******************************************************************************
- * @file    Appli/NetXDuo/App/app_rtsp_over_rtp.h
- * @author  MCD Application Team
- * @brief   RTSP over RTP application header
- ******************************************************************************
- * @attention
- *
- * Copyright (c) 2025 STMicroelectronics. All rights reserved.
- *
- * This software component is licensed by ST under BSD 3-Clause license,
- * the "License"; You may obtain a copy of the License in the LICENSE file
- * in the root directory of this software component.
- ******************************************************************************
- */
+/**
+   ******************************************************************************
+   * @file           : app_rtsp_over_rtp.h
+   * @brief          : Header for app_rtsp_over_rtp.c file.
+   *                   RTSP over RTP application header
+   ******************************************************************************
+   * @attention
+   *
+   * Copyright (c) 2025 STMicroelectronics. All rights reserved.
+   *
+   * This software component is licensed by ST under BSD 3-Clause license,
+   * the "License"; You may obtain a copy of the License in the LICENSE file
+   * in the root directory of this software component.
+   ******************************************************************************
+   */
 
 /* This is an include file for the rtsp over rtp demo programs. It is not part of the official release of NetXDuo RTSP Server or RTP Sender.
    It is simply a convenience for the user to have a simple demo program to use as a starting point for their application.
@@ -72,7 +72,7 @@ extern TX_EVENT_FLAGS_GROUP demo_test_events;
 */
 
 
-/* User added function protypes with corresponding user defined macros. */
+/* User added function prototypes with corresponding user defined macros. */
 VOID demo_media_data_initialize(VOID);
 UINT demo_video_data_read(UCHAR **data, ULONG *size);
 UINT demo_audio_data_read(UCHAR **data, ULONG *size);

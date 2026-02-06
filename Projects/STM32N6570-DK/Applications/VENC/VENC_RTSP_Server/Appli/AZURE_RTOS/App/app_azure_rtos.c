@@ -1,9 +1,8 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    app_azure_rtos.c
-  * @author  MCD Application Team
-  * @brief   app_azure_rtos application implementation file
+  * @file           : app_azure_rtos.c
+  * @brief          : app_azure_rtos application implementation file
   ******************************************************************************
   * @attention
   *
@@ -24,26 +23,11 @@
 #include "stm32n6xx.h"
 
 /* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 #include "main.h"
 #include "venc_app.h"
-/* USER CODE END Includes */
-
 /* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
 /* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
 /* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
 /* Private variables ---------------------------------------------------------*/
 #if (USE_STATIC_ALLOCATION == 1)
 /* USER CODE BEGIN TX_Pool_Buffer */
@@ -75,6 +59,11 @@ TX_THREAD venc_thread;
 /* USER CODE END PFP */
 
 __weak void monitor_thread_create(void)
+{
+  return;
+}
+
+__weak void audio_thread_create(void)
 {
   return;
 }
@@ -133,6 +122,8 @@ VOID tx_application_define(VOID *first_unused_memory)
     /* USER CODE END  App_ThreadX_Init_Success */
 
   }
+  
+  audio_thread_create();
 
   if (tx_byte_pool_create(&nx_app_byte_pool, "Nx App memory pool", nx_byte_pool_buffer, NX_APP_MEM_POOL_SIZE) != TX_SUCCESS)
   {

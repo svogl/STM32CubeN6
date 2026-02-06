@@ -1,24 +1,22 @@
 /**
-******************************************************************************
-* @file          st_monitor.c
-* @author        MCD Application Team
-* @brief         Implement CPU load manager
-*******************************************************************************
-* @attention
-*
-* Copyright (c) 2019(-2022) STMicroelectronics.
-* All rights reserved.
-*
-* This software is licensed under terms that can be found in the LICENSE file
-* in the root directory of this software component.
-* If no LICENSE file comes with this software, it is provided AS-IS.
-*
-********************************************************************************
-*/
+  ******************************************************************************
+  * @file           : st_monitor.c
+  * @brief          : Implement CPU load manager
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019(-2022) STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 /*cstat -MISRAC2012-Rule-10.4_a  A third-party produces a violation message we cannot fix*/
 #include "cmsis_compiler.h"
 /*cstat +MISRAC2012-Rule-10.4_a*/
-
 #include "st_monitor.h"
 
 

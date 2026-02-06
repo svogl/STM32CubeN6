@@ -1,18 +1,37 @@
 ## <b>VENC_SDCard_ThreadX Description</b>
 
-This project demonstrates the use of the STM32N6 video encoder and the camera pipeline.<br>It is targeted to run on STM32N657xx device on STM32N6570-DK board from STMicroelectronics.
+This project demonstrates the use of the STM32N6 video encoder and the camera pipeline.
 
-This application is meant to run in internal SRAM via the Load & Run method. The application is stored in external flash and then loaded in internal RAM for execution.<br>
-It can also be run in dev_mode debug. For information on those modes, see the "How to use" section.
+It is targeted to run on STM32N657xx device on STM32N6570-DK board from STMicroelectronics.
+
+It allows easy testing of the following use cases:
+
+  - Frame mode
+  - 720p30, 480p30
+
+This application is meant to run in internal SRAM via the Load & Run method. 
+
+The application is stored in external flash and then loaded in internal RAM for execution.<br>
+
+It can also be run in dev_mode debug. 
+
+For information on those modes, see the "How to use" section.
 
 ### <b> Example behaviour </b>
 
-This example takes a camera (OV5640) input and transfers it to the video encoder through the camera pipeline. The camera image is also displayed on the board's LCD screen for user feedback of what is being recorded.<br>
-The video encoder output stream is saved to the SD card. The output is raw since no file system is used for now. For information on how to get data from the SD card after the execution of the example, see the "How to use" section.
+This example takes a camera (IMX335) input and transfers it to the video encoder through the camera pipeline. 
 
-This example uses ThreadX for its RTOS functionality. The ewl_conf.h file is set up accordingly to take advantage of ThreadX's memory management and synchronization features within the video encoder software.
+The camera image is also displayed on the board's LCD screen for user feedback of what is being recorded.
 
-The example does the following :<br>
+The video encoder output stream is saved to the SD car. 
+
+For information on how to get data from the SD card after the execution of the example, see the "How to use" section.
+
+This example uses ThreadX for its RTOS functionality. 
+
+The ewl_conf.h file is set up accordingly to take advantage of ThreadX's memory management and synchronization features within the video encoder software.
+
+The example does the following :
 
   - Enable all internal RAMs
   - Configure all necessary clocks
@@ -21,26 +40,15 @@ The example does the following :<br>
   - Enable the camera via the BSP
   - Enable the LCD via the BSP
   - Initialize the encoder
-  - Encode 600 frames
+  - Encode each 600 frames into a single file (`xxx.h264` will be created containing 600 frames = 10 sec @ 30fps)
 
 Depending on the execution mode, some of the initialization will be performed in the FSBL.
 
 #### <b>Error Handling</b><br>
 
-Upon successful execution of the example, both LEDs on the board will turn on after initialization and turn off when 600 frames have been encoded.
+Upon successful execution of the example, both LEDs on the board will turn on after initialization.
 
 If an error occurs during initialization, the red LED will blink indefinitely (this can for example be caused by the SD card not being present).
-
-#### <b>Notes</b>
-
- 1. Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)
-    based on variable incremented in SysTick ISR. This implies that if HAL_Delay() is called from
-    a peripheral ISR process, then the SysTick interrupt must have higher priority (numerically lower)
-    than the peripheral interrupt. Otherwise the caller ISR process will be blocked.
-    To change the SysTick interrupt priority you have to use HAL_NVIC_SetPriority() function.
-
- 2. The application needs to ensure that the SysTick time base is always set to 1 millisecond
-    to have correct HAL operation.
 
 
 ### <b>Keywords</b>
@@ -51,30 +59,55 @@ Graphics, VENC, Encoding,  Hardware Encoding
 
 #### <b>Sub-project FSBL</b>
 
-    - VENC_LRUN_Example_ThreadX/FSBL/Inc/main.h                    Header for main.c module
-    - VENC_LRUN_Example_ThreadX/FSBL/Inc/extmem.h                  Header for extmem.c module
-    - VENC_LRUN_Example_ThreadX/FSBL/Inc/partition_stm32n657xx.h   SAU partition configuration
-    - VENC_LRUN_Example_ThreadX/FSBL/Incstm32n6xx_hal_conf.h       HAL Configuration file
-    - VENC_LRUN_Example_ThreadX/FSBL/Inc/stm32n6xx_it.h            Interrupt handlers header file
-    - VENC_LRUN_Example_ThreadX/FSBL/stm32_extmem_conf.h           External memory manager Configuration file
-    - VENC_LRUN_Example_ThreadX/FSBL/Src/main.c                    Main program
-    - VENC_LRUN_Example_ThreadX/FSBL/Src/extmem.c                  code to initialize external memory
-    - VENC_LRUN_Example_ThreadX/FSBL/Src/stm32n6xx_hal_msp.c       HAL MSP module
-    - VENC_LRUN_Example_ThreadX/FSBL/Src/stm32n6xx_it.c            Interrupt handlers
-    - VENC_LRUN_Example_ThreadX/FSBL/Src/system_stm32n6xx_fsbl.c   STM32N6xx system source file
+    - FSBL/Inc/main.h                    Header for main.c module
+    - FSBL/Inc/extmem.h                  Header for extmem.c module
+    - FSBL/Inc/partition_stm32n657xx.h   SAU partition configuration
+    - FSBL/Inc/stm32n6xx_hal_conf.h      HAL Configuration file
+    - FSBL/Inc/stm32n6xx_it.h            Interrupt handlers header file
+    - FSBL/Inc/stm32_extmem_conf.h       External memory manager Configuration file
+    - FSBL/Src/main.c                    Main program
+    - FSBL/Src/extmem.c                  Code to initialize external memory
+    - FSBL/Src/stm32n6xx_hal_msp.c       HAL MSP module
+    - FSBL/Src/stm32n6xx_it.c            Interrupt handlers
+    - FSBL/Src/system_stm32n6xx_fsbl.c   STM32N6xx system source file
+
 
 #### <b>Sub-project Appli</b>
-    - VENC_LRUN_Example_ThreadX/Appli/Inc/main.h                       Header for main.c module
-    - VENC_LRUN_Example_ThreadX/Appli/Inc/stm32n6xx_hal_conf.h         HAL Configuration file
-    - VENC_LRUN_Example_ThreadX/Appli/Inc/stm32n6xx_it.h               Interrupt handlers header file
-    - VENC_LRUN_Example_ThreadX/Appli/Inc/partition_stm32n657xx.h      SAU partition configuration
-    - VENC_LRUN_Example_ThreadX/Appli/Inc/stm32_assert.h               Assert function definition
-    - VENC_LRUN_Example_ThreadX/Appli/Inc/ewl_conf.h                   EWL configuration file
-    - VENC_LRUN_Example_ThreadX/Appli/Inc/stm32n6570_discovery_conf.h  BSP configuration file
-    - VENC_LRUN_Example_ThreadX/Appli/Src/main.c                       Main program
-    - VENC_LRUN_Example_ThreadX/Appli/Src/hal_timebase_tim.c           HAL timer timebase source file
-    - VENC_LRUN_Example_ThreadX/Appli/Src/stm32n6xx_it.c               Interrupt handlers
-    - VENC_LRUN_Example_ThreadX/Appli/Src/system_stm32n6xx.c           STM32N6xx system source file
+
+    - Appli/Core/Inc/app_filex.h                    FileX app header
+    - Appli/Core/Inc/app_threadx.h                  ThreadX app header
+    - Appli/Core/Inc/aps256xx_conf.h                APS256XX config
+    - Appli/Core/Inc/dcmipp_app.h                   DCMI-PP app header
+    - Appli/Core/Inc/ewl_conf.h                     EWL configuration file
+    - Appli/Core/Inc/fx_stm32_sd_driver.h           FileX SD driver header
+    - Appli/Core/Inc/main.h                         Header for main.c module
+    - Appli/Core/Inc/partition_stm32n657xx.h        SAU partition configuration
+    - Appli/Core/Inc/stm32_assert.h                 Assert function definition
+    - Appli/Core/Inc/stm32n6570_discovery_conf.h    BSP configuration file
+    - Appli/Core/Inc/stm32n6xx_hal_conf.h           HAL Configuration file
+    - Appli/Core/Inc/stm32n6xx_it.h                 Interrupt handlers header file
+    - Appli/Core/Inc/utils.h                        Utility helpers
+    - Appli/Core/Inc/venc_app.h                     VENC app API
+    - Appli/Core/Inc/venc_h264_config.h             H.264 encoder config
+    - Appli/Core/Inc/venc_h264_config_480p_Frame.h  H.264 480p frame config
+    - Appli/Core/Inc/venc_h264_config_720p_Frame.h  H.264 720p frame config
+    - Appli/Core/Src/app_filex.c                    FileX app source
+    - Appli/Core/Src/app_threadx.c                  ThreadX app source
+    - Appli/Core/Src/dcmipp_app.c                   DCMI-PP app source
+    - Appli/Core/Src/fx_stm32_sd_driver_glue.c      FileX SD driver glue
+    - Appli/Core/Src/lcd_app.c                      LCD app source
+    - Appli/Core/Src/main.c                         Main program
+    - Appli/Core/Src/sdcard_app.c                   SDCard recording logic
+    - Appli/Core/Src/stm32n6xx_hal_timebase_tim.c   HAL timer timebase source file
+    - Appli/Core/Src/stm32n6xx_it.c                 Interrupt handlers
+    - Appli/Core/Src/SystemClock_Config_600MHz.c    System clock config 600MHz
+    - Appli/Core/Src/SystemClock_Config_800MHz.c    System clock config 800MHz
+    - Appli/Core/Src/system_stm32n6xx_s.c           STM32N6xx system source file (secure)
+    - Appli/Core/Src/tx_initialize_low_level.S      ThreadX low-level init (ASM)
+    - Appli/Core/Src/venc_app.c                     VENC app source
+    - Appli/Core/Src/venc_h264_config.c             H.264 encoder config source 
+    - Appli/Core/Inc/fx_user.h                      FileX user config
+
 
 ### <b>Hardware and Software environment</b>
 
@@ -83,28 +116,24 @@ Graphics, VENC, Encoding,  Hardware Encoding
   - This template has been tested with STMicroelectronics STM32N6570-DK (MB1939)
     board and can be easily tailored to any other supported device
     and development board.
+    
+  - This application uses USART1 to display logs, the hyperterminal configuration is as follows:
+      - BaudRate = 115200 baud
+      - Word Length = 8 Bits
+      - Stop Bit = 1
+      - Parity = None
+      - Flow control = None
 
   - On STM32N6570-DK board, the BOOT0 mechanical slide switch must be set to SW1.
 
-  - The following OTP fuses are set in this template:
+  - In order to use the full XSPI speed, the following OTP fuses need to be set 
 
-    - VDDIO3_HSLV=1     I/O XSPIM_P2 High speed option enabled
+  - VDDIO2_HSLV=1     I/O XSPIM_P1 High speed option enabled
+  - VDDIO3_HSLV=1     I/O XSPIM_P2 High speed option enabled
 	
-  - To ensure the project runs properly, the SD card must be formatted in FAT32. 
-
-**WARNING**
-
-When OTP fuses are set, they can not be reset.
-The NO_OTP_FUSE option is selected by default using the Preprocessor definition in the IDE. XSPI speed will however be limited to 50MHz.
-To use the full XSPI speed, delete the NO_OTP_FUSE definition.
+  - To ensure the project runs properly, **the SD card must be formatted in FAT32.** 
 
 
-  - **EWARM** : To monitor a variable in the live watch window, you must proceed as follow :
-    - Start a debugging session.
-    - Open the View > Images.
-    - Double-click to deselect the second instance of project.out.
-
-  - **MDK-ARM** : To monitor a variable in the live watch window, you must comment out SCB_EnableDCache() in main() function.
 
 ### <b>How to use it ?</b>
 
@@ -123,7 +152,6 @@ This mode enables execution without having to connect through an IDE. The applic
 
 It is expected that a command line environment is configured with the CubeProgrammer in its PATH.
 
- - Make sure that the "Appli" project in IAR is in the "DK_LRUN" configuration
  - Compile the FSBL project and the Appli project
  - Using the command line, add the header to the Appli and the FSBL (see "Annex : adding a header" section of this README)
  - Make sure that the board is in development mode (BOOT1 switch position is 1-3)
@@ -132,16 +160,23 @@ It is expected that a command line environment is configured with the CubeProgra
  - Press the reset button
  - The example should execute
 
- Note : when using CubeIDE, make sure to use the Debug configuration for development mode and the Release configuration for boot from flash.
+__Note__: 2 scripts are provided as example for signing and flashing IAR or CubeIDE builds 
+  VENC_SDCard_ThreadX/Tools/flash_IAR.sh
+  VENC_SDCard_ThreadX/Tools/flash_cubeIDE.sh 
+
+Please adapt the scripts to your environment 
 
 #### <b> After execution </b>
 
-After the red and green LED have turned off, 600 frames of video have been encoded. To play them back, the stream needs to be extracted from the SD card.
-After plugging the SD card into a computer, the raw stream is stored in the "encoded.h264" file.
+After each 600 frames of video have been encoded, a new xxx.h264 file is completed. 
+To play them back, the SD card should be plugged into a computer, and the xxx.h264 files should appear.
 
-To read back encoded video, it can be converted from raw bytestream to mp4 using a tool called [ffmpeg](https://trac.ffmpeg.org/) with the following command : `ffmpeg -f h264 -framerate 30 -i [extracted file] -c copy [output file]`
+To read back encoded video, it can be converted from raw bytestream to mp4 using  **ffmpeg**  with the following command : `ffmpeg -f h264 -framerate 30 -i xxxx.h264 -c copy xxx.mp4`
 
-The file can then be read using VLC.
+The file can then be read using **ffplay** or any other regular video player.
+
+[Windows ffmpeg can be found here ](https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z)
+
 
 #### <b> Adding a header </b>
 

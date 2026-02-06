@@ -28,7 +28,7 @@ extern "C" {
 /** Frame width in pixels  */
 #define VENC_WIDTH     1280U
 /** Target framerate (frames per second) */
-#define FRAMERATE      30U
+#define FRAMERATE      20U
 
 /* Hardware mode ------------------------------------------------------------*/
 /** Enable hardware handshake / slice / stream mode (1 = enabled) */
@@ -36,7 +36,8 @@ extern "C" {
 
 /* Buffer placement ---------------------------------------------------------*/
 /** Location macro for VENC internal buffer */
-#define VENC_BUFFER_LOCATION    IN_RAM
+#define VENC_BUFFER_LOCATION    IN_UNCACHED_RAM
+
 /** Location macro for input frame buffer */
 #define INPUT_FRAME_LOCATION    IN_RAM
 
@@ -58,6 +59,19 @@ extern "C" {
 #define VENC_POOL_SIZE                  (2306868U)
 #endif
 
+
+
+/* Size of output h264 bitstream - to be adjusted according to targeted bitrate*.. and available memory*/
+#ifndef VENC_OUTPUT_BUFFER_SIZE
+#define VENC_OUTPUT_BUFFER_SIZE     (4U * 75U * 1024U)
+#endif
+
+/* This use case is tight in memory => lower the bitrate*/
+#ifndef VENC_BITRATE
+#define VENC_BITRATE (1*1000U*1000U)
+#endif
+
+  
 #ifdef __cplusplus
 }
 #endif

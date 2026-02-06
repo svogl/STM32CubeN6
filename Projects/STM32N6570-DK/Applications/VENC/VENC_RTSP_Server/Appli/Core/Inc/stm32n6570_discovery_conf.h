@@ -8,7 +8,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2023 STMicroelectronics.
+  * Copyright (c) 2024 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -30,8 +30,13 @@ extern "C" {
 #include "stm32n6xx_hal.h"
 
 /* COM defines */
+#if defined(TERMINAL_IO)
 #define USE_COM_LOG                         0U
 #define USE_BSP_COM_FEATURE                 0U
+#else
+#define USE_COM_LOG                         1U
+#define USE_BSP_COM_FEATURE                 1U
+#endif /* TERMINAL_IO */
 
 /* Touch Sensing controller defines */
 #define USE_FT5336_TS_CTRL                  1U
@@ -54,17 +59,13 @@ extern "C" {
 #define BSP_BUTTON_USER2_IT_PRIORITY        15U
 #define BSP_BUTTON_TAMP_IT_PRIORITY         15U
 #define BSP_AUDIO_OUT_IT_PRIORITY           14U
-#define BSP_AUDIO_IN_IT_PRIORITY            15U
+#define BSP_AUDIO_IN_IT_PRIORITY            7U
 #define BSP_SD_IT_PRIORITY                  14U
 #define BSP_SD_RX_IT_PRIORITY               14U
 #define BSP_SD_TX_IT_PRIORITY               15U
 #define BSP_TS_IT_PRIORITY                  15U
 
 #define USE_IMX335_SENSOR 1U
-
-
-#define USE_DMA2D_TO_FILL_RGB_RECT           1U
-
 
 #ifdef __cplusplus
 }

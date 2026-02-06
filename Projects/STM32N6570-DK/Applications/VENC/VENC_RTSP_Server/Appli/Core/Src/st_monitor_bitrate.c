@@ -1,20 +1,19 @@
 /**
-******************************************************************************
-* @file          st_monitor_bitrate.c
-* @author        MCD Application Team
-* @brief         Implement bitrate monitoring
-*******************************************************************************
-* @attention
-*
-* Copyright (c) 2025 STMicroelectronics.
-* All rights reserved.
-*
-* This software is licensed under terms that can be found in the LICENSE file
-* in the root directory of this software component.
-* If no LICENSE file comes with this software, it is provided AS-IS.
-*
-********************************************************************************
-*/
+    ******************************************************************************
+    * @file           : st_monitor_bitrate.c
+    * @brief          : Implement bitrate monitoring
+    ******************************************************************************
+    * @attention
+    *
+    * Copyright (c) 2025 STMicroelectronics.
+    * All rights reserved.
+    *
+    * This software is licensed under terms that can be found in the LICENSE file
+    * in the root directory of this software component.
+    * If no LICENSE file comes with this software, it is provided AS-IS.
+    *
+    ******************************************************************************
+    */
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>

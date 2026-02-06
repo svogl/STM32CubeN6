@@ -1,34 +1,37 @@
 /**
  ******************************************************************************
- * @file    Appli/Core/Inc/venc_h264_config.h
+* @file          venc_h264_config.h
  * @author  MCD Application Team
- * @brief   VENC support public header
+* @brief         venc configuration 
  ******************************************************************************
  * @attention
  *
  * Copyright (c) 2025 STMicroelectronics.
  * All rights reserved.
  *
- * This software component is licensed by ST under BSD 3-Clause license,
- * the "License"; You may obtain a copy of the License in the LICENSE file
+* This software is licensed under terms that can be found in the LICENSE file
  * in the root directory of this software component.
+* If no LICENSE file comes with this software, it is provided AS-IS.
+*
  ******************************************************************************
  */
 
-#ifndef __PLUGIN_VENC_H__
-#define __PLUGIN_VENC_H__
+
+
+#ifndef venc_h264_config_h
+#define venc_h264_config_h
+
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /* Includes ------------------------------------------------------------------*/
 #include <stdarg.h>
 #include <stdint.h>
-#include "stm32n6xx_hal.h"
 #include "stm32n6xx_ll_venc.h"
-#include "H264EncApi.h"
-#include "venc_h264_config.h"
+#include "h264encapi.h"
 
 /* Exported types ------------------------------------------------------------*/
 
@@ -46,6 +49,7 @@ typedef struct cam_h264_cfg_t
  */
 typedef struct dcmipp_h264_cfg_t
 {
+  float    bytes_per_pixel;
   uint32_t format; /**< pixel packer format identifier */
   uint32_t pitch;  /**< line pitch in bytes */
 } dcmipp_h264_cfg_t;
@@ -95,12 +99,6 @@ bool IsHwHanshakeMode(void);
 uint32_t GetDCMIPPFormat(void);
 
 /**
- * @brief  Get picture type expected for the encoder input.
- * @retval H264EncPictureType picture type
- */
-H264EncPictureType GetInputFrameType(void);
-
-/**
  * @brief  Retrieve DCMIPP lines configuration (warp/irq lines).
  * @param  pWarpLines Output warp lines count
  * @param  pIrqLines  Output irq lines count
@@ -109,15 +107,45 @@ H264EncPictureType GetInputFrameType(void);
 HAL_StatusTypeDef GetDCMIPPLinesConfig(uint32_t *pWarpLines, uint32_t *pIrqLines);
 
 /**
+ * @brief Return the last frame address captured by DCMIPP
+ * @param  frame_number Input frame ID to be retrieved
+ * @retval frame address
+ */
+uint8_t * GetNextFrame(uint32_t frame_number);
+
+
+/**
+ * @brief  Return maximmum number of frames available for DCMIPP capture.
+ * @retval Number of frames
+ */
+uint32_t GetNbInputFrame(void);
+
+
+/**
+ * @brief  Get pointer to output  buffer and  its size.
+ * @param  bufferSize Optional output: size of buffer in bytes.
+ * @retval uint8_t* Pointer to the buffer
+ */
+uint8_t * GetOutputBuffer(uint32_t * bufferSize);
+
+
+/**
  * @brief  Return number of captured lines by DCMIPP.
  * @retval uint32_t number of lines captured
  */
 uint32_t GetDCMIPPNbLinesCaptured(void);
 
+
+/**
+ * @brief Returns the video frame rate (FPS) from the H.264 encoder configuration.
+ * @retval uint32_t The computed frames-per-second value.
+ */
+uint32_t GetVideoFramerate(void);
+
 #ifdef __cplusplus
-}
+};
 #endif
 
-#endif /* __PLUGIN_VENC_H__ */
+#endif
 
 

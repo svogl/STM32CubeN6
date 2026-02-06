@@ -1,17 +1,19 @@
 
 ##  <b>VENC_RTSP_Server Application Description</b>
 
-This application provides an example of the H264 video encoder streamed through Azure RTOS NetX/NetXDuo on STM32N6570-DK board.
-It allows easy testing of the following use cases:
-+ h264 encoding in 1080p, 720p, or 480p in Frame mode or Hardware Handshake mode (aka "Slice mode" aka "Streaming mode")
-+ h264 + Audio uncompressed (PCM)
+This application demonstrates the H.264 video encoder streaming through Azure RTOS NetX/NetXDuo on the STM32N6570-DK board.
 
-The application aims to stream an encoded H264 video (+ audio) format. 
+It enables testing of the following H.264 encoding use cases:
 
-Then,the frames are sent through Ethernet peripheral using the RTP protocol (Real-time Transport Protocol) to a remote client (for example VLC media player or ffmpeg). 
+  - Frame mode or Hardware Handshake mode (also known as Slice mode or Streaming mode)
+  - 1080p, 720p, or 480p
 
-The RTSP protocol (Real Time Streaming Protocol) is used to control
-media sessions (SETUP, PLAY, TEARDOWN).
+
+The application streams encoded H.264 video with optional audio.
+
+Frames are transmitted through the Ethernet peripheral using the RTP (Real-time Transport Protocol) to a remote client, such as VLC media player or ffmpeg.
+
+The RTSP (Real-Time Streaming Protocol) controls media sessions, including SETUP, PLAY, and TEARDOWN commands.
 
 
 ### Thread Overview
@@ -49,50 +51,41 @@ The following threads are created.
 
 ####  <b>Expected success behavior</b>
 
-+ The board IP address is printed on the HyperTerminal@115200 bauds
+- The board IP address is printed on HyperTerminal at 115200 baud
 
 #####  <b>Playback using ffplay</b>
 Playback with low latency can be done using ffplay ;
 ```sh
 ffplay -flags low_delay rtsp://[IP]
 ```
- Note : This application was tested with ffplay version 6.1.1-3ubuntu5
+Note: This application was tested with ffplay version 6.1.1-3ubuntu5
 
 #####  <b>Playback using VLC</b>
 Enter rtsp://[IP]:554 in the Media/Open Network Stream window.
  
- + Streaming video is well displayed on the VLC media player after entering the URL: rtsp://[IP]:554  in the Media/Open Network Stream/Open Media window
-  (example rtsp://192.168.0.27:554)
- + It is recommended that the caching value is set to 500ms on the VLC to keep the stream running smoothly
-  (Media/Open Network Stream/Open Media window => Show more options), then press Play on VLC Play button.
- + The response messages sent by the server are printed on the HyperTerminal.
+ - Streaming video is displayed correctly in VLC after entering the URL rtsp://[IP]:554 in the Media/Open Network Stream/Open Media window
+   (example rtsp://192.168.0.27:554)
+ - It is recommended to set the caching value to 500 ms in VLC to keep the stream running smoothly
+   (Media/Open Network Stream/Open Media window => Show more options), then press Play.
+ - The response messages sent by the server are printed on HyperTerminal.
 
- Note : This application was tested with VLC version 3.0.19
- Limitation: When using PCM, VLC audio rendering is scattered. This issue is pending resolution.
+Note: This application was tested with VLC version 3.0.19  **using Live555 plugin**
+
 
 #### <b>Expected error behavior</b>
 
-+ The red LED toggles every 1000ms to indicate that an error has occurred.
-+ In case the message exchange is not completed the Hyperterminal does not print the received messages.
-+ ""Critical error has occurred" message is printed on the HyperTerminal.
+- The red LED toggles every 250 ms to indicate that an error has occurred.
+- In case the message exchange is not completed, HyperTerminal does not print the received messages.
 
 #### <b>Assumptions if any</b>
 
-- The application is using the DHCP to acquire IP address, thus a DHCP server should be reachable by the board in the RTL used to test the application.
+- The application uses DHCP to acquire an IP address; thus, a DHCP server should be reachable by the board in the RTL used to test the application.
 - The application is configuring the Ethernet IP with a static predefined <i>MAC Address</i>. Ensure to change it if multiple boards are connected on the same RTL to avoid any potential network traffic issues.
 - The <i>MAC Address</i> is defined in the `main.c`
 
 ```
 void MX_ETH_Init(void)
 {
-
-  /* USER CODE BEGIN ETH_Init 0 */
-
-  /* USER CODE END ETH_Init 0 */
-
-  /* USER CODE BEGIN ETH_Init 1 */
-
-  /* USER CODE END ETH_Init 1 */
   heth.Instance = ETH1;
   MACAddr[0] = 0x00;
   MACAddr[1] = 0x80;
@@ -103,7 +96,7 @@ void MX_ETH_Init(void)
 ```
 #### <b>Known limitations</b>
 
-The RTSP server is minimalist and does not support client multiple connections/disconnections.
+The RTSP server is minimalist and does not support multiple client connections/disconnections.
 
 #### <b>ThreadX usage hints</b>
 
@@ -138,7 +131,7 @@ with
 #define __NON_CACHEABLE __attribute__((section(".noncacheable")))
 ```
 
-The definition of the uncached section must be consistent between the link file and the MPU configuration.
+The definition of the uncached section must be consistent between the linker file and the MPU configuration.
 
 
 For more details about the MPU configuration please refer to the [AN4838](https://www.st.com/resource/en/application_note/dm00272912-managing-memory-protection-unit-in-stm32-mcus-stmicroelectronics.pdf)
@@ -159,39 +152,49 @@ RTOS, Network, ThreadX, NetXDuo, RTP, RTSP, TCP, UDP, UART
       - Parity = None
       - Flow control = None
 
-  - **EWARM** : To monitor a variable in the live watch window, you must proceed as follow :
-    - Start a debugging session.
-    - Open the View > Images.
-    - Double-click to deselect the second instance of project.out.
+  - In order to use the full XSPI speed, the following OTP fuses need to be set:
+      - VDDIO2_HSLV=1     I/O XSPIM_P1 High speed option enabled
+      - VDDIO3_HSLV=1     I/O XSPIM_P2 High speed option enabled
 
-  - **MDK-ARM** : To monitor a variable in the live watch window, you must comment out SCB_EnableDCache() in main() function.
 
 ### <b>How to use it ?</b>
 
-In order to make the program work, you must do the following :
+The example can be run either in development mode or in Load & Run mode.
 
- - Set the boot mode in development mode (BOOT1 switch position is 1-3, BOOT0 switch position doesn't matter).
- - Open your preferred toolchain
- - Select first the FSBL workspace
- - Rebuild all files from sub-project FSBL (if no modification is done on FSBL project, this step can be done only once)
- - Select the Appli workspace
- - Rebuild all files from sub-project Appli
- - Resort to CubeProgrammer to add a header to the generated Appli binary Project.bin with the following command
+#### <b> Development mode </b>
+
+Make sure that BOOT1 switch position is 1-3. BOOT0 position does not matter. Then, plug in your board via the ST-LINK USB port.
+
+Select the "Appli" tab in IAR and select the "DK_debug" configuration. This enables the development mode configuration.<br>
+Then, simply click the execute button and the program will run in debug mode.
+
+#### <b> Load & Run </b>
+
+This mode enables execution without having to connect through an IDE. The application will be stored in external memory and therefore will not require any external tools once loaded onto the board.
+
+It is expected that a command line environment is configured with the CubeProgrammer in its PATH.
+
+ - Compile the FSBL project and the Appli project
+ - Using the command line, add the header to the Appli and the FSBL (see "Annex : adding a header" section of this README)
+ - Make sure that the board is in development mode (BOOT1 switch position is 1-3)
+ - Program the external flash using CubeProgrammer with the FSBL (with header) at address 0x7000'0000 and the Application (with header) at address 0x7010'0000
+ - Switch to boot from external flash mode : BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2
+ - Press the reset button
+ - The example should execute
+
+
+__Note__: 2 scripts are provided as example for signing and flashing IAR or CubeIDE builds :
+
+  - VENC_RTSP_Server/Tools/flash_IAR.sh
+  - VENC_RTSP_Server/Tools/flash_cubeIDE.sh
+
+Please adapt the scripts to your environment 
+
+#### <b> Adding a header </b>
+
+ - Resort to CubeProgrammer to add a header to a binary Project.bin with the following command
    - *STM32_SigningTool_CLI.exe -bin Project.bin -nk -of 0x80000000 -t fsbl -o Project-trusted.bin -hv 2.3 -dump Project-trusted.bin*
    - The resulting binary is Project-trusted.bin.
- - Next, in resorting again to CubeProgrammer, load the Appli binary and its header (Project-trusted.bin) in DK board external Flash at address 0x7010'0000.
- - Load the FSBL binary in internal RAM using the IDE
- - Run the example
 
- Next, this program can be run in boot from flash mode. This is done by following the instructions below:
 
- - Resort to CubeProgrammer to add a header to the generated binary FSBL.bin with the following command
-   - *STM32_SigningTool_CLI.exe -bin FSBL.bin -nk -of 0x80000000 -t fsbl -o FSBL-trusted.bin -hv 2.3 -dump FSBL-trusted.bin*
-   - The resulting binary is FSBL-trusted.bin.
- - In resorting again to CubeProgrammer, load the FSBL binary and its header (FSBL-trusted.bin) in DK board external Flash at address 0x7000'0000.
- - Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).
- - Press the reset button. The code then executes in boot from external Flash mode.
-
-Note :
--  when using CubeIDE, make sure to use the Debug configuration for development mode and the Release configuration for boot from flash.
-- 2 scripts have been added under Projects/STM32N6570-DK/Applications/VENC/VENC_RTSP_Server_Ext/Tools. These are helper to flash IAR and CubeIDE configurations. They are provided as reference and need adaptation to each environment (path)
+**Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

@@ -42,11 +42,6 @@
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.c</locationURI>
 		</link>
 		<link>
-			<name>Drivers/BSP/stm32n6570_discovery_camera.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_camera.c</locationURI>
-		</link>
-		<link>
 			<name>Drivers/BSP/stm32n6570_discovery_usbpd_pwr.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_usbpd_pwr.c</locationURI>
@@ -55,7 +50,7 @@
 			<name>Drivers/BSP/stm32n6570_discovery_xspi.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_xspi.c</locationURI>
-		</link>		
+		</link>
 		<link>
 			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal.c</name>
 			<type>1</type>
@@ -175,7 +170,7 @@
 			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_xspi.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_xspi.c</locationURI>
-		</link>		
+		</link>
 		<link>
 			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_ll_dma.c</name>
 			<type>1</type>
@@ -1187,9 +1182,19 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Appli/AZURE_RTOS/App/app_azure_rtos.c</locationURI>
 		</link>
 		<link>
+			<name>Src/Core/SystemClock_Config_800MHz.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/SystemClock_Config_800MHz.c</locationURI>
+		</link>
+		<link>
 			<name>Src/Core/app_threadx.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/app_threadx.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Core/dcmipp_app.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/dcmipp_app.c</locationURI>
 		</link>
 		<link>
 			<name>Src/Core/main.c</name>
@@ -1235,7 +1240,12 @@
 			<name>Src/Core/venc_h264_config.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/venc_h264_config.c</locationURI>
-		</link>		
+		</link>
+		<link>
+			<name>Src/Patch/stm32n6570_discovery_camera.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/Patch/stm32n6570_discovery_camera.c</locationURI>
+		</link>
 		<link>
 			<name>Src/USBPD/usbpd.c</name>
 			<type>1</type>
@@ -1296,11 +1306,11 @@
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/Components/imx335/imx335_reg.c</locationURI>
 		</link>
-        <link>
+		<link>
 			<name>Drivers/BSP/Components/mx66uw1g45g.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/Components/mx66uw1g45g/mx66uw1g45g.c</locationURI>
-		</link>		
+		</link>
 		<link>
 			<name>Drivers/BSP/Components/tcpp0203.c</name>
 			<type>1</type>

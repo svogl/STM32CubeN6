@@ -2,11 +2,11 @@
 ******************************************************************************
 * @file          venc_h264_config_1080p_Frame.h
 * @author        MCD Application Team
-* @brief         venc support
+ * @brief   VENC H.264 configuration for 1080p frames
 ******************************************************************************
 * @attention
 *
-* Copyright (c) 2018(-2022) STMicroelectronics.
+ * Copyright (c) 2025 STMicroelectronics.
 * All rights reserved.
 *
 * This software is licensed under terms that can be found in the LICENSE file
@@ -16,32 +16,51 @@
 ******************************************************************************
 */
 
-
-
-#ifndef venc_h264_config_1080p_Frame_h
-#define venc_h264_config_1080p_Frame_h
+#ifndef __VENC_H264_CONFIG_1080P_FRAME_H__
+#define __VENC_H264_CONFIG_1080P_FRAME_H__
 
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-#define VENC_HEIGHT  1080   
-#define VENC_WIDTH   1920
-#define FRAMERATE    15
+/* Frame dimensions and framerate -------------------------------------------*/
+/** Frame height in pixels */
+#define VENC_HEIGHT    1080U
+/** Frame width in pixels  */
+#define VENC_WIDTH     1920U
+/** Target framerate (frames per second) */
+#define FRAMERATE      15U
 
-/* "HW Handshake mode"  aka "slice mode" aka "stream mode"*/
-#define VENC_HW_MODE_ENABLE     0
+/* Hardware mode ------------------------------------------------------------*/
+/** Enable hardware handshake / slice / stream mode (0 = disabled) */
+#define VENC_HW_MODE_ENABLE     0U
 
-/* Camera and VENC buffer location*/
+/* Buffer placement ---------------------------------------------------------*/
+/** Location macro for VENC internal buffer */
 #define VENC_BUFFER_LOCATION     IN_PSRAM
+/** Location macro for input frame buffer */
 #define INPUT_FRAME_LOCATION     IN_PSRAM
 
 
-#ifdef __cplusplus
-};
+#ifndef VENC_POOL_SIZE
+#define VENC_POOL_SIZE (8U * 1024U * 1024U)
 #endif
 
+#ifndef VENC_OUTPUT_BUFFER_SIZE
+#define VENC_OUTPUT_BUFFER_SIZE     (4U * 500U * 1024U)
 #endif
+  
+#ifndef VENC_BITRATE
+#define VENC_BITRATE (10*1000U*1000U)
+#endif
+
+
+  
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __VENC_H264_CONFIG_1080P_FRAME_H__ */
+
 

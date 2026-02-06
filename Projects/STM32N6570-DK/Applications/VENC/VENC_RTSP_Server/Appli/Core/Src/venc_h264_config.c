@@ -1,7 +1,6 @@
-/*
+/**
  ******************************************************************************
- * @file    Appli/Core/Src/venc_h264_config.c
- * @author  MCD Application Team
+ * @file    venc_h264_config.c
  * @brief   App plugin instances and VENC/H264 configuration
  ******************************************************************************
  * @attention
@@ -9,20 +8,22 @@
  * Copyright (c) 2025 STMicroelectronics.
  * All rights reserved.
  *
- * This software component is licensed under BSD 3-Clause license. You may
- * obtain a copy of the License in the LICENSE file in the root directory of
- * this software component.
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
  *
  ******************************************************************************
  */
 
+
 #include "utils.h"
+#include "stm32n6xx_hal.h"
 #include "venc_h264_config.h"
-#include "stm32n6xx_hal_dcmipp.h"
-#include "stm32n6xx_hal_def.h"
+
+
 
 /* Select target frame configuration */
-#define FULL_1080P_SLICE
+#define FULL_720P_FRAME
 
 #if defined(FULL_1080P_SLICE)
 #include "venc_h264_config_1080p_Slice.h"
@@ -73,23 +74,39 @@
 #define VENC_LINE_BUF_DEPTH     (2U) /* 2 lines of 16-pixel macroblocks */
 #define INPUT_FRAME_SIZE        ((uint32_t)(VENC_WIDTH * CAM_MACROBLOCK_HEIGHT * CAM_NB_BUFFERS * VENC_LINE_BUF_DEPTH * DCMIPP_BYTES_PER_PIXELS))
 #define VIEW_MODE               H264ENC_BASE_VIEW_SINGLE_BUFFER
+#define NB_INPUT_FRAME          (1U)
 #else /* Frame mode */
-#define CAM_NB_BUFFERS          (2U)
+#define CAM_NB_BUFFERS          (1U) 
 #define VENC_LINE_BUF_DEPTH     (1U)
 #define INPUT_FRAME_SIZE        ((uint32_t)(VENC_WIDTH * VENC_HEIGHT * CAM_NB_BUFFERS * DCMIPP_BYTES_PER_PIXELS))
 #define VIEW_MODE               H264ENC_BASE_VIEW_DOUBLE_BUFFER
+#define NB_INPUT_FRAME          (2U)
 #endif
 
+/* Maximum size of VENC buffer (1080p)*/
 #ifndef VENC_POOL_SIZE
 #define VENC_POOL_SIZE (8U * 1024U * 1024U)
 #endif
 
+/* Size of output h264 bitstream - to be adjusted according to targeted bitrate*/
+#ifndef VENC_OUTPUT_BUFFER_SIZE
+#define VENC_OUTPUT_BUFFER_SIZE     (4U * 500U * 1024U)
+#endif
+
+
+#ifndef VENC_BITRATE
+#define VENC_BITRATE (2*1000U*1000U)
+#endif
+
+
 /* Input frame (camera capture) */
-uint8_t input_frame[INPUT_FRAME_SIZE] ALIGN_32 INPUT_FRAME_LOCATION;
+uint8_t input_frame[NB_INPUT_FRAME][INPUT_FRAME_SIZE] ALIGN_32 INPUT_FRAME_LOCATION;
 
 /* Encoder working pool */
 uint8_t ewl_pool[VENC_POOL_SIZE] ALIGN_32 VENC_BUFFER_LOCATION;
 
+/* h264 bitstream (encoded output buffer) */
+uint8_t h264_bitstream[VENC_OUTPUT_BUFFER_SIZE] ALIGN_32 __NON_CACHEABLE;
 
 
 /* IMX335 : CAMERA_R2592x1944, CAMERA_PF_RAW_RGGB10*/ 
@@ -99,6 +116,7 @@ cam_h264_cfg_t hCamH264Instance  ={
 };
 
 dcmipp_h264_cfg_t hDcmippH264Instance = {
+    .bytes_per_pixel =    DCMIPP_BYTES_PER_PIXELS,
     .format = DCMIPP_FORMAT,
     .pitch  = DCMIPP_PITCH,
 };
@@ -109,7 +127,7 @@ venc_h264_cfg_t hVencH264Instance = {
     .cfgH264Main.viewMode                     = VIEW_MODE,                           /* Mode of stream to be generated and  the corresponding amount of encoder internal frame buffers required */
     .cfgH264Main.width                        = VENC_WIDTH,                          /* Encoded picture width in pixels, multiple of 4. */
     .cfgH264Main.height                       = VENC_HEIGHT,                         /* Encoded picture height in pixels, multiple of 2. */
-    .cfgH264Main.level                        = H264ENC_LEVEL_4,                     /* encoding Level */
+    .cfgH264Main.level                        = H264ENC_LEVEL_4_1,                     /* encoding Level */
     .cfgH264Main.frameRateNum                 = FRAMERATE,                           /*  The stream time scale, [1..1048575] */
     .cfgH264Main.frameRateDenom               = 1,                                   /* Maximum frame rate is frameRateNum/frameRateDenom in frames/second. The actual frame rate will be defined by timeIncrement of encoded pictures, [1..frameRateNum] */
     .cfgH264Main.scaledWidth                  = 0,                                   /* Optional down-scaled output picture width,multiple of 4. 0=disabled. [16..width] */
@@ -166,15 +184,15 @@ venc_h264_cfg_t hVencH264Instance = {
     .cfgH264Coding.nBaseLayerPID              = 0,                                   /*  priority_id of base temporal layer */
     .cfgH264Coding.level                      = 0,                                   /*  ?????????????????????? */
     .cfgH264Coding.enableSVC                  = 0,                                   /*  ?????????????????????? */
-    .cfgH264Rate.pictureRc                    = 0,                                   /* QP between pictures, [0,1] */
-    .cfgH264Rate.mbRc                         = 0,                                   /* QP inside picture, [0,1] */
+    .cfgH264Rate.pictureRc                    = 1,                                   /* QP between pictures, [0,1] */
+    .cfgH264Rate.mbRc                         = 1,                                   /* QP inside picture, [0,1] */
     .cfgH264Rate.pictureSkip                  = 0,                                   /* pictureSkip [0,1] */
     .cfgH264Rate.qpHdr                        = 26,                                  /* for next encoded picture, [-1..51],-1 = Let rate control calculate initial QP,This QP is used for all pictures if,HRD and pictureRc and mbRc are disabled,If HRD is enabled it may override this QP */
-    .cfgH264Rate.qpMin                        = 20,                                  /* Minimum QP for any picture, [0..51] */
-    .cfgH264Rate.qpMax                        = 42,                                  /* Maximum QP for any picture, [0..51] */
-    .cfgH264Rate.bitPerSecond                 = 128000,                              /* Target bitrate in bits/second, this is needed if pictureRc, mbRc, pictureSkip or,hrd is enabled [10000..60000000] */
-    .cfgH264Rate.hrd                          = 0,                                   /*  Hypothetical Reference Decoder model, [0,1],restricts the instantaneous bitrate and total bit amount of every coded picture.Enabling HRD will cause tight constrains on the operation of the rate control */
-    .cfgH264Rate.hrdCpbSize                   = 30000000,                            /* Size of Coded Picture Buffer in HRD (bits) */
+    .cfgH264Rate.qpMin                        = 0,                                  /* Minimum QP for any picture, [0..51] */
+    .cfgH264Rate.qpMax                        = 51,                                  /* Maximum QP for any picture, [0..51] */
+    .cfgH264Rate.bitPerSecond                 = VENC_BITRATE,                              /* Target bitrate in bits/second, this is needed if pictureRc, mbRc, pictureSkip or,hrd is enabled [10000..60000000] */
+    .cfgH264Rate.hrd                          = 1,                                   /*  Hypothetical Reference Decoder model, [0,1],restricts the instantaneous bitrate and total bit amount of every coded picture.Enabling HRD will cause tight constrains on the operation of the rate control */
+    .cfgH264Rate.hrdCpbSize                   = 75000000,                            /* Size of Coded Picture Buffer in HRD (bits) */
     .cfgH264Rate.gopLen                       = 30,                                  /* Length for Group of Pictures, indicates,the distance of two intra pictures,including first intra [1..300] */
     .cfgH264Rate.intraQpDelta                 = -3,                                  /* Intra QP delta. intraQP = QP + intraQpDelta This can be used to change the relative quality of the Intra pictures or to lower the size of Intra pictures. [-12..12] */
     .cfgH264Rate.fixedIntraQp                 = 0,                                   /* Fixed QP value for all Intra pictures, [0..51] 0 = Rate control calculates intra QP. */
@@ -216,7 +234,32 @@ uint8_t * GetInputFrame(uint32_t * frameSize)
     {
         *frameSize = INPUT_FRAME_SIZE;
     }
-    return input_frame;
+    return input_frame[0];
+}
+
+/**
+ * @brief  Get pointer to output  buffer and  its size.
+ * @param  bufferSize Optional output: size of buffer in bytes.
+ * @retval uint8_t* Pointer to the buffer
+ */
+uint8_t * GetOutputBuffer(uint32_t * bufferSize)
+{
+    if (bufferSize)
+    {
+        *bufferSize = VENC_OUTPUT_BUFFER_SIZE;
+    }
+    return h264_bitstream;
+}
+
+
+uint8_t * GetNextFrame(uint32_t frame_number)
+{
+   return input_frame[frame_number % NB_INPUT_FRAME];
+}
+
+uint32_t GetNbInputFrame(void)
+{
+  return NB_INPUT_FRAME;
 }
 
 /**
@@ -300,4 +343,15 @@ uint32_t GetDCMIPPNbLinesCaptured(void)
     {
         return (uint32_t)hVencH264Instance.cfgH264Main.height;
     }
+}
+
+/**
+ * @brief Returns the video frame rate (FPS) from the H.264 encoder configuration.
+ * @retval uint32_t The computed frames-per-second value.
+ */
+uint32_t GetVideoFramerate(void)
+{
+    uint32_t num = hVencH264Instance.cfgH264Main.frameRateNum;
+    uint32_t den = hVencH264Instance.cfgH264Main.frameRateDenom;
+    return den ? (num / den) : 0U;
 }

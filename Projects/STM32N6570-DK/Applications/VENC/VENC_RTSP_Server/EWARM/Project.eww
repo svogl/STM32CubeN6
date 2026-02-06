@@ -23,7 +23,7 @@
             </member>
             <member>
                 <project>VENC_RTSP_Server_Appli</project>
-                <configuration>VENC_RTSP_LRUN</configuration>
+                <configuration>VENC_OPUS_RTSP_Debug</configuration>
             </member>
         </batchDefinition>
     </batchBuild>

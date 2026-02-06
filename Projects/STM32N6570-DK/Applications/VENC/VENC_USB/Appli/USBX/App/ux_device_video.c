@@ -412,6 +412,22 @@ VOID video_write_payload(UX_DEVICE_CLASS_VIDEO_STREAM *stream)
   }
 }
 
+extern TX_SEMAPHORE video_thread_semaphore;
+
+VOID app_video_thread_entry(ULONG thread_input)
+{
+  while(1)
+  {
+    // To acquire (get) the semaphore - wait indefinitely
+    if (tx_semaphore_get(&video_thread_semaphore, UX_WAIT_FOREVER) == TX_SUCCESS)
+    {
+      ux_system_tasks_run();
+      ux_system_tasks_run();
+      HAL_NVIC_EnableIRQ(USB1_OTG_HS_IRQn);
+    }
+  }
+}
+
 /* USER CODE END 1 */
 
 UINT usb_sender_session_h264_send(UX_DEVICE_CLASS_VIDEO_STREAM *stream, UCHAR *frame_data, ULONG frame_data_size, ULONG timestamp, UINT marker)

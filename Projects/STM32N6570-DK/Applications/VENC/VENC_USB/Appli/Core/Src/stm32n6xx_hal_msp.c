@@ -78,6 +78,17 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef* pcdHandle)
 {
   if (pcdHandle->Instance==USB1_OTG_HS)
   {
+  RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
+
+  /* Turn on HSE */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+     Error_Handler();
+  }
+  
+    
     /* USER CODE BEGIN USB_OTG_HS_MspInit 0 */
 
     /* USER CODE END USB_OTG_HS_MspInit 0 */

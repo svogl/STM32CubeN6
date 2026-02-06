@@ -1,10 +1,7 @@
 /**
   ******************************************************************************
-  * @file    EWL_conf_template.h
-  * @author  MCD Application Team
-  * @brief   EWL configuration template file.
-  *          This file should be copied to the application folder and renamed
-  *          to EWL_conf.h.
+  * @file           : ewl_conf.h
+  * @brief          : EWL configuration file.
   ******************************************************************************
   * @attention
   *

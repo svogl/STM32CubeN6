@@ -20,6 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_usbx_device.h"
+#include "tx_api.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -48,6 +49,9 @@ static ULONG video_configuration_number;
 static UX_DEVICE_CLASS_VIDEO_PARAMETER video_parameter;
 static UX_DEVICE_CLASS_VIDEO_STREAM_PARAMETER video_stream_parameter[USBD_VIDEO_STREAM_NMNBER];
 static TX_THREAD ux_device_app_thread;
+static TX_THREAD ux_video_thread;
+TX_SEMAPHORE video_thread_semaphore;
+VOID app_video_thread_entry(ULONG thread_input);
 
 /* USER CODE BEGIN PV */
 extern PCD_HandleTypeDef hpcd_USB1_OTG_HS;
@@ -64,6 +68,20 @@ static VOID app_ux_device_thread_entry(ULONG thread_input);
 /* USER CODE BEGIN PFP */
 ALIGN_32BYTES(uint32_t DataBuffer[512/ sizeof(uint32_t)]);
 /* USER CODE END PFP */
+
+/* USER CODE BEGIN UX_Device_Pool_Buffer */
+/* USER CODE END UX_Device_Pool_Buffer */
+#if defined ( __ICCARM__ )
+#pragma data_alignment=4
+#endif
+__ALIGN_BEGIN static UCHAR ux_device_cached_buffer[UX_DEVICE_APP_MEM_CACHED_SIZE]  __ALIGN_END ;
+
+#if defined ( __ICCARM__ )
+#pragma data_alignment=4
+#endif
+__ALIGN_BEGIN static UCHAR ux_device_uncached_buffer[UX_DEVICE_APP_MEM_UNCACHED_SIZE] IN_UNCACHED_RAM __ALIGN_END ;
+
+
 
 /**
   * @brief  Application USBX Device Initialization.
@@ -88,17 +106,10 @@ UINT MX_USBX_Device_Init(VOID *memory_ptr)
 
   /* USER CODE END MX_USBX_Device_Init0 */
 
-  /* Allocate the stack for USBX Memory */
-  if (tx_byte_allocate(byte_pool, (VOID **) &pointer,
-                       USBX_DEVICE_MEMORY_STACK_SIZE, TX_NO_WAIT) != TX_SUCCESS)
-  {
-    /* USER CODE BEGIN USBX_ALLOCATE_STACK_ERORR */
-    return TX_POOL_ERROR;
-    /* USER CODE END USBX_ALLOCATE_STACK_ERORR */
-  }
+
 
   /* Initialize USBX Memory */
-  if (ux_system_initialize(pointer, USBX_DEVICE_MEMORY_STACK_SIZE, UX_NULL, 0) != UX_SUCCESS)
+  if (ux_system_initialize(ux_device_uncached_buffer, UX_DEVICE_APP_MEM_UNCACHED_SIZE, ux_device_cached_buffer, UX_DEVICE_APP_MEM_CACHED_SIZE) != UX_SUCCESS)
   {
     /* USER CODE BEGIN USBX_SYSTEM_INITIALIZE_ERORR */
     return UX_ERROR;
@@ -151,8 +162,13 @@ UINT MX_USBX_Device_Init(VOID *memory_ptr)
   video_stream_parameter[0].ux_device_class_video_stream_parameter_max_payload_buffer_size
     = USBD_VIDEO_StreamGetMaxPayloadBufferSize();
 
+#if defined(UX_DEVICE_STANDALONE)
+  video_stream_parameter[0].ux_device_class_video_stream_parameter_task_function 
+    = ux_device_class_video_write_task_function;
+#else
   video_stream_parameter[0].ux_device_class_video_stream_parameter_thread_entry
     = ux_device_class_video_write_thread_entry;
+#endif
 
   /* Set the parameters for Video device */
   video_parameter.ux_device_class_video_parameter_streams_nb  = USBD_VIDEO_STREAM_NMNBER;
@@ -221,10 +237,53 @@ UINT MX_USBX_Device_Init(VOID *memory_ptr)
   {
     return TX_QUEUE_ERROR;
   }
+  
+    /* Create the MsgQueue */
+  
+  if(tx_semaphore_create(&video_thread_semaphore, "Video Semaphore", 0) != UX_SUCCESS)
+  {
+    return  UX_SEMAPHORE_ERROR;
+  }
+ 
+   /* Allocate Memory for the Queue */
+  if (tx_byte_allocate(byte_pool, (VOID **) &pointer, UX_VIDEO_THREAD_STACK_SIZE,
+                       TX_NO_WAIT) != TX_SUCCESS)
+  {
+    return TX_POOL_ERROR;
+  }
+
+  /* Create the device application main thread */
+  if (tx_thread_create(&ux_video_thread, UX_VIDEO_THREAD_NAME, app_video_thread_entry,
+                       0, pointer, UX_DEVICE_APP_THREAD_STACK_SIZE,
+                       UX_VIDEO_THREAD_PRIO, UX_VIDEO_THREAD_PRIO, 
+                       TX_NO_TIME_SLICE, TX_AUTO_START) != TX_SUCCESS)
+  {
+    /* USER CODE BEGIN MAIN_THREAD_CREATE_ERORR */
+    return TX_THREAD_ERROR;
+    /* USER CODE END MAIN_THREAD_CREATE_ERORR */
+  }
+
   /* USER CODE END MX_USBX_Device_Init1 */
+  return ret;
+  
+}
+
+#if defined(UX_DEVICE_STANDALONE)
+ALIGN_TYPE _ux_utility_interrupt_disable(VOID)
+{
+  ALIGN_TYPE ret = __get_PRIMASK();
+
+  __disable_irq();
 
   return ret;
 }
+
+VOID _ux_utility_interrupt_restore(ALIGN_TYPE flags)
+{
+  if (!flags)
+    __enable_irq();
+}
+#endif
 
 /**
   * @brief  Function implementing app_ux_device_thread_entry.

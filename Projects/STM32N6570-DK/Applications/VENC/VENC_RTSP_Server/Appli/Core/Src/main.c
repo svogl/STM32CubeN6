@@ -1,4 +1,3 @@
-/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file           : main.c
@@ -15,62 +14,40 @@
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "string.h"
 #include "app_threadx.h"
+#include "stm32n6570_discovery.h"
 #include "stm32n6570_discovery_xspi.h"
 
 /* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-#if defined(__ICCARM__)
-#include <LowLevelIOInterface.h>
-#endif /* __ICCARM__ */
-/* USER CODE END Includes */
-
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-#if defined(__ICCARM__)
-/* New definition from EWARM V9, compatible with EWARM8 */
-int iar_fputc(int ch);
-#define PUTCHAR_PROTOTYPE int iar_fputc(int ch)
-#elif defined(__ARMCC_VERSION)
-/* ARM Compiler 6 */
-#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#elif defined(__GNUC__)
-#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#endif /* __ICCARM__ */
-
-/* USER CODE END PD */
-
 /* Private macro -------------------------------------------------------------*/
+#define TRACE_MAIN(...) printf(__VA_ARGS__)
 /* Private variables ---------------------------------------------------------*/
 ETH_DMADescTypeDef  DMARxDscrTab[ETH_DMA_RX_CH_CNT][ETH_RX_DESC_CNT] __NON_CACHEABLE; /* Ethernet Rx DMA Descriptors */
 ETH_DMADescTypeDef  DMATxDscrTab[ETH_DMA_TX_CH_CNT][ETH_TX_DESC_CNT] __NON_CACHEABLE; /* Ethernet Tx DMA Descriptors */
 ETH_TxPacketConfig  TxConfig;
 ETH_HandleTypeDef   heth;
-UART_HandleTypeDef  huart1;
 
 /* Private function prototypes -----------------------------------------------*/
-static void MX_GPIO_Init(void);
 static void MX_ETH_Init(void);
-static void MX_USART1_UART_Init(void);
 static void MPU_Config(void);
+static void LOG_Config(void);
 static void RISAF_Config(void);
 static void XSPI1_Source_Init(void);
 static void MX_GPDMA1_Init(void);
-void power_default_system_clock_config(void);
-void MX_TheadX_Init(void);
 
+__weak void SystemClock_Config(void)
+{
+  Error_Handler();
+}
 
 /**
   * @brief  The application entry point.
   * @retval int
   */
-  
 int main(void)
 {
   /* MPU Configuration */
@@ -89,21 +66,32 @@ int main(void)
   HAL_Init();
  
   /* Clocks configuration*/
-  power_default_system_clock_config();
+  SystemClock_Config();
  
-  /*  Risaf configuration */
+  /* initialize LEDs to signal processing is ongoing */
+  BSP_LED_Init(LED1);
+  BSP_LED_Init(LED2);
+
+  /* Security configuration */
   RISAF_Config();
+
+  /* UART Config */
+  LOG_Config();
 
   /*  External RAM  Init */
   XSPI1_Source_Init();
   BSP_XSPI_RAM_Init(0);
   BSP_XSPI_RAM_EnableMemoryMappedMode(0);
   
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
+  /* Ethernet confi*/
   MX_ETH_Init();
-  MX_USART1_UART_Init();
+
+  /* GPDMA init*/
   MX_GPDMA1_Init();
+
+  TRACE_MAIN("VENC_RTSP_Server\n");
+  TRACE_MAIN("CPU frequency    : %ld MHz\n", HAL_RCC_GetCpuClockFreq() / 1000000);
+  TRACE_MAIN("sysclk frequency : %ld MHz\n", HAL_RCC_GetSysClockFreq() / 1000000);
 
   /* Start OS*/
   MX_ThreadX_Init();
@@ -115,9 +103,12 @@ int main(void)
   }
 }
 
-static void  XSPI1_Source_Init(void)
-{ 
-  
+/**
+  * @brief XSPI clock config
+  */
+static void XSPI1_Source_Init(void)
+{
+
   RCC_PeriphCLKInitTypeDef PeriphClkInit;
   
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_XSPI1;
@@ -129,96 +120,52 @@ static void  XSPI1_Source_Init(void)
   return;
 }
 
+/**
+  * @brief UART Initialization Function
+  */
+static void LOG_Config(void)
+{
+  COM_InitTypeDef COM_Init;
+
+  /* Initialize COM init structure */
+  COM_Init.BaudRate   = 115200;
+  COM_Init.WordLength = COM_WORDLENGTH_8B;
+  COM_Init.StopBits   = COM_STOPBITS_1;
+  COM_Init.Parity     = COM_PARITY_NONE;
+  COM_Init.HwFlowCtl  = COM_HWCONTROL_NONE;
+
+  BSP_COM_Init(COM1, &COM_Init);
+
+  if (BSP_COM_SelectLogPort(COM1) != BSP_ERROR_NONE)
+  {
+    Error_Handler();
+  }
+}
 
 void H264EncTrace(const char *pMsg)
 {
   printf("VENC[%s]\n", pMsg);
 }
 
+/**
+  * @brief GPDMA Initialization Function
+  */
 static void MX_GPDMA1_Init(void)
 {
-  /* USER CODE BEGIN GPDMA1_Init 0 */
-
-  /* USER CODE END GPDMA1_Init 0 */
-
-  /* Peripheral clock enable */
   __HAL_RCC_GPDMA1_CLK_ENABLE();
 
   /* GPDMA1 interrupt Init */
     HAL_NVIC_SetPriority(GPDMA1_Channel0_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(GPDMA1_Channel0_IRQn);
-
-  /* USER CODE BEGIN GPDMA1_Init 1 */
-
-  /* USER CODE END GPDMA1_Init 1 */
-  /* USER CODE BEGIN GPDMA1_Init 2 */
-
-  /* USER CODE END GPDMA1_Init 2 */
-}
-
-
-/**
-  * @brief USART1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USART1_UART_Init(void)
-{
-
-  /* USER CODE BEGIN USART1_Init 0 */
-
-  /* USER CODE END USART1_Init 0 */
-
-  /* USER CODE BEGIN USART1_Init 1 */
-
-  /* USER CODE END USART1_Init 1 */
-  huart1.Instance        = USART1;
-  huart1.Init.BaudRate   = 115200;
-  huart1.Init.Mode       = UART_MODE_TX_RX;
-  huart1.Init.Parity     = UART_PARITY_NONE;
-  huart1.Init.StopBits   = UART_STOPBITS_1;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.HwFlowCtl  = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_SetTxFifoThreshold(&huart1, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_SetRxFifoThreshold(&huart1, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_DisableFifoMode(&huart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USART1_Init 2 */
-
-  /* USER CODE END USART1_Init 2 */
-
 }
 
 /**
   * @brief ETH Initialization Function
-  * @param None
-  * @retval None
   */
 static void MX_ETH_Init(void)
 {
+  static uint8_t MACAddr[6];
 
-  /* USER CODE BEGIN ETH_Init 0 */
-
-  /* USER CODE END ETH_Init 0 */
-
-   static uint8_t MACAddr[6];
-
-  /* USER CODE BEGIN ETH_Init 1 */
-
-  /* USER CODE END ETH_Init 1 */
   heth.Instance = ETH1;
   MACAddr[0] = 0x00;
   MACAddr[1] = 0x80;
@@ -237,10 +184,6 @@ static void MX_ETH_Init(void)
 
   heth.Init.RxBuffLen = 1536;
 
-  /* USER CODE BEGIN MACADDRESS */
-
-  /* USER CODE END MACADDRESS */
-
   if (HAL_ETH_Init(&heth) != HAL_OK)
   {
     Error_Handler();
@@ -250,82 +193,8 @@ static void MX_ETH_Init(void)
   TxConfig.Attributes = ETH_TX_PACKETS_FEATURES_CSUM | ETH_TX_PACKETS_FEATURES_CRCPAD;
   TxConfig.ChecksumCtrl = ETH_CHECKSUM_IPHDR_PAYLOAD_INSERT_PHDR_CALC;
   TxConfig.CRCPadCtrl = ETH_CRC_PAD_INSERT;
-  /* USER CODE BEGIN ETH_Init 2 */
-
-  /* USER CODE END ETH_Init 2 */
-
 }
 
-/**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_GPIO_Init(void)
-{
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOH_CLK_ENABLE();
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
-  __HAL_RCC_GPIOG_CLK_ENABLE();
-  __HAL_RCC_GPIOO_CLK_ENABLE();
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
-
-  /*Configure GPIO pin : LED_GREEN_Pin */
-  GPIO_InitStruct.Pin = LED_GREEN_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(LED_GREEN_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : LED_YELLOW_Pin */
-  GPIO_InitStruct.Pin = LED_RED_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(LED_RED_GPIO_Port, &GPIO_InitStruct);
-
-}
-
-/* USER CODE BEGIN 4 */
-#if defined(__ICCARM__)
-size_t __write(int file, unsigned char const *ptr, size_t len)
-{
-  size_t idx;
-  unsigned char const *pdata = ptr;
-
-  for (idx = 0; idx < len; idx++)
-  {
-    iar_fputc((int)*pdata);
-    pdata++;
-  }
-  return len;
-}
-#endif /* __ICCARM__ */
-/**
-  * @brief  Retargets the C library printf function to the USART.
-  */
-
-#ifndef TERMINAL_IO
-PUTCHAR_PROTOTYPE
-{
-  /* Place your implementation of putchar here */
-  /* e.g. write a character to the USART1 and Loop until the end of transmission */
-  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
-
-  return ch;
-}
-#endif
-/* USER CODE END 4 */
 
 /**
 * @brief  RISAF Configuration.
@@ -333,6 +202,9 @@ PUTCHAR_PROTOTYPE
 */
 static void RISAF_Config(void)
 {
+ __HAL_RCC_SYSCFG_CLK_ENABLE();
+
+   /* set all required IPs as secure privileged */
   __HAL_RCC_RIFSC_CLK_ENABLE();
   RIMC_MasterConfig_t RIMC_master = {0};
   RIMC_master.MasterCID = RIF_CID_1;
@@ -374,38 +246,45 @@ static void RISAF_Config(void)
   */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  /* USER CODE BEGIN Callback 0 */
-
-  /* USER CODE END Callback 0 */
   if (htim->Instance == TIM6) {
     HAL_IncTick();
   }
-  /* USER CODE BEGIN Callback 1 */
-
-  /* USER CODE END Callback 1 */
 }
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
+  * @brief  Check MPU region setting before configuring
   */
-void Error_Handler(void)
+static void MPU_CheckAndConfig( MPU_Region_InitTypeDef * region_config)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET);
-  printf("Critical error has occurred\r\n");
-  while (1)
+  /* Check region consistency before config*/
+  if (region_config->BaseAddress == 0  || region_config->LimitAddress <= region_config->BaseAddress)
   {
-    HAL_GPIO_TogglePin(LED_RED_GPIO_Port,LED_RED_Pin);
-    HAL_Delay(1000);
+    Error_Handler();
   }
-  /* USER CODE END Error_Handler_Debug */
-}
+  HAL_MPU_ConfigRegion(region_config);
+} 
+
+/* Get regions boundaries (exported from link files)*/
+extern int __ro_region_start__;
+extern int __ro_region_end__;
+
+extern int __rw_region_start__;
+extern int __rw_region_end__;
+
+extern int __nocache_region_start__;
+extern int __nocache_region_end__;
+
+extern int __psram_region_start__;
+extern int __psram_region_end__;
+
+
+/**
+  * @brief  Configure  MPU regions
+  */
 static void MPU_Config(void)
 {
   uint32_t primask_bit = __get_PRIMASK();
-  MPU_Region_InitTypeDef default_config = {0};
+  MPU_Region_InitTypeDef mpu_config = {0};
   MPU_Attributes_InitTypeDef attr_config = {0};
   uint32_t region_number = MPU_REGION_NUMBER0;
   __disable_irq();
@@ -426,60 +305,70 @@ static void MPU_Config(void)
 #define CACHED_ATTRIBUTE   MPU_ATTRIBUTES_NUMBER1
   
   /* Define RO */
-  default_config.Enable           = MPU_REGION_ENABLE;
-  default_config.Number           = region_number++;
-  default_config.AttributesIndex  = CACHED_ATTRIBUTE; /*Cached*/
-  default_config.BaseAddress      = 0x34000000;
-  default_config.LimitAddress     = 0x340963FF;
-  default_config.AccessPermission = MPU_REGION_ALL_RO;
-  default_config.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
-  default_config.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
-  HAL_MPU_ConfigRegion(&default_config);
+  mpu_config.Enable           = MPU_REGION_ENABLE;
+  mpu_config.Number           = region_number++;
+  mpu_config.AttributesIndex  = CACHED_ATTRIBUTE; /*Cached*/
+  mpu_config.BaseAddress      = (uint32_t)&__ro_region_start__;
+  mpu_config.LimitAddress     = (uint32_t)&__ro_region_end__ - 1;
+  mpu_config.AccessPermission = MPU_REGION_ALL_RO;
+  mpu_config.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
+  mpu_config.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
+  MPU_CheckAndConfig(&mpu_config);
 
-   /* Define Not Cacheable area */
-  default_config.Enable           = MPU_REGION_ENABLE;
-  default_config.Number           = region_number++;
-  default_config.AttributesIndex  = UNCACHED_ATTRIBUTE;  /*uncached*/
-  default_config.BaseAddress      = 0x34096400;
-  default_config.LimitAddress     = 0x341163FF;
-  default_config.AccessPermission = MPU_REGION_ALL_RW;
-  default_config.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
-  default_config.IsShareable      = MPU_ACCESS_INNER_SHAREABLE | MPU_ACCESS_OUTER_SHAREABLE;
-  HAL_MPU_ConfigRegion(&default_config);
+  /* Define Not Cacheable area */
+  mpu_config.Enable           = MPU_REGION_ENABLE;
+  mpu_config.Number           = region_number++;
+  mpu_config.AttributesIndex  = UNCACHED_ATTRIBUTE;  /*uncached*/
+  mpu_config.BaseAddress      = (uint32_t)&__nocache_region_start__;
+  mpu_config.LimitAddress     = (uint32_t)&__nocache_region_end__ - 1;
+  mpu_config.AccessPermission = MPU_REGION_ALL_RW;
+  mpu_config.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
+  mpu_config.IsShareable      = MPU_ACCESS_INNER_SHAREABLE | MPU_ACCESS_OUTER_SHAREABLE;
+  MPU_CheckAndConfig(&mpu_config);
 
-
-   /* Define RW */
-  default_config.Enable           = MPU_REGION_ENABLE;
-  default_config.Number           = region_number++;
-  default_config.AttributesIndex  = CACHED_ATTRIBUTE;  /*Cached*/
-  default_config.BaseAddress      = 0x34116400;
-  default_config.LimitAddress     = 0x34AC33FF;
-  default_config.AccessPermission = MPU_REGION_ALL_RW;
-  default_config.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
-  default_config.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
-  HAL_MPU_ConfigRegion(&default_config);
+  /* Define RW */
+  mpu_config.Enable           = MPU_REGION_ENABLE;
+  mpu_config.Number           = region_number++;
+  mpu_config.AttributesIndex  = CACHED_ATTRIBUTE;  /*Cached*/
+  mpu_config.BaseAddress      = (uint32_t)&__rw_region_start__;
+  mpu_config.LimitAddress     = (uint32_t)&__rw_region_end__ - 1;
+  mpu_config.AccessPermission = MPU_REGION_ALL_RW;
+  mpu_config.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
+  mpu_config.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
+  MPU_CheckAndConfig(&mpu_config);
  
+  /* Define external RAM Cacheable area */
+  mpu_config.Enable           = MPU_REGION_ENABLE;
+  mpu_config.Number           = region_number++;
+  mpu_config.AttributesIndex  = UNCACHED_ATTRIBUTE;  /*Uncached*/
+  mpu_config.BaseAddress      = (uint32_t)&__psram_region_start__;
+  mpu_config.LimitAddress     = (uint32_t)&__psram_region_end__ - 1;
+  mpu_config.AccessPermission = MPU_REGION_ALL_RW;
+  mpu_config.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
+  mpu_config.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
+  MPU_CheckAndConfig(&mpu_config);
  
-
-   /* Define external RAM Cacheable area */
-  default_config.Enable           = MPU_REGION_ENABLE;
-  default_config.Number           = region_number++;
-  default_config.AttributesIndex  = CACHED_ATTRIBUTE;  /*Cached*/
-  default_config.BaseAddress      = 0x90000000;
-  default_config.LimitAddress     = 0x91ffffff;
-  default_config.AccessPermission = MPU_REGION_ALL_RW;
-  default_config.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
-  default_config.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
-  HAL_MPU_ConfigRegion(&default_config);
- 
-
   /* enable the MPU */
   HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
 
   __enable_irq();
-  /* Exit critical section to lock the system and avoid any issue around MPU mechanisme */
+  /* Exit critical section to lock the system and avoid any issue around MPU mechanism */
   __set_PRIMASK(primask_bit);
 }
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  */
+void Error_Handler(void)
+{
+  BSP_LED_Off(LED_GREEN);
+  while (1)
+  {
+    BSP_LED_Toggle(LED_RED);
+    HAL_Delay(250);
+  }
+}
+
 #ifdef  USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
@@ -490,13 +379,10 @@ static void MPU_Config(void)
   */
 void assert_failed(uint8_t *file, uint32_t line)
 {
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  TRACE_MAIN("assert failed at line %d of file %s\n", line, file);
   /* Infinite loop */
   while (1)
   {
   }
-  /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

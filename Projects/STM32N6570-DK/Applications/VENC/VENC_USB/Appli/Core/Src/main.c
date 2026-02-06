@@ -15,54 +15,100 @@
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "app_threadx.h"
 #include "usbpd.h"
 #include "stm32n6570_discovery.h"
 #include "stm32n6570_discovery_xspi.h"
+#include "utils.h"
+
 /* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
 /* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
 /* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
 /* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
+#define TRACE_MAIN(...) printf(__VA_ARGS__)
 /* Private variables ---------------------------------------------------------*/
+PCD_HandleTypeDef hpcd_USB1_OTG_HS IN_UNCACHED_RAM;
 
-/* USER CODE BEGIN PV */
-PCD_HandleTypeDef hpcd_USB1_OTG_HS;
-
-/* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
+static void MPU_Config(void);
+static void LOG_Config(void);
+
 static void MX_GPDMA1_Init(void);
 static void MX_UCPD1_Init(void);
-void MPU_Config(void);
-/* USER CODE BEGIN PFP */
+
 static void RISAF_Config(void);
-/* USER CODE END PFP */
+static void XSPI1_Source_Init(void);
 
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
+__weak void SystemClock_Config(void)
+{
+  Error_Handler();
+}
 
-/* USER CODE END 0 */
-void  XSPI1_Source_Init(void)
+/**
+  * @brief  The application entry point.
+  * @retval int
+  */
+int main(void)
+{
+  /* MPU Configuration */
+  MPU_Config();
+
+  /* Enable I-Cache */
+  SCB_EnableICache();
+  
+  /* Enable D-Cache */
+  SCB_EnableDCache();
+
+  /* System clock already configured, simply SystemCoreClock init */
+  SystemCoreClockUpdate();
+
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
+
+  /* Clocks configuration*/
+  SystemClock_Config();
+
+  /* initialize LEDs to signal processing is ongoing */
+  BSP_LED_Init(LED1);
+  BSP_LED_Init(LED2);
+
+  /* Security configuration */
+  RISAF_Config();
+
+  /* UART Config */
+  LOG_Config();
+
+  /*  External RAM  Init */
+  XSPI1_Source_Init();
+  BSP_XSPI_RAM_Init(0);
+  BSP_XSPI_RAM_EnableMemoryMappedMode(0);
+
+  /* Initialize all configured peripherals */
+  MX_GPDMA1_Init();
+  MX_UCPD1_Init();
+  USBPD_PreInitOs();
+
+  TRACE_MAIN("VENC_USB\n");
+  TRACE_MAIN("CPU frequency    : %ld MHz\n", HAL_RCC_GetCpuClockFreq() / 1000000);
+  TRACE_MAIN("sysclk frequency : %ld MHz\n", HAL_RCC_GetSysClockFreq() / 1000000);
+
+  /* Start OS*/
+  MX_ThreadX_Init();
+
+  /* We should never get here as control is now taken by the scheduler */
+  /* Infinite loop */
+  while (1)
+  {
+  }
+}
+
+/**
+  * @brief XSPI clock config
+  */
+static void  XSPI1_Source_Init(void)
 { 
   
   RCC_PeriphCLKInitTypeDef PeriphClkInit;
@@ -76,59 +122,11 @@ void  XSPI1_Source_Init(void)
   return;
 }
 
-
 /**
-  * @brief  The application entry point.
-  * @retval int
+  * @brief UART Initialization Function
   */
-int main(void)
-{
-  /* USER CODE BEGIN 1 */
-
-  /* Enable and set up the MPU------------------------------------------------*/
-  MPU_Config();
-  /* USER CODE END 1 */
-  /* Power settings */
-  HAL_PWREx_EnableVddA();
-  HAL_PWREx_EnableVddIO2();
-  HAL_PWREx_EnableVddIO3();
-  HAL_PWREx_EnableVddIO4();
-  HAL_PWREx_EnableVddIO5();
-  /* Enable I-Cache---------------------------------------------------------*/
-  SCB_EnableICache();
-
-  /* System clock already configured, simply SystemCoreClock init */
-  SystemCoreClockUpdate();
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* Configure the power domain */
-
-  /* Configure the system Power Supply on LDO */
-  SystemClock_Config();
-
-  RISAF_Config();
-  /* USER CODE END Init */
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /*  External RAM  Init */
-  XSPI1_Source_Init();
-  BSP_XSPI_RAM_Init(0);
-  BSP_XSPI_RAM_EnableMemoryMappedMode(0);
-
-  /* Initialize all configured peripherals */
-  MX_GPDMA1_Init();
-  MX_UCPD1_Init();
-
-  /* USER CODE BEGIN 2 */
-#if USE_COM_LOG
+static void LOG_Config(void)
+{  
   COM_InitTypeDef COM_Init;
 
   /* Initialize COM init structure */
@@ -144,159 +142,51 @@ int main(void)
   {
     Error_Handler();
   }
-#endif
-  /* USER CODE END 2 */
-  USBPD_PreInitOs();
-
-  MX_ThreadX_Init();
-
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-  }
-  /* USER CODE END 3 */
 }
+
+
 
 /**
-  * @brief  System Clock Configuration
-  * @param None
-  * @retval None
-  */
-void SystemClock_Config(void)
+* @brief  RISAF Configuration.
+* @retval None
+*/
+static void RISAF_Config(void)
 {
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ __HAL_RCC_SYSCFG_CLK_ENABLE();
 
-  /* Configure the power domain */
-  if (HAL_PWREx_ConfigSupply(PWR_EXTERNAL_SOURCE_SUPPLY) != HAL_OK)
-  {
-    Error_Handler();
-  }
+   /* set all required IPs as secure privileged */
+  __HAL_RCC_RIFSC_CLK_ENABLE();
 
-  /* Get current CPU/System buses clocks configuration */
-  /* and if necessary switch to intermediate HSI clock */
-  /* to ensure target clock can be set                 */
-  HAL_RCC_GetClockConfig(&RCC_ClkInitStruct);
-  if ((RCC_ClkInitStruct.CPUCLKSource == RCC_CPUCLKSOURCE_IC1) ||
-      (RCC_ClkInitStruct.SYSCLKSource == RCC_SYSCLKSOURCE_IC2_IC6_IC11))
-  {
-    RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_CPUCLK | RCC_CLOCKTYPE_SYSCLK);
-    RCC_ClkInitStruct.CPUCLKSource = RCC_CPUCLKSOURCE_HSI;
-    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
-    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct) != HAL_OK)
-    {
-      Error_Handler();
-    }
-  }
+  RIMC_MasterConfig_t RIMC_master = {0};
+  RIMC_master.MasterCID = RIF_CID_1;
+  RIMC_master.SecPriv = RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV;
+  HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_DCMIPP, &RIMC_master);
+  HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_LTDC1 , &RIMC_master);
+  HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_LTDC2 , &RIMC_master);
+  HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_VENC  , &RIMC_master);
+  HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_DMA2D , &RIMC_master);
+  HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_OTG1  , &RIMC_master);
+  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_OTG1HS , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
+  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_ADC12  , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
+  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_DMA2D  , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
+  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_DCMIPP , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
+  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_CSI    , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
+  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_VENC   , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
+  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_LTDC   , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
+  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_LTDCL1 , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
+  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_LTDCL2 , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
 
-  /* HSE selected as source (stable clock on Level 0 samples */
-  /* PLL1 output = ((HSE/PLLM)*PLLN)/PLLP1/PLLP2             */
-  /*             = ((48000000/3)*75)/1/1                     */
-  /*             = (16000000*75)/1/1                         */
-  /*             = 1200000000 (1200 MHz)                     */
-  /* PLL2 off                                                */
-  /* PLL3 off                                                */
-  /* PLL4 off                                                */
+  /* AXISRAM1 full secure */
+  RISAF2_S->REG[0].STARTR  = 0x0;
+  RISAF2_S->REG[0].ENDR    = 0x000FFFFF;  /* Al SRAM1 in base region (1Mbytes) */
+  RISAF2_S->REG[0].CIDCFGR = 0x00030003;  /* RW by DMA (CID 0) and CPU (CID 1) */
+  RISAF2_S->REG[0].CFGR    = 0x101;       /* Base region set with SEC attribute */
 
-  /* Enable HSE && HSI */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSIState = RCC_HSI_OFF;
-  RCC_OscInitStruct.HSIDiv = RCC_HSI_DIV1;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON; /* 48 MHz */
+  RISAF3_S->REG[0].STARTR  = 0x0;
+  RISAF3_S->REG[0].ENDR    = 0x000FFFFF;  /* Al SRAM1 in base region (1Mbytes) */
+  RISAF3_S->REG[0].CIDCFGR = 0x00030003;  /* RW by DMA (CID 0) and CPU (CID 1) */
+  RISAF3_S->REG[0].CFGR    = 0x101;       /* Base region set with SEC attribute */
 
-  RCC_OscInitStruct.PLL1.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL1.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL1.PLLM  = 3;
-  RCC_OscInitStruct.PLL1.PLLN  = 75;  /* PLL1 VCO = 48/3 * 75 = 1200MHz */
-  RCC_OscInitStruct.PLL1.PLLP1 = 1;   /* PLL output = PLL VCO frequency / (PLLP1 * PLLP2) */
-  RCC_OscInitStruct.PLL1.PLLP2 = 1;   /* PLL output = 1200 MHz */
-  RCC_OscInitStruct.PLL1.PLLFractional = 0;
-
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    /* Initialization error */
-    Error_Handler();
-  }
-
-  /* Select PLL1 outputs as CPU and System bus clock source */
-  /* CPUCLK = ic1_ck = PLL1 output/ic1_divider = 600 MHz */
-  /* SYSCLK = ic2_ck = PLL1 output/ic2_divider = 400 MHz */
-  /* Configure the HCLK clock divider */
-  /* HCLK =  PLL1 SYSCLK/HCLK divider = 200 MHz */
-  /* PCLKx = HCLK / PCLKx divider = 200 MHz */
-  RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_CPUCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK  | \
-                                 RCC_CLOCKTYPE_PCLK1  | RCC_CLOCKTYPE_PCLK2 | RCC_CLOCKTYPE_PCLK4  | RCC_CLOCKTYPE_PCLK5);
-  RCC_ClkInitStruct.CPUCLKSource = RCC_CPUCLKSOURCE_IC1;
-  RCC_ClkInitStruct.IC1Selection.ClockSelection = RCC_ICCLKSOURCE_PLL1;
-  RCC_ClkInitStruct.IC1Selection.ClockDivider = 2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_IC2_IC6_IC11;
-  RCC_ClkInitStruct.IC2Selection.ClockSelection = RCC_ICCLKSOURCE_PLL1;
-  RCC_ClkInitStruct.IC2Selection.ClockDivider = 3;
-  RCC_ClkInitStruct.IC6Selection.ClockSelection = RCC_ICCLKSOURCE_PLL1;
-  RCC_ClkInitStruct.IC6Selection.ClockDivider = 2;
-  RCC_ClkInitStruct.IC11Selection.ClockSelection = RCC_ICCLKSOURCE_PLL1;
-  RCC_ClkInitStruct.IC11Selection.ClockDivider = 2;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV2;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV1;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV1;
-  RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV1;
-  RCC_ClkInitStruct.APB5CLKDivider = RCC_APB5_DIV1;
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler();
-  }
-}
-
-void MPU_Config(void){
-  MPU_Region_InitTypeDef default_config = {0};
-  MPU_Attributes_InitTypeDef attr_config = {0};
-  uint32_t primask_bit = __get_PRIMASK();
-  __disable_irq();
-
-  /* disable the MPU */
-  HAL_MPU_Disable();
-
-  /* create an attribute configuration for the MPU */
-  attr_config.Attributes = INNER_OUTER(MPU_NOT_CACHEABLE);
-  attr_config.Number = MPU_ATTRIBUTES_NUMBER0;
-
-  HAL_MPU_ConfigMemoryAttributes(&attr_config);
-
-  /* Create a non cacheable region */
-  /* Normal memory type, code execution allowed */
-  default_config.Enable = MPU_REGION_ENABLE;
-  default_config.Number = MPU_REGION_NUMBER0;
-  default_config.BaseAddress = __NON_CACHEABLE_SECTION_BEGIN;
-  default_config.LimitAddress =  __NON_CACHEABLE_SECTION_END;
-  default_config.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
-  default_config.AccessPermission = MPU_REGION_ALL_RW;
-  default_config.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
-  default_config.AttributesIndex = MPU_ATTRIBUTES_NUMBER0;
-  HAL_MPU_ConfigRegion(&default_config);
-
-  /* Create a non shareable  region for externam RAM*/
-  /* Normal memory type, code execution allowed */
-  default_config.Enable = MPU_REGION_ENABLE;
-  default_config.Number = MPU_REGION_NUMBER1;
-  default_config.BaseAddress =  0x90000000;
-  default_config.LimitAddress = 0x91ffffff;
-  default_config.AccessPermission = MPU_REGION_ALL_RW;
-  default_config.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
-  default_config.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
-  HAL_MPU_ConfigRegion(&default_config);  
-
-  /* enable the MPU */
-  HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
-
-  /* Exit critical section to lock the system and avoid any issue around MPU mechanisme */
-  __set_PRIMASK(primask_bit);
 }
 
 /**
@@ -337,16 +227,11 @@ static void MX_GPDMA1_Init(void)
   */
 static void MX_UCPD1_Init(void)
 {
-
-  /* USER CODE BEGIN UCPD1_Init 0 */
-
-  /* USER CODE END UCPD1_Init 0 */
   LL_DMA_InitTypeDef DMA_InitStruct = {0};
 
   /* Peripheral clock enable */
   LL_APB1_GRP2_EnableClock(LL_APB1_GRP2_PERIPH_UCPD1);
 
-  /* UCPD1 DMA Init */
 
   /* GPDMA1_REQUEST_UCPD1_RX Init */
   DMA_InitStruct.SrcAddress = 0x00000000U;
@@ -405,44 +290,6 @@ static void MX_UCPD1_Init(void)
   /* UCPD1 interrupt Init */
   NVIC_SetPriority(UCPD1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
   NVIC_EnableIRQ(UCPD1_IRQn);
-
-  /* USER CODE BEGIN UCPD1_Init 1 */
-
-  /* USER CODE END UCPD1_Init 1 */
-  /* USER CODE BEGIN UCPD1_Init 2 */
-
-  /* USER CODE END UCPD1_Init 2 */
-}
-
-
-
-/**
-* @brief  RISAF Configuration.
-* @retval None
-*/
-static void RISAF_Config(void)
-{
-  __HAL_RCC_RIFSC_CLK_ENABLE();
-
-  RIMC_MasterConfig_t RIMC_master = {0};
-  RIMC_master.MasterCID = RIF_CID_1;
-  RIMC_master.SecPriv = RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV;
-  HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_DCMIPP, &RIMC_master);
-  HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_LTDC1 , &RIMC_master);
-  HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_LTDC2 , &RIMC_master);
-  HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_VENC  , &RIMC_master);
-  HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_DMA2D , &RIMC_master);
-  HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_OTG1  , &RIMC_master);
-  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_OTG1HS , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
-  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_ADC12  , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
-  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_DMA2D  , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
-  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_DCMIPP , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
-  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_CSI    , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
-  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_VENC   , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
-  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_LTDC   , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
-  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_LTDCL1 , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
-  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_LTDCL2 , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
-
 }
 
 /**
@@ -453,16 +300,8 @@ static void RISAF_Config(void)
 
 void MX_USB1_OTG_HS_PCD_Init(void)
 {
-
-  /* USER CODE BEGIN USB1_OTG_HS_Init 0 */
-
-  /* USER CODE END USB1_OTG_HS_Init 0 */
-
-  /* USER CODE BEGIN USB1_OTG_HS_Init 1 */
-
   memset(&hpcd_USB1_OTG_HS, 0x0, sizeof(PCD_HandleTypeDef));
 
-  /* USER CODE END USB1_OTG_HS_Init 1 */
   hpcd_USB1_OTG_HS.Instance = USB1_OTG_HS;
   hpcd_USB1_OTG_HS.Init.dev_endpoints = 9;
   hpcd_USB1_OTG_HS.Init.speed = PCD_SPEED_HIGH;
@@ -478,14 +317,7 @@ void MX_USB1_OTG_HS_PCD_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN USB1_OTG_HS_Init 2 */
-
-  /* USER CODE END USB1_OTG_HS_Init 2 */
-
 }
-/* USER CODE BEGIN 4 */
-
-/* USER CODE END 4 */
 
 /**
   * @brief  Period elapsed callback in non blocking mode
@@ -497,29 +329,127 @@ void MX_USB1_OTG_HS_PCD_Init(void)
   */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  /* USER CODE BEGIN Callback 0 */
-
-  /* USER CODE END Callback 0 */
   if (htim->Instance == TIM6) {
     HAL_IncTick();
   }
-  /* USER CODE BEGIN Callback 1 */
+}
 
-  /* USER CODE END Callback 1 */
+/**
+  * @brief  Check MPU region setting before configuring
+  */
+static void MPU_CheckAndConfig( MPU_Region_InitTypeDef * region_config)
+{
+  /* Check region consistency before config*/
+  if (region_config->BaseAddress == 0  || region_config->LimitAddress <= region_config->BaseAddress)
+  {
+    Error_Handler();
+  }
+  HAL_MPU_ConfigRegion(region_config);
+} 
+
+/* Get regions boundaries (exported from link files)*/
+extern int __ro_region_start__;
+extern int __ro_region_end__;
+
+extern int __rw_region_start__;
+extern int __rw_region_end__;
+
+extern int __nocache_region_start__;
+extern int __nocache_region_end__;
+
+extern int __psram_region_start__;
+extern int __psram_region_end__;
+
+
+/**
+  * @brief  Configure  MPU regions
+  */
+static void MPU_Config(void)
+{
+  uint32_t primask_bit = __get_PRIMASK();
+  MPU_Region_InitTypeDef mpu_config = {0};
+  MPU_Attributes_InitTypeDef attr_config = {0};
+  uint32_t region_number = MPU_REGION_NUMBER0;
+  __disable_irq();
+
+  /* disable the MPU */
+  HAL_MPU_Disable();
+
+  /* create an attribute configuration for the MPU */
+  attr_config.Number = MPU_ATTRIBUTES_NUMBER0;
+  attr_config.Attributes = INNER_OUTER(MPU_NOT_CACHEABLE);
+  HAL_MPU_ConfigMemoryAttributes(&attr_config);
+
+  attr_config.Number = MPU_ATTRIBUTES_NUMBER1;
+  attr_config.Attributes = INNER_OUTER( MPU_WRITE_THROUGH|MPU_NON_TRANSIENT|MPU_RW_ALLOCATE);
+  HAL_MPU_ConfigMemoryAttributes(&attr_config);
+
+#define UNCACHED_ATTRIBUTE MPU_ATTRIBUTES_NUMBER0
+#define CACHED_ATTRIBUTE   MPU_ATTRIBUTES_NUMBER1
+  
+  /* Define RO */
+  mpu_config.Enable           = MPU_REGION_ENABLE;
+  mpu_config.Number           = region_number++;
+  mpu_config.AttributesIndex  = CACHED_ATTRIBUTE; /*Cached*/
+  mpu_config.BaseAddress      = (uint32_t)&__ro_region_start__;
+  mpu_config.LimitAddress     = (uint32_t)&__ro_region_end__ - 1;
+  mpu_config.AccessPermission = MPU_REGION_ALL_RO;
+  mpu_config.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
+  mpu_config.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
+  MPU_CheckAndConfig(&mpu_config);
+
+  /* Define Not Cacheable area */
+  mpu_config.Enable           = MPU_REGION_ENABLE;
+  mpu_config.Number           = region_number++;
+  mpu_config.AttributesIndex  = UNCACHED_ATTRIBUTE;  /*uncached*/
+  mpu_config.BaseAddress      = (uint32_t)&__nocache_region_start__;
+  mpu_config.LimitAddress     = (uint32_t)&__nocache_region_end__ - 1;
+  mpu_config.AccessPermission = MPU_REGION_ALL_RW;
+  mpu_config.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
+  mpu_config.IsShareable      = MPU_ACCESS_INNER_SHAREABLE | MPU_ACCESS_OUTER_SHAREABLE;
+  MPU_CheckAndConfig(&mpu_config);
+
+  /* Define RW */
+  mpu_config.Enable           = MPU_REGION_ENABLE;
+  mpu_config.Number           = region_number++;
+  mpu_config.AttributesIndex  = CACHED_ATTRIBUTE;  /*Cached*/
+  mpu_config.BaseAddress      = (uint32_t)&__rw_region_start__;
+  mpu_config.LimitAddress     = (uint32_t)&__rw_region_end__ - 1;
+  mpu_config.AccessPermission = MPU_REGION_ALL_RW;
+  mpu_config.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
+  mpu_config.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
+  MPU_CheckAndConfig(&mpu_config);
+ 
+  /* Define external RAM Cacheable area */
+  mpu_config.Enable           = MPU_REGION_ENABLE;
+  mpu_config.Number           = region_number++;
+  mpu_config.AttributesIndex  = UNCACHED_ATTRIBUTE;  /*Uncached*/
+  mpu_config.BaseAddress      = (uint32_t)&__psram_region_start__;
+  mpu_config.LimitAddress     = (uint32_t)&__psram_region_end__ - 1;
+  mpu_config.AccessPermission = MPU_REGION_ALL_RW;
+  mpu_config.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
+  mpu_config.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
+  MPU_CheckAndConfig(&mpu_config);
+ 
+  /* enable the MPU */
+  HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
+
+  __enable_irq();
+  /* Exit critical section to lock the system and avoid any issue around MPU mechanism */
+  __set_PRIMASK(primask_bit);
 }
 
 /**
   * @brief  This function is executed in case of error occurrence.
-  * @retval None
   */
 void Error_Handler(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
+  BSP_LED_Off(LED_GREEN);
   while (1)
   {
+    BSP_LED_Toggle(LED_RED);
+    HAL_Delay(250);
   }
-  /* USER CODE END Error_Handler_Debug */
 }
 
 #ifdef  USE_FULL_ASSERT
@@ -532,13 +462,10 @@ void Error_Handler(void)
   */
 void assert_failed(uint8_t *file, uint32_t line)
 {
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  TRACE_MAIN("assert failed at line %d of file %s\n", line, file);
   /* Infinite loop */
   while (1)
   {
   }
-  /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

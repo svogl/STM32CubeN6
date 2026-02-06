@@ -1,14 +1,16 @@
 
 ## <b>VENC_USB Application Description</b>
 
-This application provides an example of VENC usage on STM32N6570-DK board,
-it shows how to develop a USB video device using the camera pipeline and VENC IP.
-It is also designed to be easily configurable:
+This application provides an example of VENC usage on STM32N6570-DK board,and shows how to develop a USB video device using the camera pipeline and VENC IP.
+
+It is designed to be easily configurable:
 
   - Hardware handshake or frame mode
   - 1080p15, 720p30, 480p30
 
-The application is designed to emulate a USB video device, the code provides all required device descriptors framework
+The application is designed to emulate a USB video device.
+
+The code provides all required device descriptors framework
 and associated class descriptor report to build a compliant USB video device.
 
 At the beginning ThreadX calls the entry function tx_application_define(), at this stage, all USBx resources
@@ -19,13 +21,18 @@ are initialized, the video class driver is registered and the application create
 #### <b>Expected success behavior</b>
 
 When plugged to PC host, the STM32N6570-DK must be properly enumerated as a USB video device.
+
 During the enumeration phase, device provides host with the requested descriptors (device, configuration, string).
+
 Those descriptors are used by host driver to identify the device capabilities.
 
 Once the STM32N6570-DK USB device successfully completed the enumeration phase:
-Use a camera tool supporting USB h264 (ffplay for example with the command  ffplay -f dshow -i video="STM32 Video Device" )
 
-    - stream1 FORMAT : H264 and Width = 960, Height = 720.
+Use a camera tool supporting USB h264.
+
+The application was tested with ffplay under Windows with the command  ffplay -f dshow -i video="STM32 Video Device" 
+
+[Windows ffmpeg can be found here ](https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z)
 
 
 #### <b>Error behaviors</b>
@@ -68,42 +75,59 @@ RTOS, ThreadX, USBX Device, USB_OTG, Full Speed, High Speed, Video, MJPEG.
 
 ### <b>Hardware and Software environment</b>
 
-  - This application runs on STM32N657X0H3QU devices.
-  - This application has been tested with STMicroelectronics SSTM32N6570-DK boards revision MB1939-N6570-C01 and can be easily tailored to any other supported device and development board.
+  - This application runs on STM32N657xx devices.
+  - This application has been tested with STMicroelectronics STM32N6570-DK boards Revision MB1939-N6570-A03 and can be easily tailored to any other supported device and development board.
 
-  - **EWARM** : To monitor a variable in the live watch window, you must proceed as follow :
-    - Start a debugging session.
-    - Open the View > Images.
-    - Double-click to deselect the second instance of project.out.
+  - This application uses USART1 to display logs, the hyperterminal configuration is as follows:
+      - BaudRate = 115200 baud
+      - Word Length = 8 Bits
+      - Stop Bit = 1
+      - Parity = None
+      - Flow control = None
 
-  - **MDK-ARM** : To monitor a variable in the live watch window, you must comment out SCB_EnableDCache() in main() function.
+  - In order to use the full XSPI speed, the following OTP fuses need to be set:
+      - VDDIO2_HSLV=1     I/O XSPIM_P1 High speed option enabled
+      - VDDIO3_HSLV=1     I/O XSPIM_P2 High speed option enabled
+
 
 ### <b>How to use it ?</b>
 
-In order to make the program work, you must do the following :
+The example can be run either in development mode or in Load & Run mode.
 
- - Set the boot mode in development mode (BOOT1 switch position is 1-3, BOOT0 switch position doesn't matter).
- - Open your preferred toolchain
- - Select first the FSBL workspace
- - Rebuild all files from sub-project FSBL (if no modification is done on FSBL project, this step can be done only once)
- - Select the Firmware workspace (VENC_USB_Appli or VENC_USB_LRUN)
- - Rebuild all files from sub-project VENC_USB_XXX
- - Use CubeProgrammer to add a header to the generated VENC_USB_XXX binary Project.bin with the following command
-   - *STM32_SigningTool_CLI.exe -bin Project.bin -nk -of 0x80000000 -t fsbl -o Firmware-trusted.bin -hv 2.3 -dump Firmware-trusted.bin*
-       - The resulting binary is Ux_Device_Video-trusted.bin.
- - Next, in resorting again to CubeProgrammer, load the Firmware binary and its header (Firmware-trusted.bin) in DK board external Flash at address 0x7010'0000.
- - Load the FSBL binary in internal RAM using the IDE
- - Run the example
+#### <b> Development mode </b>
 
- Next, this program can be run in boot from flash mode. This is done by following the instructions below:
+Make sure that BOOT1 switch position is 1-3. BOOT0 position does not matter. Then, plug in your board via the ST-LINK USB port.
 
- - Use  CubeProgrammer to add a header to the generated binary FSBL.bin with the following command
-   - *STM32_SigningTool_CLI.exe -bin FSBL.bin -nk -of 0x80000000 -t fsbl -o FSBL-trusted.bin -hv 2.3 -dump FSBL-trusted.bin*
-       - The resulting binary is FSBL-trusted.bin.
- - In resorting again to CubeProgrammer, load the FSBL binary and its header (FSBL-trusted.bin) in DK board external Flash at address 0x7000'0000.
- - Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).
- - Press the reset button. The code then executes in boot from external Flash mode.
+Select the "Appli" tab in IAR and select the "DK_debug" configuration. This enables the development mode configuration.<br>
+Then, simply click the execute button and the program will run in debug mode.
 
- Note : when using CubeIDE, make sure to use the Debug configuration for development mode and the Release configuration for boot from flash.
+#### <b> Load & Run </b>
+
+This mode enables execution without having to connect through an IDE. The application will be stored in external memory and therefore will not require any external tools once loaded onto the board.
+
+It is expected that a command line environment is configured with the CubeProgrammer in its PATH.
+
+ - Compile the FSBL project and the Appli project
+ - Using the command line, add the header to the Appli and the FSBL (see "Annex : adding a header" section of this README)
+ - Make sure that the board is in development mode (BOOT1 switch position is 1-3)
+ - Program the external flash using CubeProgrammer with the FSBL (with header) at address 0x7000'0000 and the Application (with header) at address 0x7010'0000
+ - Switch to boot from external flash mode : BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2
+ - Press the reset button
+ - The example should execute
+
+
+__Note__: 2 scripts are provided as example for signing and flashing IAR or CubeIDE builds :
+
+  - VENC_USB/Tools/flash_IAR.sh
+  - VENC_USB/Tools/flash_cubeIDE.sh
+
+Please adapt the scripts to your environment 
+
+#### <b> Adding a header </b>
+
+ - Resort to CubeProgrammer to add a header to a binary Project.bin with the following command
+   - *STM32_SigningTool_CLI.exe -bin Project.bin -nk -of 0x80000000 -t fsbl -o Project-trusted.bin -hv 2.3 -dump Project-trusted.bin*
+   - The resulting binary is Project-trusted.bin.
+
 
 **Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.

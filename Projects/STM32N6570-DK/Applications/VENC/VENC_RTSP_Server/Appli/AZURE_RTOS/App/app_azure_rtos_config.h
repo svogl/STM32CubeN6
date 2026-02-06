@@ -1,9 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    app_azure_rtos_config.h
-  * @author  MCD Application Team
-  * @brief   azure_rtos config header file
+  * @file           : app_azure_rtos_config.h
+  * @brief          : Header for app_azure_rtos_config.c file.
+  *                   azure_rtos config header file
   ******************************************************************************
   * @attention
   *
@@ -43,9 +43,10 @@ extern "C" {
 
 #define USE_STATIC_ALLOCATION                    1
 
-#define TX_APP_MEM_POOL_SIZE                     (1024 + 16000 + 512)
+#define TX_APP_MEM_POOL_SIZE                     (1024 + 48000 + 512)
 
-#define NX_APP_MEM_POOL_SIZE                     32*1024
+/* Increase to accommodate enlarged NX packet pool (64 * ~1.6KB ~= 100KB). */
+#define NX_APP_MEM_POOL_SIZE                     (150*1024)
 
 /* USER CODE BEGIN EC */
 

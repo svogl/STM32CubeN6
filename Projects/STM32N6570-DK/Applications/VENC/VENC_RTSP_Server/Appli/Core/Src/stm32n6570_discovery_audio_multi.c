@@ -1,8 +1,7 @@
 /**
   ******************************************************************************
-  * @file    stm32n6570_discovery_audio.c
-  * @author  MCD Application Team
-  * @brief   This file provides the Audio driver for the STM32N6570-DK board.
+  * @file           : stm32n6570_discovery_audio.c
+  * @brief          : This file provides the Audio driver for the STM32N6570-DK board.
   ******************************************************************************
   * @attention
   *
@@ -148,7 +147,9 @@
 /** @defgroup STM32N6570_DISCOVERY_AUDIO_Private_Macros AUDIO Private Macros
   * @{
   */
+#ifndef NB_MICS
 #define NB_MICS 1
+#endif
 #define SaturaLH(N, L, H) (((N)<(L))?(L):(((N)>(H))?(H):(N)))
 
 #define MDF_DECIMATION_RATIO(__FREQUENCY__) \
@@ -2008,8 +2009,6 @@ int32_t BSP_AUDIO_IN_Record(uint32_t Instance, uint8_t *pBuf, uint32_t NbrOfByte
       dmaConfig.Address    = (uint32_t) Audio_DigMicRecBuff;
       dmaConfig.DataLength = 2U*NbrOfBytes;
       dmaConfig.MsbOnly    = DISABLE;
-
-      //SCB_CleanInvalidateDCache (); //[DSe] [TBF]
       
       /* Start Main channel with DMA*/
       if (HAL_MDF_AcqStart_DMA(&haudio_in_mdf_multi[0], &Audio_MdfFilterConfig, &dmaConfig) != HAL_OK)
@@ -3599,7 +3598,7 @@ static void MDF_MspInit(MDF_HandleTypeDef *hmdf)
     dmaNodeConfig.SrcSecure                           = DMA_CHANNEL_SRC_SEC;
     dmaNodeConfig.DestSecure                          = DMA_CHANNEL_DEST_SEC;
 
-    if (HAL_DMA_ConfigChannelAttributes(&hDmaMdf, DMA_CHANNEL_SEC) != HAL_OK)
+    if (HAL_DMA_ConfigChannelAttributes(&hDmaMdf, DMA_CHANNEL_SEC | DMA_CHANNEL_PRIV) != HAL_OK)
     {
       BSP_AUDIO_IN_Error_CallBack(1);
     }

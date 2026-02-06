@@ -25,7 +25,7 @@
 
 /* USER CODE BEGIN Includes */
 #include "app_usbx_device.h"
-
+#include "tx_api.h"
 /* USER CODE END Includes */
 
 /* USB include files ----------------------------------------------------------*/

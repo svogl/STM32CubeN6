@@ -21,6 +21,7 @@
 #include "main.h"
 #include "stm32n6xx_it.h"
 #include "usbpd.h"
+#include "tx_api.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stm32n6570_discovery_camera.h"
@@ -143,6 +144,7 @@ void DebugMon_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32n6xx.s).                    */
 /******************************************************************************/
+extern TX_SEMAPHORE video_thread_semaphore;
 
 /**
 * @brief  This function handles USB-On-The-Go FS/HS global interrupt request.
@@ -156,6 +158,10 @@ void USB1_OTG_HS_IRQHandler(void)
   /* USER CODE END OTG_HS_IRQHandler 0 */
   HAL_PCD_IRQHandler(&hpcd_USB1_OTG_HS);
   /* USER CODE BEGIN OTG_HS_IRQHandler 1 */
+
+  
+  tx_semaphore_put(&video_thread_semaphore);
+  HAL_NVIC_DisableIRQ(USB1_OTG_HS_IRQn);
 
   /* USER CODE END OTG_HS_IRQHandler 1 */
 }
