@@ -100,7 +100,7 @@ bool IsVideoOverflow(void)
 {
     bool videoOverflow = false;
 
-    if (IsHwHanshakeMode())
+    if (IsHwHandshakeMode())
     {
         videoOverflow = (nbLineEvent != 0U);
     }
