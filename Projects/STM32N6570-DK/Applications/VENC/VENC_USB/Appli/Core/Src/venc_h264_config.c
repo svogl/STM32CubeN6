@@ -262,7 +262,7 @@ uint32_t GetNbInputFrame(void)
  * @brief  Return whether hardware handshake (slice/stream) mode is enabled.
  * @retval true if HW handshake mode enabled, false otherwise.
  */
-bool IsHwHanshakeMode(void)
+bool IsHwHandshakeMode(void)
 {
 #if (VENC_HW_MODE_ENABLE == 1U)
     return true;
@@ -293,7 +293,7 @@ HAL_StatusTypeDef GetDCMIPPLinesConfig(uint32_t *pWarpLines, uint32_t *pIrqLines
     uint32_t nbLinesCaptured = VENC_LINE_BUF_DEPTH * CAM_MACROBLOCK_HEIGHT;
     HAL_StatusTypeDef ret = HAL_OK;
 
-    if (!IsHwHanshakeMode())
+    if (!IsHwHandshakeMode())
     {
         return HAL_ERROR;
     }
@@ -331,7 +331,7 @@ HAL_StatusTypeDef GetDCMIPPLinesConfig(uint32_t *pWarpLines, uint32_t *pIrqLines
 uint32_t GetDCMIPPNbLinesCaptured(void)
 {
     /* In hardware handshake mode, capture N lines within a 2*N buffer */
-    if (IsHwHanshakeMode())
+    if (IsHwHandshakeMode())
     {
         return (uint32_t)(2U * VENC_LINE_BUF_DEPTH * CAM_MACROBLOCK_HEIGHT);
     }
